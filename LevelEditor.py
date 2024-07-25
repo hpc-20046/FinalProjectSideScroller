@@ -1,10 +1,19 @@
 import pygame
 from settings import *
+import os
+import json
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-cell_width, cell_height = 40, 40
+file = "level1.json"
+
+try:
+    with open(file, 'r') as openfile:
+        level = json.load(openfile)
+except e:
+    
+    
 
 running = True
 while running:
@@ -14,12 +23,11 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-                
+            if event.key == pygame.K_r:
+                os.system("python FinalProjectSideScroller.py")
 
-    for x in range(0, int(WIDTH/cell_width)+1):
-        for y in range(0, int(HEIGHT/cell_height)+1):
-            pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(cell_width * x, cell_height * y, cell_width, cell_height), width=1)
 
-    pygame.display.flip()
+
+
 
 pygame.quit()
