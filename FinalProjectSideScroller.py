@@ -4,7 +4,7 @@ from settings import *
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-cell_width, cell_height = 40, 40
+
 
 running = True
 while running:
