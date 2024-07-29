@@ -1,9 +1,8 @@
-import math
-
 import pygame
 from settings import *
 import os
 import json
+import math
 
 
 def increment_cell_space():
