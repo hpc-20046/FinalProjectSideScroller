@@ -32,35 +32,21 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="dungeon\" />
+    <Folder Include="levels\" />
+    <Folder Include="backgrounds\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dungeon\1.png" />
-    <Content Include="dungeon\10.png" />
-    <Content Include="dungeon\11.png" />
-    <Content Include="dungeon\12.png" />
-    <Content Include="dungeon\13.png" />
-    <Content Include="dungeon\14.png" />
-    <Content Include="dungeon\15.png" />
-    <Content Include="dungeon\16.png" />
-    <Content Include="dungeon\17.png" />
-    <Content Include="dungeon\18.png" />
-    <Content Include="dungeon\19.png" />
-    <Content Include="dungeon\2.png" />
-    <Content Include="dungeon\20.png" />
-    <Content Include="dungeon\21.png" />
-    <Content Include="dungeon\22.png" />
-    <Content Include="dungeon\23.png" />
-    <Content Include="dungeon\24.png" />
-    <Content Include="dungeon\25.png" />
-    <Content Include="dungeon\26.png" />
-    <Content Include="dungeon\27.png" />
-    <Content Include="dungeon\3.png" />
-    <Content Include="dungeon\4.png" />
-    <Content Include="dungeon\5.png" />
-    <Content Include="dungeon\6.png" />
-    <Content Include="dungeon\7.png" />
-    <Content Include="dungeon\8.png" />
-    <Content Include="dungeon\9.png" />
+    <Content Include="dungeon\a.png" />
+    <Content Include="dungeon\f.png" />
+    <Content Include="dungeon\g.png" />
+    <Content Include="dungeon\h.png" />
+    <Content Include="dungeon\b.png" />
+    <Content Include="dungeon\i.png" />
+    <Content Include="dungeon\c.png" />
+    <Content Include="dungeon\d.png" />
+    <Content Include="dungeon\e.png" />
+    <Content Include="dungeon\j.png" />
+    <Content Include="levels\level1.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
