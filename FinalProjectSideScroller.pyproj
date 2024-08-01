@@ -36,6 +36,7 @@
     <Folder Include="backgrounds\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="backgrounds\hi.txt" />
     <Content Include="dungeon\a.png" />
     <Content Include="dungeon\f.png" />
     <Content Include="dungeon\g.png" />
