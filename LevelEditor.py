@@ -76,12 +76,15 @@ while running:
                 pass
         if event.type == pygame.MOUSEWHEEL:
             tile_num += event.y
+            if tile_num > total_tiles:
+                tile_num = 0
+            if tile_num < 0:
+                tile_num = total_tiles
             pos = pygame.mouse.get_pos()
+            print(tile_num)
             cellx = math.floor(pos[0] / cell_width)
             celly = math.floor(pos[1] / cell_height)
             level["level"][cellx][celly] = tile_num
- 
- 
 
     screen.fill(pygame.Color('lightblue'))
 
