@@ -26,25 +26,16 @@ def main():
 
     current_level = 1
 
-    player_obj = Player(100, HEIGHT / 2, 3)
-    player = pygame.sprite.Group()
-    player.add(player_obj)
-    player_x_change = 0
-    is_jumping = False
+    player = Player(100, HEIGHT / 2, 3)
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
 
     running = True
     while running:
-        player_x_change = 0
-        is_jumping = False
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            player_x_change = -5
-        if keys[pygame.K_RIGHT]:
-            player_x_change = 5
+        # delta time - so player speed will look the same no matter the frame rate
+        dt = clock.tick(60) * 0.001 * TARGET_FPS
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -52,15 +43,31 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if event.key == pygame.K_SPACE:
-                    is_jumping = True
+
+                if event.key == pygame.K_LEFT:
+                    player.LEFT_KEY, player.FACING_LEFT = True, True
+                elif event.key == pygame.K_RIGHT:
+                    player.RIGHT_KEY, player.FACING_LEFT = True, False
+                elif event.key == pygame.K_SPACE:
+                    player.jump()
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    player.LEFT_KEY = False
+                elif event.key == pygame.K_RIGHT:
+                    player.RIGHT_KEY = False
+                elif event.key == pygame.K_SPACE:
+                    if player.is_jumping:
+                        player.velocity.y *= 0.25
+                        player.is_jumping = False
+
             if event.type == NEW_PLAYER_FRAME:
-                if player_x_change == 5:
-                    player.sprites()[0].update_frame("idle_right")
-                elif player_x_change == -5:
-                    player.sprites()[0].update_frame("idle_left")
+                if not player.FACING_LEFT:
+                    player.update_frame("idle_right")
+                elif player.FACING_LEFT:
+                    player.update_frame("idle_left")
                 else:
-                    player.sprites()[0].update_frame("idle_right")
+                    player.update_frame("idle_right")
 
 
 
@@ -77,17 +84,14 @@ def main():
                                 tile_surfaces[levels[current_level - 1]["level"][x][y] - 1]
                                 .get_rect(topleft=(cell_width * x, cell_height * y)))
                 else:
-                    tile_rects.append(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1]
-                                      .get_rect(topleft=(cell_width * x, cell_height * y)))
+                    tile_rect = tile_surfaces[levels[current_level - 1]["level"][x][y] - 1].get_rect(topleft=(cell_width * x, cell_height * y))
+                    tile_rects.append(tile_rect)
 
-                    screen.blit(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1],
-                                tile_surfaces[levels[current_level - 1]["level"][x][y] - 1]
-                                .get_rect(topleft=(cell_width * x, cell_height * y)))
+                    screen.blit(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1], tile_rect)
 
-        player.update(player_x_change, is_jumping, tile_rects)
+        player.update(dt, tile_rects)
         player.draw(screen)
         pygame.display.flip()
-        clock.tick(60)
 
 
 

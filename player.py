@@ -19,18 +19,24 @@ class Player(pygame.sprite.Sprite):
             pygame.transform.scale_by(pygame.image.load("player/idle/left/tile007.png"), scale_factor)
             ]
 
-        self.x = start_x
-        self.y = start_y
-        self.y_momentum = 0
-        self.jump_momentum = -10
-
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
         self.image = self.idle_right_frames[self.frame_index]
         self.rect = self.image.get_rect()
-        self.rect.topleft = (self.x, self.y)
         
         self.state = "idle_right"
+
+        self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False
+        self.is_jumping, self.on_ground = False, False
+
+        self.gravity = 0.35
+        self.friction = -0.12
+        self.max_velocity = 6
+        self.jump_height = 20
+
+        self.position = pygame.math.Vector2(start_x, start_y)
+        self.velocity = pygame.math.Vector2(0, 0)
+        self.acceleration = pygame.math.Vector2(0, self.gravity)
 
     def update_frame(self, state):
         if self.state == state:
@@ -56,43 +62,77 @@ class Player(pygame.sprite.Sprite):
                     self.image = self.state_frames[self.frame_index]
                     self.state = "idle_right"
 
-    #def momentum(self, is_jumping: bool):
+    def draw(self, display):
+        display.blit(self.image, (self.rect.x, self.rect.y))
 
+    def update(self, dt, tiles):
+        self.horizontal_movement(dt)
+        self.check_collisions_x(tiles)
+        self.vertical_movement(dt)
+        self.check_collisions_y(tiles)
 
-    def test_collisions(self, tiles):
-        collisions = []
+    def horizontal_movement(self, dt):
+        self.acceleration.x = 0
+        if self.LEFT_KEY:
+            self.acceleration.x -= 3
+        elif self.RIGHT_KEY:
+            self.acceleration.x += 3
+        self.acceleration.x += self.velocity.x * self.friction
+        self.velocity.x += self.acceleration.x * dt
+        self.limit_velocity(self.max_velocity)
+        self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
+        self.rect.x = self.position.x
+        print(self.velocity)
+
+    def vertical_movement(self, dt):
+        self.velocity.y += self.acceleration.y * dt
+        if self.velocity.y > 7:
+            self.velocity.y = 7
+
+        self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
+
+        self.rect.bottom = self.position.y
+
+    def jump(self):
+        if self.on_ground:
+            self.is_jumping = True
+            self.velocity.y -= self.jump_height
+            self.on_ground = False
+
+    def limit_velocity(self, max_vel):
+        self.velocity.x = max(min(max_vel, self.velocity.x), -max_vel)
+        if abs(self.velocity.x) < 0.01:
+            self.velocity.x = 0
+
+    def get_collisions(self, tiles):
+        hits = []
         for tile in tiles:
             if self.rect.colliderect(tile):
-                collisions.append(tile)
-        return collisions
+                hits.append(tile)
+        return hits
 
-    def movement(self, x_change, tiles, is_jumping):
-        if self.y > HEIGHT - self.image.get_height():
-            self.y_momentum = -self.y_momentum
-        elif is_jumping:
-            self.y_momentum = self.jump_momentum
-        else:
-            self.y_momentum += 0.2
-
-        self.x += x_change
-        self.rect.topleft = (self.x, self.y)
-        collisions = self.test_collisions(tiles)
+    def check_collisions_x(self, tiles):
+        collisions = self.get_collisions(tiles)
         for tile in collisions:
-            if x_change > 0:
-                self.rect.right = tile.left
-            elif x_change < 0:
-                self.rect.left = tile.right
-        self.y += self.y_momentum
-        self.rect.topleft = (self.x, self.y)
-        collisions = self.test_collisions(tiles)
-        for tile in collisions:
-            if self.y_momentum > 0:
-                self.rect.bottom = tile.top
-                self.y_momentum = 0
-            elif self.y_momentum < 0:
-                self.rect.top = tile.bottom
-                self.y_momentum = 0
+            if self.velocity.x > 0:
+                self.position.x = tile.left - self.rect.w
+                self.rect.x = self.position.x
+            elif self.velocity.x < 0:
+                self.position.x = tile.right
+                self.rect.x = self.position.x
 
-    def update(self, x_change, is_jumping: bool, tiles):
-        #self.momentum(is_jumping)
-        self.movement(x_change, tiles, is_jumping)
+    def check_collisions_y(self, tiles):
+        self.on_ground = False
+        self.rect.bottom += 1
+        collisions = self.get_collisions(tiles)
+        for tile in collisions:
+            if self.velocity.y > 0:
+                self.on_ground = True
+                self.is_jumping = False
+                self.velocity.y = 0
+                self.position.y = tile.top
+                self.rect.bottom = self.position.y
+            elif self.velocity.y < 0:
+                self.velocity.y = 0
+                self.position.y = tile.bottom + self.rect.h
+                self.rect.bottom = self.position.y
