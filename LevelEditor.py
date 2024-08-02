@@ -46,7 +46,7 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 running = False
             if event.key == pygame.K_r:
-                os.system("python FinalProjectSideScroller.py")
+                os.system("python main.py")
         if pygame.mouse.get_pressed()[0]:
             try:
                 print(event.pos)

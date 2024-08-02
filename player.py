@@ -22,7 +22,10 @@ class Player(pygame.sprite.Sprite):
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
         self.image = self.idle_right_frames[self.frame_index]
-        self.rect = self.image.get_rect()
+        self.image_offset = pygame.math.Vector2(-27, -27)
+
+        self.rect = pygame.Rect(0, 0, 13 * scale_factor, 19 * scale_factor)
+        #self.rect = self.image.get_rect()
         
         self.state = "idle_right"
 
@@ -32,7 +35,8 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.35
         self.friction = -0.12
         self.max_velocity = 6
-        self.jump_height = 20
+        self.jump_height = 10
+        self.terminal_velocity = 10
 
         self.position = pygame.math.Vector2(start_x, start_y)
         self.velocity = pygame.math.Vector2(0, 0)
@@ -63,13 +67,15 @@ class Player(pygame.sprite.Sprite):
                     self.state = "idle_right"
 
     def draw(self, display):
-        display.blit(self.image, (self.rect.x, self.rect.y))
+        display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
+        #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
 
     def update(self, dt, tiles):
         self.horizontal_movement(dt)
         self.check_collisions_x(tiles)
         self.vertical_movement(dt)
         self.check_collisions_y(tiles)
+
 
     def horizontal_movement(self, dt):
         self.acceleration.x = 0
@@ -82,15 +88,13 @@ class Player(pygame.sprite.Sprite):
         self.limit_velocity(self.max_velocity)
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
         self.rect.x = self.position.x
-        print(self.velocity)
 
     def vertical_movement(self, dt):
         self.velocity.y += self.acceleration.y * dt
-        if self.velocity.y > 7:
-            self.velocity.y = 7
+        if self.velocity.y > self.terminal_velocity:
+            self.velocity.y = self.terminal_velocity
 
         self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
-
         self.rect.bottom = self.position.y
 
     def jump(self):
