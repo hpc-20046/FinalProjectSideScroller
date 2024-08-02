@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.x = start_x
         self.y = start_y
         self.y_momentum = 0
-        self.jump_momentum = 10
+        self.jump_momentum = -10
 
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
@@ -56,13 +56,8 @@ class Player(pygame.sprite.Sprite):
                     self.image = self.state_frames[self.frame_index]
                     self.state = "idle_right"
 
-    def momentum(self, is_jumping: bool):
-        if self.y > HEIGHT - self.image.get_height():
-            self.y_momentum = -self.y_momentum
-        elif is_jumping:
-            self.y_momentum = -self.jump_momentum
-        else:
-            self.y_momentum += 0.2
+    #def momentum(self, is_jumping: bool):
+
 
     def test_collisions(self, tiles):
         collisions = []
@@ -71,14 +66,21 @@ class Player(pygame.sprite.Sprite):
                 collisions.append(tile)
         return collisions
 
-    def movement(self, x_change, tiles):
+    def movement(self, x_change, tiles, is_jumping):
+        if self.y > HEIGHT - self.image.get_height():
+            self.y_momentum = -self.y_momentum
+        elif is_jumping:
+            self.y_momentum = self.jump_momentum
+        else:
+            self.y_momentum += 0.2
+
         self.x += x_change
         self.rect.topleft = (self.x, self.y)
         collisions = self.test_collisions(tiles)
         for tile in collisions:
             if x_change > 0:
                 self.rect.right = tile.left
-            if x_change < 0:
+            elif x_change < 0:
                 self.rect.left = tile.right
         self.y += self.y_momentum
         self.rect.topleft = (self.x, self.y)
@@ -87,10 +89,10 @@ class Player(pygame.sprite.Sprite):
             if self.y_momentum > 0:
                 self.rect.bottom = tile.top
                 self.y_momentum = 0
-            if self.y_momentum < 0:
+            elif self.y_momentum < 0:
                 self.rect.top = tile.bottom
                 self.y_momentum = 0
 
     def update(self, x_change, is_jumping: bool, tiles):
-        self.momentum(is_jumping)
-        self.movement(x_change, tiles)
+        #self.momentum(is_jumping)
+        self.movement(x_change, tiles, is_jumping)

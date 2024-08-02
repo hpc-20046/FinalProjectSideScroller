@@ -72,6 +72,10 @@ def main():
             for y in range(0, int(HEIGHT/cell_height)+1):
                 if levels[current_level - 1]["level"][x][y] == 0:
                     continue
+                elif levels[current_level - 1]["level"][x][y] == total_tiles:
+                    screen.blit(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1],
+                                tile_surfaces[levels[current_level - 1]["level"][x][y] - 1]
+                                .get_rect(topleft=(cell_width * x, cell_height * y)))
                 else:
                     tile_rects.append(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1]
                                       .get_rect(topleft=(cell_width * x, cell_height * y)))
