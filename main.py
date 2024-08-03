@@ -3,6 +3,7 @@ import os
 import json
 from settings import *
 from player import Player
+from tilemap import TileMap
 
 
 def main():
@@ -10,12 +11,7 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
 
-    tile_surfaces = []
-    tile_list = os.scandir('dungeon/')
-    with tile_list as tiles:
-        for tile in tiles:
-            tile_surfaces.append(pygame.transform.scale(pygame.image.load(tile.path), (cell_width, cell_height)))
-    total_tiles = len(tile_surfaces)
+    tiles = TileMap('dungeon/', 'dungeon/')
 
     levels = []
     level_list = os.scandir('levels/')
@@ -23,6 +19,13 @@ def main():
         for level in alevel:
             with open(level.path, 'r') as openfile:
                 levels.append(json.load(openfile))
+
+    backgrounds = []
+    back_list = os.scandir('backgrounds/')
+    with back_list as backs:
+        for back in backs:
+            with open(back.path, 'r') as openfile:
+                backgrounds.append(json.load(openfile))
 
     current_level = 1
 
@@ -45,8 +48,10 @@ def main():
                     running = False
 
                 if event.key == pygame.K_LEFT:
+                    player.turn(True)
                     player.LEFT_KEY, player.FACING_LEFT = True, True
                 elif event.key == pygame.K_RIGHT:
+                    player.turn(False)
                     player.RIGHT_KEY, player.FACING_LEFT = True, False
                 elif event.key == pygame.K_SPACE:
                     player.jump()
@@ -69,27 +74,11 @@ def main():
                 else:
                     player.update_frame("idle_right")
 
-
-
         screen.fill((0, 0, 0))
 
-        tile_rects = []
+        tile_rects, spike_rects = tiles.draw(screen, levels[current_level - 1], backgrounds[current_level - 1], 9)
 
-        for x in range(0, int(WIDTH/cell_width)+1):
-            for y in range(0, int(HEIGHT/cell_height)+1):
-                if levels[current_level - 1]["level"][x][y] == 0:
-                    continue
-                elif levels[current_level - 1]["level"][x][y] == total_tiles:
-                    screen.blit(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1],
-                                tile_surfaces[levels[current_level - 1]["level"][x][y] - 1]
-                                .get_rect(topleft=(cell_width * x, cell_height * y)))
-                else:
-                    tile_rect = tile_surfaces[levels[current_level - 1]["level"][x][y] - 1].get_rect(topleft=(cell_width * x, cell_height * y))
-                    tile_rects.append(tile_rect)
-
-                    screen.blit(tile_surfaces[levels[current_level - 1]["level"][x][y] - 1], tile_rect)
-
-        player.update(dt, tile_rects)
+        player.update(dt, tile_rects, spike_rects)
         player.draw(screen)
         pygame.display.flip()
 
