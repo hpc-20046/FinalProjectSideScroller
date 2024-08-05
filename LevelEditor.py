@@ -20,8 +20,8 @@ with tile_list as tiles:
 total_tiles = len(tile_surfaces)
 
 # open level file to be edited
-#file = "levels/level1.json"
-file = "backgrounds/level1.json"
+file = "levels/level2.json"
+#file = "backgrounds/level1.json"
 
 try:
     with open(file, 'r') as openfile:

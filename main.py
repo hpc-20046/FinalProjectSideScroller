@@ -1,4 +1,5 @@
 import pygame
+import sys 
 import os
 import json
 from settings import *
@@ -76,7 +77,11 @@ def main():
 
         screen.fill((0, 0, 0))
 
-        tile_rects, spike_rects = tiles.draw(screen, levels[current_level - 1], backgrounds[current_level - 1], 9)
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level - 1], 0, 0, backgrounds[current_level - 1], 9)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level], 1, 0, backgrounds[current_level - 1], 9)
+
+        tile_rects = tile_rects1 + tile_rects2
+        spike_rects = spike_rects1 + spike_rects2
 
         player.update(dt, tile_rects, spike_rects)
         player.draw(screen)
@@ -86,3 +91,4 @@ def main():
 if __name__ == "__main__":
     main()
     pygame.quit()
+    sys.exit()
