@@ -3,13 +3,13 @@ from abc import ABC, abstractmethod
 from settings import *
 vec = pygame.math.Vector2
 
-
+"""
 class Camera:
     def __init__(self, player):
         self.player = player
         self.offset = vec(0, 0)
         self.offset_float = vec(0, 0)
-        self.CONST = vec(-WIDTH / 2 + self.player.rect.w / 2, -self.player.rect.bottom + 20)
+        self.CONST = vec(-WIDTH / 2 + self.player.rect.w / 2, -HEIGHT / 2)
 
     def setmethod(self, method):
         self.method = method
@@ -58,6 +58,6 @@ class Auto(CamScroll):
         self.camera.offset.x += 1
 
 
-
+"""
 
 

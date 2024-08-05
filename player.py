@@ -1,4 +1,6 @@
+from turtle import position
 import pygame
+from camera import Camera
 from settings import *
 
 
@@ -45,17 +47,17 @@ class Player(pygame.sprite.Sprite):
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
     def draw(self, display, camera):
-        display.blit(self.image, (self.rect.x + self.image_offset.x - camera.offset.x, self.rect.y + self.image_offset.x - camera.offset.y))
+        display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
         #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
 
-    def update(self, dt, tiles, spikes, border):
-        self.border = border
-        self.horizontal_movement(dt)
-        self.check_collisions_x(tiles, spikes)
-        self.vertical_movement(dt)
-        self.check_collisions_y(tiles, spikes)
+    def update(self, dt, tiles, spikes, border, camera):
+        #self.border = border
+        self.horizontal_movement(dt, camera)
+        self.check_collisions_x(tiles, spikes, camera)
+        self.vertical_movement(dt, camera)
+        self.check_collisions_y(tiles, spikes, camera)
 
-    def horizontal_movement(self, dt):
+    def horizontal_movement(self, dt, camera):
         self.acceleration.x = 0
         if self.LEFT_KEY:
             self.acceleration.x -= 3
@@ -65,15 +67,17 @@ class Player(pygame.sprite.Sprite):
         self.velocity.x += self.acceleration.x * dt
         self.limit_velocity(self.max_velocity)
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
-        self.rect.x = self.position.x
+        self.position.x = self.position.x
+        self.rect.x = self.position.x# - camera.offset.x
 
-    def vertical_movement(self, dt):
+    def vertical_movement(self, dt, camera):
         self.velocity.y += self.acceleration.y * dt
         if self.velocity.y > self.terminal_velocity:
             self.velocity.y = self.terminal_velocity
 
         self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
-        self.rect.bottom = self.position.y
+        self.position.y = self.position.y
+        self.rect.bottom = self.position.y# - camera.offset.y
 
     def jump(self):
         if self.on_ground:
@@ -91,39 +95,43 @@ class Player(pygame.sprite.Sprite):
         for tile in tiles:
             if self.rect.colliderect(tile):
                 hits.append(tile)
+                print("length of hits " + str(len(hits)))
+                print("collide")
         return hits
 
-    def check_collisions_x(self, tiles, spikes):
+    def check_collisions_x(self, tiles, spikes, camera):
         collisions = self.get_collisions(tiles, spikes)
         for tile in collisions:
             if self.velocity.x > 0:
                 self.position.x = tile.left - self.rect.w
-                self.rect.x = self.position.x
+                self.rect.x = self.position.x# - camera.offset.x
             elif self.velocity.x < 0:
-                self.position.x = tile.right
-                self.rect.x = self.position.x
+                self.position.x = tile.right 
+                self.rect.x = self.position.x# - camera.offset.x
 
-    def check_collisions_y(self, tiles, spikes):
+    def check_collisions_y(self, tiles, spikes, camera):
         self.on_ground = False
         self.rect.bottom += 1
         collisions = self.get_collisions(tiles, spikes)
         for tile in collisions:
+            print("tile col" + str(tile))
             if self.velocity.y > 0:
                 self.on_ground = True
                 self.is_jumping = False
                 self.velocity.y = 0
                 self.position.y = tile.top
-                self.rect.bottom = self.position.y
+                self.rect.bottom = self.position.y# - camera.offset.y
             elif self.velocity.y < 0:
                 self.velocity.y = 0
                 self.position.y = tile.bottom + self.rect.h
-                self.rect.bottom = self.position.y
-        if self.position.y >= HEIGHT:
+                self.rect.bottom = self.position.y# - camera.offset.y
+        if self.position.y > HEIGHT:
             self.on_ground = True
             self.is_jumping = False
             self.velocity.y = 0
             self.position.y = HEIGHT
             self.rect.bottom = self.position.y
+        print(self.position)
 
     def update_frame(self, state):
         if self.state == state:

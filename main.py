@@ -31,13 +31,13 @@ def main():
 
     current_level = 1
 
-    player = Player(100, HEIGHT / 2, 3, WIDTH * 2)
+    player = Player(100, 0, 3, WIDTH * 2)
 
     camera = Camera(player)
-    follow = Follow(camera, player)
-    border = Border(camera, player)
-    auto = Auto(camera, player)
-    camera.setmethod(border)
+    #follow = Follow(camera, player)
+    #border = Border(camera, player)
+    #auto = Auto(camera, player)
+    #camera.setmethod(follow)
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
@@ -84,16 +84,17 @@ def main():
 
         screen.fill((0, 0, 0))
 
-        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level - 1], 0, 0, backgrounds[current_level - 1], 9)
-        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level], 1, 0, backgrounds[current_level - 1], 9)
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level - 1], 0, 0, backgrounds[current_level - 1], 9, camera)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level], 1, 0, backgrounds[current_level - 1], 9, camera)
 
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
-
-        player.update(dt, tile_rects, spike_rects, WIDTH * 2)
+        
+        player.update(dt, tile_rects, spike_rects, WIDTH * 2, camera)
         camera.scroll()
-
+        
         player.draw(screen, camera)
+        
         pygame.display.flip()
 
 

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>80be093d-eb38-401b-a899-057f4a864fdb</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>LevelEditor.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,10 +23,12 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FinalProjectSideScroller.py" />
+    <Compile Include="camera.py" />
     <Compile Include="LevelEditor.py" />
+    <Compile Include="main.py" />
     <Compile Include="player.py" />
     <Compile Include="settings.py" />
+    <Compile Include="tilemap.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.10" />
@@ -65,6 +67,7 @@
     <Folder Include="player\turn\right\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="backgrounds\level1.json" />
     <Content Include="dungeon\a.png" />
     <Content Include="dungeon\f.png" />
     <Content Include="dungeon\g.png" />
@@ -80,6 +83,7 @@
     <Content Include="dungeon\m.png" />
     <Content Include="dungeon\n.png" />
     <Content Include="levels\level1.json" />
+    <Content Include="levels\level2.json" />
     <Content Include="player\death\left\tile076.png" />
     <Content Include="player\death\left\tile077.png" />
     <Content Include="player\death\left\tile078.png" />

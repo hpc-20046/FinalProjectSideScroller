@@ -18,7 +18,7 @@ class TileMap:
         self.tiles, self.total_tiles = load_tiles(path)
         self.background_tiles, self.total_background_tiles = load_tiles(background)
 
-    def draw(self, display, level, gridx, gridy, background, spike):
+    def draw(self, display, level, gridx, gridy, background, spike, camera):
         tile_rects = []
         spike_rects = []
         grid_factor_x = gridx * WIDTH
@@ -28,17 +28,23 @@ class TileMap:
                 if level["level"][x][y] == 0:
                     #display.blit(self.background_tiles[background["level"][x][y] - 1], (cell_width * x, cell_height * y))
                     continue
+                
                 elif level["level"][x][y] == self.total_tiles:
-                    display.blit(self.tiles[level["level"][x][y] - 1], self.tiles[level["level"][x][y] - 1].get_rect(topleft=(cell_width * x + grid_factor_x, cell_height * y + grid_factor_y)))
+                    display.blit(self.tiles[level["level"][x][y] - 1], self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x), (cell_height * y + grid_factor_y))))
+                    
                 elif level["level"][x][y] == spike:
                     #display.blit(self.background_tiles[background["level"][x][y] - 1], (cell_width * x, cell_height * y))
-                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=(cell_width * x + grid_factor_x, cell_height * y + grid_factor_y))
+                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x), (cell_height * y + grid_factor_y)))
                     spike_rects.append(rect)
                     display.blit(self.tiles[level["level"][x][y] - 1], rect)
+                    pygame.draw.rect(display, (255, 255, 255), rect, width=1)
+                    
                 else:
-                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=(cell_width * x + grid_factor_x, cell_height * y + grid_factor_y))
+                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x), (cell_height * y + grid_factor_y)))
                     tile_rects.append(rect)
                     display.blit(self.tiles[level["level"][x][y] - 1], rect)
+                    pygame.draw.rect(display, (255, 255, 255), rect, width=1)
+                    
 
         return tile_rects, spike_rects
 
