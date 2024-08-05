@@ -1,12 +1,11 @@
 import pygame
 from abc import ABC, abstractmethod
-from player import Player
 from settings import *
 vec = pygame.math.Vector2
 
 
 class Camera:
-    def __init__(self, player: Player):
+    def __init__(self, player):
         self.player = player
         self.offset = vec(0, 0)
         self.offset_float = vec(0, 0)
@@ -20,7 +19,7 @@ class Camera:
 
 
 class CamScroll(ABC):
-    def __init__(self, camera, player: Player):
+    def __init__(self, camera, player):
         self.camera = camera
         self.player = player
 
@@ -47,7 +46,16 @@ class Border(CamScroll):
         self.camera.offset_float.x += (self.player.position.x - self.camera.offset_float.x + self.camera.CONST.x)
         self.camera.offset_float.y += (self.player.position.y - self.camera.offset_float.y + self.camera.CONST.y)
         self.camera.offset.x, self.camera.offset.y = int(self.camera.offset_float.x), int(self.camera.offset_float.y)
+        self.camera.offset.x = max(self.player.border, self.camera.offset.x)
+        self.camera.offset.x = min(self.camera.offset.x, -WIDTH)
 
+
+class Auto(CamScroll):
+    def __init(self, camera, player):
+        CamScroll.__init__(self, camera, player)
+
+    def scroll(self):
+        self.camera.offset.x += 1
 
 
 

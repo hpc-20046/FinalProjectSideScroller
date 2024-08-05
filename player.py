@@ -3,7 +3,7 @@ from settings import *
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, start_x, start_y, scale_factor):
+    def __init__(self, start_x, start_y, scale_factor, border):
         pygame.sprite.Sprite.__init__(self)
         
         self.idle_right_frames = [
@@ -24,6 +24,8 @@ class Player(pygame.sprite.Sprite):
         self.image = self.idle_right_frames[self.frame_index]
         self.image_offset = pygame.math.Vector2(-27, -27)
 
+        self.border = border
+
         self.rect = pygame.Rect(0, 0, 13 * scale_factor, 19 * scale_factor)
         #self.rect = self.image.get_rect()
         
@@ -42,11 +44,12 @@ class Player(pygame.sprite.Sprite):
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
-    def draw(self, display):
-        display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
+    def draw(self, display, camera):
+        display.blit(self.image, (self.rect.x + self.image_offset.x - camera.offset.x, self.rect.y + self.image_offset.x - camera.offset.y))
         #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
 
-    def update(self, dt, tiles, spikes):
+    def update(self, dt, tiles, spikes, border):
+        self.border = border
         self.horizontal_movement(dt)
         self.check_collisions_x(tiles, spikes)
         self.vertical_movement(dt)

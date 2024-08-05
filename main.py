@@ -5,6 +5,7 @@ import json
 from settings import *
 from player import Player
 from tilemap import TileMap
+from camera import *
 
 
 def main():
@@ -30,7 +31,13 @@ def main():
 
     current_level = 1
 
-    player = Player(100, HEIGHT / 2, 3)
+    player = Player(100, HEIGHT / 2, 3, WIDTH * 2)
+
+    camera = Camera(player)
+    follow = Follow(camera, player)
+    border = Border(camera, player)
+    auto = Auto(camera, player)
+    camera.setmethod(border)
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
@@ -83,8 +90,10 @@ def main():
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
 
-        player.update(dt, tile_rects, spike_rects)
-        player.draw(screen)
+        player.update(dt, tile_rects, spike_rects, WIDTH * 2)
+        camera.scroll()
+
+        player.draw(screen, camera)
         pygame.display.flip()
 
 
