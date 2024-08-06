@@ -1,6 +1,4 @@
-from turtle import position
 import pygame
-from camera import Camera
 from settings import *
 
 
@@ -20,16 +18,34 @@ class Player(pygame.sprite.Sprite):
             pygame.transform.scale_by(pygame.image.load("player/idle/left/tile006.png"), scale_factor),
             pygame.transform.scale_by(pygame.image.load("player/idle/left/tile007.png"), scale_factor)
             ]
+        self.run_right_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile008.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile009.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile010.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile011.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile016.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile017.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile018.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/right/tile019.png'), scale_factor)
+        ]
+        self.run_left_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile012.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile013.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile014.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile015.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile020.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile021.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile022.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/run/left/tile023.png'), scale_factor)
+        ]
 
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
         self.image = self.idle_right_frames[self.frame_index]
         self.image_offset = pygame.math.Vector2(-27, -27)
-
         self.border = border
 
         self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
-        #self.rect = self.image.get_rect()
         
         self.state = "idle_right"
 
@@ -38,17 +54,17 @@ class Player(pygame.sprite.Sprite):
 
         self.gravity = 0.35
         self.friction = -0.12
-        self.max_velocity = 6
+        self.max_velocity = 4
         self.jump_height = 10
         self.terminal_velocity = 10
+        self.speed = 2
 
         self.position = pygame.math.Vector2(start_x, start_y)
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
-    def draw(self, display, camera):
+    def draw(self, display):
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
-        #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
 
     def update(self, dt, tiles, spikes, border, camera):
         self.border = border
@@ -60,9 +76,9 @@ class Player(pygame.sprite.Sprite):
     def horizontal_movement(self, dt, camera):
         self.acceleration.x = 0
         if self.LEFT_KEY:
-            self.acceleration.x -= 3
+            self.acceleration.x -= self.speed
         elif self.RIGHT_KEY:
-            self.acceleration.x += 3
+            self.acceleration.x += self.speed
         self.acceleration.x += self.velocity.x * self.friction
         self.velocity.x += self.acceleration.x * dt
         self.limit_velocity(self.max_velocity)
@@ -115,7 +131,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom += 1
         collisions = self.get_collisions(tiles, spikes)
         for tile in collisions:
-            print("tile col" + str(tile))
             if self.velocity.y > 0:
                 self.on_ground = True
                 self.is_jumping = False

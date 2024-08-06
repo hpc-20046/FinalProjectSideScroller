@@ -53,9 +53,11 @@ def main():
 
                 if event.key == pygame.K_LEFT:
                     player.turn(True)
+                    player.RIGHT_KEY = False
                     player.LEFT_KEY, player.FACING_LEFT = True, True
                 elif event.key == pygame.K_RIGHT:
                     player.turn(False)
+                    player.LEFT_KEY = False
                     player.RIGHT_KEY, player.FACING_LEFT = True, False
                 elif event.key == pygame.K_SPACE:
                     player.jump()
@@ -89,7 +91,7 @@ def main():
         player.update(dt, tile_rects, spike_rects, WIDTH * 2, camera)
         camera.scroll()
         
-        player.draw(screen, camera)
+        player.draw(screen)
         
         pygame.display.flip()
 
