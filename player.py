@@ -28,7 +28,7 @@ class Player(pygame.sprite.Sprite):
 
         self.border = border
 
-        self.rect = pygame.Rect(0, 0, 13 * scale_factor, 19 * scale_factor)
+        self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
         #self.rect = self.image.get_rect()
         
         self.state = "idle_right"
@@ -51,11 +51,11 @@ class Player(pygame.sprite.Sprite):
         #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
 
     def update(self, dt, tiles, spikes, border, camera):
-        #self.border = border
+        self.border = border
         self.horizontal_movement(dt, camera)
-        self.check_collisions_x(tiles, spikes, camera)
-        self.vertical_movement(dt, camera)
-        self.check_collisions_y(tiles, spikes, camera)
+        self.check_collisions_x(tiles, spikes)
+        self.vertical_movement(dt)
+        self.check_collisions_y(tiles, spikes)
 
     def horizontal_movement(self, dt, camera):
         self.acceleration.x = 0
@@ -67,17 +67,15 @@ class Player(pygame.sprite.Sprite):
         self.velocity.x += self.acceleration.x * dt
         self.limit_velocity(self.max_velocity)
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
-        self.position.x = self.position.x
-        self.rect.x = self.position.x# - camera.offset.x
+        self.rect.x = self.position.x - camera.offset
 
-    def vertical_movement(self, dt, camera):
+    def vertical_movement(self, dt):
         self.velocity.y += self.acceleration.y * dt
         if self.velocity.y > self.terminal_velocity:
             self.velocity.y = self.terminal_velocity
 
         self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
-        self.position.y = self.position.y
-        self.rect.bottom = self.position.y# - camera.offset.y
+        self.rect.bottom = self.position.y
 
     def jump(self):
         if self.on_ground:
@@ -95,21 +93,24 @@ class Player(pygame.sprite.Sprite):
         for tile in tiles:
             if self.rect.colliderect(tile):
                 hits.append(tile)
-                print("length of hits " + str(len(hits)))
-                print("collide")
         return hits
 
-    def check_collisions_x(self, tiles, spikes, camera):
+    def check_collisions_x(self, tiles, spikes):
         collisions = self.get_collisions(tiles, spikes)
         for tile in collisions:
             if self.velocity.x > 0:
-                self.position.x = tile.left - self.rect.w
-                self.rect.x = self.position.x# - camera.offset.x
-            elif self.velocity.x < 0:
-                self.position.x = tile.right 
-                self.rect.x = self.position.x# - camera.offset.x
+                temp_rect = self.rect.x
+                self.rect.x = tile.left - self.rect.w
+                adjust_factor = self.rect.x - temp_rect
+                self.position.x += adjust_factor
 
-    def check_collisions_y(self, tiles, spikes, camera):
+            elif self.velocity.x < 0:
+                temp_rect = self.rect.x
+                self.rect.x = tile.right
+                adjust_factor = self.rect.x - temp_rect
+                self.position.x += adjust_factor
+
+    def check_collisions_y(self, tiles, spikes):
         self.on_ground = False
         self.rect.bottom += 1
         collisions = self.get_collisions(tiles, spikes)
@@ -120,18 +121,17 @@ class Player(pygame.sprite.Sprite):
                 self.is_jumping = False
                 self.velocity.y = 0
                 self.position.y = tile.top
-                self.rect.bottom = self.position.y# - camera.offset.y
+                self.rect.bottom = self.position.y
             elif self.velocity.y < 0:
                 self.velocity.y = 0
                 self.position.y = tile.bottom + self.rect.h
-                self.rect.bottom = self.position.y# - camera.offset.y
+                self.rect.bottom = self.position.y
         if self.position.y > HEIGHT:
             self.on_ground = True
             self.is_jumping = False
             self.velocity.y = 0
             self.position.y = HEIGHT
             self.rect.bottom = self.position.y
-        print(self.position)
 
     def update_frame(self, state):
         if self.state == state:

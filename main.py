@@ -31,13 +31,9 @@ def main():
 
     current_level = 1
 
-    player = Player(100, 0, 3, WIDTH * 2)
+    player = Player(100, HEIGHT / 2, 3, WIDTH * 2)
 
     camera = Camera(player)
-    #follow = Follow(camera, player)
-    #border = Border(camera, player)
-    #auto = Auto(camera, player)
-    #camera.setmethod(follow)
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)

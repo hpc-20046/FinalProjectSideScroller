@@ -30,21 +30,20 @@ class TileMap:
                     continue
                 
                 elif level["level"][x][y] == self.total_tiles:
-                    display.blit(self.tiles[level["level"][x][y] - 1], self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x), (cell_height * y + grid_factor_y))))
+                    display.blit(self.tiles[level["level"][x][y] - 1], self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x) - camera.offset, (cell_height * y + grid_factor_y))))
                     
                 elif level["level"][x][y] == spike:
                     #display.blit(self.background_tiles[background["level"][x][y] - 1], (cell_width * x, cell_height * y))
-                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x), (cell_height * y + grid_factor_y)))
+                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x) - camera.offset, (cell_height * y + grid_factor_y)))
                     spike_rects.append(rect)
                     display.blit(self.tiles[level["level"][x][y] - 1], rect)
-                    pygame.draw.rect(display, (255, 255, 255), rect, width=1)
+                    #pygame.draw.rect(display, (255, 255, 255), rect, width=1)
                     
                 else:
-                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x), (cell_height * y + grid_factor_y)))
+                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((cell_width * x + grid_factor_x) - camera.offset, (cell_height * y + grid_factor_y)))
                     tile_rects.append(rect)
                     display.blit(self.tiles[level["level"][x][y] - 1], rect)
-                    pygame.draw.rect(display, (255, 255, 255), rect, width=1)
-                    
+                    #pygame.draw.rect(display, (255, 255, 255), rect, width=1)
 
         return tile_rects, spike_rects
 
