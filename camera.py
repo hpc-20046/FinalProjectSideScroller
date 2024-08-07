@@ -13,3 +13,5 @@ class Camera:
         self.offset = int(self.offset_float)
         self.offset = max(self.offset, 0)
         self.offset = min(self.offset, self.player.border - WIDTH)
+        self.offset_float = max(self.offset_float, 0)
+        self.offset_float = min(self.offset_float, self.player.border - WIDTH)

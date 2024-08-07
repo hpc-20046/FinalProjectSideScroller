@@ -38,6 +38,18 @@ class Player(pygame.sprite.Sprite):
             pygame.transform.scale_by(pygame.image.load('player/run/left/tile022.png'), scale_factor),
             pygame.transform.scale_by(pygame.image.load('player/run/left/tile023.png'), scale_factor)
         ]
+        self.turn_right_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/turn/right/tile056.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/turn/right/tile057.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/turn/right/tile058.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/turn/right/tile059.png'), scale_factor)
+        ]
+        self.turn_left_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/turn/left/tile060.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/turn/left/tile061.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/turn/left/tile062.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/turn/left/tile063.png'), scale_factor)
+        ]
 
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
@@ -83,7 +95,7 @@ class Player(pygame.sprite.Sprite):
         self.velocity.x += self.acceleration.x * dt
         self.limit_velocity(self.max_velocity)
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
-        self.rect.x = self.position.x - camera.offset
+        self.rect.x = self.position.x - camera.offset_float
 
     def vertical_movement(self, dt):
         self.velocity.y += self.acceleration.y * dt
@@ -119,12 +131,14 @@ class Player(pygame.sprite.Sprite):
                 self.rect.x = tile.left - self.rect.w
                 adjust_factor = self.rect.x - temp_rect
                 self.position.x += adjust_factor
+                self.position.x = int(self.position.x)
 
             elif self.velocity.x < 0:
                 temp_rect = self.rect.x
                 self.rect.x = tile.right
                 adjust_factor = self.rect.x - temp_rect
                 self.position.x += adjust_factor
+                self.position.x = int(self.position.x) + 1
 
     def check_collisions_y(self, tiles, spikes):
         self.on_ground = False
@@ -155,30 +169,54 @@ class Player(pygame.sprite.Sprite):
                 self.frame_index = 0
             self.image = self.state_frames[self.frame_index]
         else:
-            match state:
-                case "idle_right":
-                    self.state_frames = self.idle_right_frames
-                    self.frame_index = 0
-                    self.image = self.state_frames[self.frame_index]
-                    self.state = state
-                case "idle_left":
-                    self.state_frames = self.idle_left_frames
-                    self.frame_index = 0
-                    self.image = self.state_frames[self.frame_index]
-                    self.state = state
-                case _:
-                    self.state_frames = self.idle_right_frames
-                    self.frame_index = 0
-                    self.image = self.state_frames[self.frame_index]
-                    self.state = "idle_right"
+            if (self.state == 'turn_right' or self.state == 'turn_left') and self.frame_index != len(self.state_frames) - 1:
+                self.frame_index += 1
+                self.image = self.state_frames[self.frame_index]
+            else:
+                match state:
+                    case "idle_right":
+                        self.state_frames = self.idle_right_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = state
+                    case "idle_left":
+                        self.state_frames = self.idle_left_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = state
+                    case "run_right":
+                        self.state_frames = self.run_right_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = state
+                    case "run_left":
+                        self.state_frames = self.run_left_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = state
+                    case "turn_right":
+                        self.state_frames = self.turn_right_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = state
+                    case "turn_left":
+                        self.state_frames = self.turn_left_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = state
+                    case _:
+                        self.state_frames = self.idle_right_frames
+                        self.frame_index = 0
+                        self.image = self.state_frames[self.frame_index]
+                        self.state = "idle_right"
 
     def turn(self, turning_left):
         state = "idle_right"
         if turning_left == self.FACING_LEFT:
             return
         elif not turning_left:
-            state = "idle_right"
+            state = "turn_left"
         elif turning_left:
-            state = "idle_left"
+            state = "turn_right"
 
         self.update_frame(state)

@@ -32,6 +32,7 @@ def main():
     current_level = 1
 
     player = Player(100, HEIGHT / 2, 3, WIDTH * 2)
+    player_state = 'idle'
 
     camera = Camera(player)
 
@@ -73,12 +74,25 @@ def main():
                         player.is_jumping = False
 
             if event.type == NEW_PLAYER_FRAME:
-                if not player.FACING_LEFT:
-                    player.update_frame("idle_right")
-                elif player.FACING_LEFT:
-                    player.update_frame("idle_left")
+                player.update_frame(player.state)
+
+        if player.RIGHT_KEY:
+            if not player_state == 'run':
+                player_state = 'run'
+                player.update_frame('run_right')
+
+        elif player.LEFT_KEY:
+            if not player_state == 'run':
+                player_state = 'run'
+                player.update_frame('run_left')
+        else:
+            if not player_state == 'idle':
+                if player.FACING_LEFT:
+                    player.update_frame('idle_left')
+                    player_state = 'idle'
                 else:
-                    player.update_frame("idle_right")
+                    player.update_frame('idle_right')
+                    player_state = 'idle'
 
         screen.fill((0, 0, 0))
 
