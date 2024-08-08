@@ -59,17 +59,17 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-
-                if event.key == pygame.K_LEFT:
-                    player.turn(True)
-                    player.RIGHT_KEY = False
-                    player.LEFT_KEY, player.FACING_LEFT = True, True
-                elif event.key == pygame.K_RIGHT:
-                    player.turn(False)
-                    player.LEFT_KEY = False
-                    player.RIGHT_KEY, player.FACING_LEFT = True, False
-                elif event.key == pygame.K_z:
-                    player.jump()
+                if player.state == 'landing':
+                    if event.key == pygame.K_LEFT:
+                        player.turn(True)
+                        player.RIGHT_KEY = False
+                        player.LEFT_KEY, player.FACING_LEFT = True, True
+                    elif event.key == pygame.K_RIGHT:
+                        player.turn(False)
+                        player.LEFT_KEY = False
+                        player.RIGHT_KEY, player.FACING_LEFT = True, False
+                    elif event.key == pygame.K_z:
+                        player.jump()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -83,7 +83,7 @@ def main():
 
             if event.type == NEW_PLAYER_FRAME:
                 player.update_frame(player.state)
-
+        
         if player.RIGHT_KEY:
             if not player_state == 'run':
                 player_state = 'run'
@@ -101,6 +101,7 @@ def main():
                 else:
                     player.update_frame('idle_right')
                     player_state = 'idle'
+                    
 
         screen.fill((0, 0, 0))
 
