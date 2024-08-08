@@ -5,7 +5,7 @@ import json
 from settings import *
 from player import Player
 from tilemap import TileMap
-from camera import *
+from camera import Camera
 
 
 def main():
@@ -38,12 +38,20 @@ def main():
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
+    
+    loading = 0
 
     running = True
     while running:
 
         # delta time - so player speed will look the same no matter the frame rate
-        dt = clock.tick(60) * 0.001 * TARGET_FPS
+        if loading <= 2:
+            loading = False
+            dt = 1
+        elif loading > 2:
+            dt = clock.tick(60) * 0.001 * TARGET_FPS
+            
+        loading += 1
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -60,7 +68,7 @@ def main():
                     player.turn(False)
                     player.LEFT_KEY = False
                     player.RIGHT_KEY, player.FACING_LEFT = True, False
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_z:
                     player.jump()
 
             if event.type == pygame.KEYUP:
@@ -68,7 +76,7 @@ def main():
                     player.LEFT_KEY = False
                 elif event.key == pygame.K_RIGHT:
                     player.RIGHT_KEY = False
-                elif event.key == pygame.K_SPACE:
+                elif event.key == pygame.K_z:
                     if player.is_jumping:
                         player.velocity.y *= 0.25
                         player.is_jumping = False
@@ -108,6 +116,7 @@ def main():
         player.draw(screen)
         
         pygame.display.flip()
+        clock.tick(60)
 
 
 if __name__ == "__main__":
