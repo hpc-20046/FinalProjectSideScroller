@@ -42,16 +42,6 @@ class Player(pygame.sprite.Sprite):
         self.idle_jump_right_frames = pygame.transform.scale_by(pygame.image.load('player/idle_jump/right/tile024.png'), scale_factor)
         self.run_jump_right_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/right/tile032.png'), scale_factor)
         self.run_jump_left_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/left/tile036.png'), scale_factor)
-        self.land_right_frames = [
-            pygame.transform.scale_by(pygame.image.load('player/land/right/tile025.png'), scale_factor),
-            pygame.transform.scale_by(pygame.image.load('player/land/right/tile026.png'), scale_factor),
-            pygame.transform.scale_by(pygame.image.load('player/land/right/tile027.png'), scale_factor)
-            ]
-        self.land_left_frames = [
-            pygame.transform.scale_by(pygame.image.load('player/land/left/tile029.png'), scale_factor),
-            pygame.transform.scale_by(pygame.image.load('player/land/left/tile030.png'), scale_factor),
-            pygame.transform.scale_by(pygame.image.load('player/land/left/tile031.png'), scale_factor)
-            ]
 
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
@@ -62,10 +52,10 @@ class Player(pygame.sprite.Sprite):
         self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
         
         self.state = "idle_right"
-        self.tempstate = "idle_right"
 
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False
         self.is_jumping, self.on_ground = False, False
+        self.in_air = False
 
         self.gravity = 0.35
         self.friction = -0.12
@@ -151,7 +141,6 @@ class Player(pygame.sprite.Sprite):
         for tile in collisions:
             if self.velocity.y > 0:
                 self.on_ground = True
-                self.state = 'landing'
                 self.is_jumping = False
                 self.velocity.y = 0
                 self.position.y = tile.top
@@ -162,7 +151,6 @@ class Player(pygame.sprite.Sprite):
                 self.rect.bottom = self.position.y
         if self.position.y > HEIGHT:
             self.on_ground = True
-            self.state = 'landing'
             self.is_jumping = False
             self.velocity.y = 0
             self.position.y = HEIGHT
@@ -202,32 +190,6 @@ class Player(pygame.sprite.Sprite):
                         self.state_frames = self.idle_right_frames
                         self.frame_index = 0
                         self.state = "idle_right"
-                        
-        elif self.state == 'landing':
-            
-            if (not self.state_frames == self.land_left_frames) or (not self.state_frames == self.land_right_frames):
-                if self.FACING_LEFT:
-                    self.state_frames = self.land_left_frames
-                    self.frame_index = -1
-                else:
-                    self.state_frames = self.land_right_frames
-                    self.frame_index = -1
-            
-            self.tempstate = state
-            if self.frame_index >= len(self.state_frames) - 1:
-                self.state = self.tempstate
-            else:
-                self.frame_index += 1
-                self.image = self.state_frames[self.frame_index]
-                
-
-            
-                 
-
-                
-            
-
-
         else:
             if self.state == state:
                 self.frame_index += 1

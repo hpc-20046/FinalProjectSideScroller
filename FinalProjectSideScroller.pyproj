@@ -29,11 +29,15 @@
     <Compile Include="player.py" />
     <Compile Include="settings.py" />
     <Compile Include="tilemap.py" />
+    <Compile Include="ui.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.10" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="enemies\" />
+    <Folder Include="enemies\skeleton\" />
+    <Folder Include="fonts\" />
     <Folder Include="player\" />
     <Folder Include="dungeon\" />
     <Folder Include="levels\" />
@@ -48,12 +52,8 @@
     <Folder Include="player\idle_jump\" />
     <Folder Include="player\idle_jump\left\" />
     <Folder Include="player\idle_jump\right\" />
-    <Folder Include="player\land\" />
-    <Folder Include="player\land\left\" />
-    <Folder Include="player\land\right\" />
     <Folder Include="player\hit\" />
     <Folder Include="player\death\" />
-    <Folder Include="player\turn\" />
     <Folder Include="player\roll\" />
     <Folder Include="player\roll\left\" />
     <Folder Include="player\roll\right\" />
@@ -63,8 +63,6 @@
     <Folder Include="player\run\right\" />
     <Folder Include="player\run_jump\left\" />
     <Folder Include="player\run_jump\right\" />
-    <Folder Include="player\turn\left\" />
-    <Folder Include="player\turn\right\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="backgrounds\level1.json" />
@@ -82,6 +80,11 @@
     <Content Include="dungeon\l.png" />
     <Content Include="dungeon\m.png" />
     <Content Include="dungeon\n.png" />
+    <Content Include="enemies\skeleton\skeleton2_v2_1.png" />
+    <Content Include="enemies\skeleton\skeleton2_v2_2.png" />
+    <Content Include="enemies\skeleton\skeleton2_v2_3.png" />
+    <Content Include="enemies\skeleton\skeleton2_v2_4.png" />
+    <Content Include="fonts\ARIAL.TTF" />
     <Content Include="levels\level1.json" />
     <Content Include="levels\level2.json" />
     <Content Include="player\death\left\tile076.png" />
@@ -110,12 +113,6 @@
     <Content Include="player\idle\right\tile003.png" />
     <Content Include="player\idle_jump\left\tile028.png" />
     <Content Include="player\idle_jump\right\tile024.png" />
-    <Content Include="player\land\left\tile029.png" />
-    <Content Include="player\land\left\tile030.png" />
-    <Content Include="player\land\left\tile031.png" />
-    <Content Include="player\land\right\tile025.png" />
-    <Content Include="player\land\right\tile026.png" />
-    <Content Include="player\land\right\tile027.png" />
     <Content Include="player\roll\left\tile044.png" />
     <Content Include="player\roll\left\tile045.png" />
     <Content Include="player\roll\left\tile046.png" />
@@ -150,14 +147,6 @@
     <Content Include="player\run\right\tile019.png" />
     <Content Include="player\run_jump\left\tile036.png" />
     <Content Include="player\run_jump\right\tile032.png" />
-    <Content Include="player\turn\left\tile060.png" />
-    <Content Include="player\turn\left\tile061.png" />
-    <Content Include="player\turn\left\tile062.png" />
-    <Content Include="player\turn\left\tile063.png" />
-    <Content Include="player\turn\right\tile056.png" />
-    <Content Include="player\turn\right\tile057.png" />
-    <Content Include="player\turn\right\tile058.png" />
-    <Content Include="player\turn\right\tile059.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

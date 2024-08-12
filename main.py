@@ -6,6 +6,7 @@ from settings import *
 from player import Player
 from tilemap import TileMap
 from camera import Camera
+from ui import UserInterface
 
 
 def main():
@@ -35,6 +36,8 @@ def main():
     player_state = 'idle'
 
     camera = Camera(player)
+    
+    ui = UserInterface(WIDTH / 2, HEIGHT / 2, 500, 500, (100, 100, 100))
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
@@ -59,7 +62,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if player.state == 'landing':
+                if player.state != 'landing':
                     if event.key == pygame.K_LEFT:
                         player.turn(True)
                         player.RIGHT_KEY = False
@@ -115,6 +118,9 @@ def main():
         camera.scroll()
         
         player.draw(screen)
+        
+        ui.draw(screen)
+        ui.update(pygame.event.get())
         
         pygame.display.flip()
         clock.tick(60)
