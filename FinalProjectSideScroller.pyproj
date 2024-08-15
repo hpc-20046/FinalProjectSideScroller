@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="enemies\" />
+    <Folder Include="enemies\Grave revenant\" />
     <Folder Include="enemies\skeleton\" />
     <Folder Include="fonts\" />
     <Folder Include="misc_assets\" />
@@ -83,6 +84,10 @@
     <Content Include="dungeon\l.png" />
     <Content Include="dungeon\m.png" />
     <Content Include="dungeon\n.png" />
+    <Content Include="enemies\Grave revenant\tile000.png" />
+    <Content Include="enemies\Grave revenant\tile001.png" />
+    <Content Include="enemies\Grave revenant\tile002.png" />
+    <Content Include="enemies\Grave revenant\tile003.png" />
     <Content Include="enemies\skeleton\skeleton2_v2_1.png" />
     <Content Include="enemies\skeleton\skeleton2_v2_2.png" />
     <Content Include="enemies\skeleton\skeleton2_v2_3.png" />
