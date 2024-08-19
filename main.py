@@ -6,7 +6,7 @@ from settings import *
 from player import Player
 from tilemap import TileMap
 from camera import Camera
-from ui import UserInterface
+from ui import *
 
 
 def main():
@@ -36,8 +36,15 @@ def main():
     player_state = 'idle'
 
     camera = Camera(player)
-    
-    ui = UserInterface(WIDTH / 2, HEIGHT / 2, 500, 500, (100, 100, 100))
+
+    inventory = Inventory((WIDTH / 2, HEIGHT / 2), 600, 4)
+    slots = pygame.sprite.Group()
+    slots.add(ItemSlot(inventory, 1, 1))
+    slots.add(ItemSlot(inventory, 2, 1))
+    slots.add(ItemSlot(inventory, 3, 1))
+    slots.add(ItemSlot(inventory, 4, 1))
+    slots.add(ItemSlot(inventory, 5, 1))
+
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
@@ -62,17 +69,22 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if player.state != 'landing':
-                    if event.key == pygame.K_LEFT:
-                        player.turn(True)
-                        player.RIGHT_KEY = False
-                        player.LEFT_KEY, player.FACING_LEFT = True, True
-                    elif event.key == pygame.K_RIGHT:
-                        player.turn(False)
-                        player.LEFT_KEY = False
-                        player.RIGHT_KEY, player.FACING_LEFT = True, False
-                    elif event.key == pygame.K_z:
-                        player.jump()
+                if event.key == pygame.K_LEFT:
+                    player.turn(True)
+                    player.RIGHT_KEY = False
+                    player.LEFT_KEY, player.FACING_LEFT = True, True
+                elif event.key == pygame.K_RIGHT:
+                    player.turn(False)
+                    player.LEFT_KEY = False
+                    player.RIGHT_KEY, player.FACING_LEFT = True, False
+                elif event.key == pygame.K_z:
+                    player.jump()
+
+                if event.key == pygame.K_e:
+                    if inventory.showing:
+                        inventory.showing = False
+                    else:
+                        inventory.showing = True
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -118,9 +130,9 @@ def main():
         camera.scroll()
         
         player.draw(screen)
-        
-        ui.draw(screen)
-        ui.update(pygame.event.get())
+
+        inventory.draw(screen)
+        slots.draw(screen)
         
         pygame.display.flip()
         clock.tick(60)
