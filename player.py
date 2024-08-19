@@ -2,9 +2,8 @@ import pygame
 from settings import *
 
 
-class Player(pygame.sprite.Sprite):
+class Player:
     def __init__(self, start_x, start_y, scale_factor, border):
-        pygame.sprite.Sprite.__init__(self)
         
         self.idle_right_frames = [
             pygame.transform.scale_by(pygame.image.load("player/idle/right/tile000.png"), scale_factor),

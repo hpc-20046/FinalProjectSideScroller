@@ -37,13 +37,11 @@ def main():
 
     camera = Camera(player)
 
-    inventory = Inventory((WIDTH / 2, HEIGHT / 2), 600, 4)
+    inventory = Inventory((WIDTH / 2, HEIGHT / 2), 550, 4)
     slots = pygame.sprite.Group()
-    slots.add(ItemSlot(inventory, 1, 1))
-    slots.add(ItemSlot(inventory, 2, 1))
-    slots.add(ItemSlot(inventory, 3, 1))
-    slots.add(ItemSlot(inventory, 4, 1))
-    slots.add(ItemSlot(inventory, 5, 1))
+    for i in range(24):
+        slots.add(InventorySlot(inventory, i, 4.5))
+    
 
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
@@ -132,7 +130,8 @@ def main():
         player.draw(screen)
 
         inventory.draw(screen)
-        slots.draw(screen)
+        if inventory.showing:
+            slots.draw(screen)  
         
         pygame.display.flip()
         clock.tick(60)

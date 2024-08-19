@@ -67,6 +67,8 @@
     <Folder Include="player\run\right\" />
     <Folder Include="player\run_jump\left\" />
     <Folder Include="player\run_jump\right\" />
+    <Folder Include="ui\" />
+    <Folder Include="ui\MinimalFantasy\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="backgrounds\level1.json" />
@@ -191,6 +193,47 @@
     <Content Include="player\run\right\tile019.png" />
     <Content Include="player\run_jump\left\tile036.png" />
     <Content Include="player\run_jump\right\tile032.png" />
+    <Content Include="ui\centre_frame.png" />
+    <Content Include="ui\frame.png" />
+    <Content Include="ui\frame2pxborder.png" />
+    <Content Include="ui\GUI_1x.png" />
+    <Content Include="ui\itemslot1.png" />
+    <Content Include="ui\Level_0.png" />
+    <Content Include="ui\MinimalFantasy\AttributesBar_41x9.png" />
+    <Content Include="ui\MinimalFantasy\AttributesIcons_17x17.png" />
+    <Content Include="ui\MinimalFantasy\BlackBigCircleBoxWithBorder_27x27.png" />
+    <Content Include="ui\MinimalFantasy\BlackMediumCircleBoxWithBorder_27x27.png" />
+    <Content Include="ui\MinimalFantasy\BlackSmallCircleBox_19x19.png" />
+    <Content Include="ui\MinimalFantasy\BlankEquipmentIcons_20x17.png" />
+    <Content Include="ui\MinimalFantasy\BottomPatternBG_128x112.png" />
+    <Content Include="ui\MinimalFantasy\BottomPatternPanel_119x17.png" />
+    <Content Include="ui\MinimalFantasy\BuffIcons%28WithoutStroke%29_16x16.png" />
+    <Content Include="ui\MinimalFantasy\BuffIcons_16x16.png" />
+    <Content Include="ui\MinimalFantasy\Button_52x14.png" />
+    <Content Include="ui\MinimalFantasy\CharacterBox_56x57.png" />
+    <Content Include="ui\MinimalFantasy\CornerKnot_14x14.png" />
+    <Content Include="ui\MinimalFantasy\EquipLabel_13x14.png" />
+    <Content Include="ui\MinimalFantasy\HealthBarPanel_160x41.png" />
+    <Content Include="ui\MinimalFantasy\HeartIcons_32x32.png" />
+    <Content Include="ui\MinimalFantasy\HotkeyBox_34x34.png" />
+    <Content Include="ui\MinimalFantasy\ItemBox_24x24.png" />
+    <Content Include="ui\MinimalFantasy\ItemInteractIcons_14x12.png" />
+    <Content Include="ui\MinimalFantasy\ItemsIcons_24x24.png" />
+    <Content Include="ui\MinimalFantasy\MenusBox_34x34.png" />
+    <Content Include="ui\MinimalFantasy\MenusIcons_34x34.png" />
+    <Content Include="ui\MinimalFantasy\PatternMiddleBottomBG_199x48.png" />
+    <Content Include="ui\MinimalFantasy\Pipe_36x11.png" />
+    <Content Include="ui\MinimalFantasy\QuitIcon.png" />
+    <Content Include="ui\MinimalFantasy\RectangleBox_96x96.png" />
+    <Content Include="ui\MinimalFantasy\StatusIncDecButton_7x9.png" />
+    <Content Include="ui\MinimalFantasy\TitleBox_64x16.png" />
+    <Content Include="ui\MinimalFantasy\TopPatternBG_116x67.png" />
+    <Content Include="ui\MinimalFantasy\TopPatternPanel_01_33x15.png" />
+    <Content Include="ui\MinimalFantasy\TopPatternPanel_02_33x15.png" />
+    <Content Include="ui\MinimalFantasy\ValueBar_128x16.png" />
+    <Content Include="ui\MinimalFantasy\ValueBlue_120x8.png" />
+    <Content Include="ui\MinimalFantasy\ValueRed_120x8.png" />
+    <Content Include="ui\ui.ldtk" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
