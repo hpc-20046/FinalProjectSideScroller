@@ -1,5 +1,7 @@
 import math
 import pygame
+from numpy.core.defchararray import center
+
 from settings import *
 
 
@@ -43,26 +45,43 @@ class EquipSlot(pygame.sprite.Sprite):
     def __init__(self, inventory, slot_num, scale):
         pygame.sprite.Sprite.__init__(self)
         
-        self.image
+        self.image = pygame.transform.scale_by(pygame.image.load('ui/equipslot.png'), scale)
         self.pos = pygame.math.Vector2(0,0)
+
         match slot_num:
             case 1:
-                self.pos.x = 0
-                self.pos.y = 0
+                self.pos.x = (WIDTH / 2) - 150
+                self.pos.y = (HEIGHT / 2) + 220
             case 2:
-                self.pos.x = 0
-                self.pos.y = 0
+                self.pos.x = (WIDTH / 2) - 50
+                self.pos.y = (HEIGHT / 2) + 220
             case 3:
-                self.pos.x = 0
-                self.pos.y = 0
+                self.pos.x = (WIDTH / 2) + 50
+                self.pos.y = (HEIGHT / 2) + 220
             case 4:
-                self.pos.x = 0
-                self.pos.y = 0
+                self.pos.x = (WIDTH / 2) + 150
+                self.pos.y = (HEIGHT / 2) + 220
             case 5:
-                self.pos.x = 0
-                self.pos.y = 0
+                self.pos.x = (WIDTH / 2)
+                self.pos.y = (HEIGHT / 2) + 120
             case _:
                 self.pos.x = 0
                 self.pos.y = 0
                 
         self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
+
+
+class PlayerBorder(pygame.sprite.Sprite):
+    def __init__(self, inventory, scale):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale_by(pygame.image.load('ui/player_border.png'), scale)
+        self.pos = inventory.pos
+        self.y_offset = -100
+        self.rect = self.image.get_rect(center=(self.pos[0], self.pos[1] + self.y_offset))
+
+
+class Icon(pygame.sprite.Sprite):
+    def __init__(self, inventory, pos, image, scale):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale_by(image, scale)
+        self.rect = self.image.get_rect(center=(pos[0], pos[1]))

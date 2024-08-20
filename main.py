@@ -38,9 +38,20 @@ def main():
     camera = Camera(player)
 
     inventory = Inventory((WIDTH / 2, HEIGHT / 2), 550, 4)
+    misc_inventory = pygame.sprite.Group()
     slots = pygame.sprite.Group()
+    misc_inventory.add(PlayerBorder(inventory, 8))
+
+    misc_inventory.add(Icon(inventory, ((WIDTH / 2) - 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/helmet.png'), 6))
+    misc_inventory.add(Icon(inventory, ((WIDTH / 2) - 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/chestplate.png'), 6))
+    misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/leggings.png'), 6))
+    misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
+    misc_inventory.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
+
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
+    for i in range(5):
+        slots.add(EquipSlot(inventory, i + 1, 4.5))
     
 
 
@@ -131,7 +142,8 @@ def main():
 
         inventory.draw(screen)
         if inventory.showing:
-            slots.draw(screen)  
+            slots.draw(screen)
+            misc_inventory.draw(screen)
         
         pygame.display.flip()
         clock.tick(60)
