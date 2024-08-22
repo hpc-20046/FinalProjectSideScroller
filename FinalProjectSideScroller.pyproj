@@ -68,6 +68,7 @@
     <Folder Include="player\run_jump\left\" />
     <Folder Include="player\run_jump\right\" />
     <Folder Include="ui\" />
+    <Folder Include="ui\icons\" />
     <Folder Include="ui\MinimalFantasy\" />
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +96,7 @@
     <Content Include="enemies\skeleton\skeleton2_v2_3.png" />
     <Content Include="enemies\skeleton\skeleton2_v2_4.png" />
     <Content Include="fonts\ARIAL.TTF" />
+    <Content Include="fonts\BitPotionExt.ttf" />
     <Content Include="levels\level1.json" />
     <Content Include="levels\level2.json" />
     <Content Include="misc_assets\spirit_fire\frame_00_delay-0.08s.png" />
@@ -193,12 +195,32 @@
     <Content Include="player\run\right\tile019.png" />
     <Content Include="player\run_jump\left\tile036.png" />
     <Content Include="player\run_jump\right\tile032.png" />
+    <Content Include="ui\attributeBarActive.png" />
+    <Content Include="ui\attributeBarEmpty.png" />
     <Content Include="ui\centre_frame.png" />
     <Content Include="ui\frame.png" />
-    <Content Include="ui\frame2pxborder.png" />
-    <Content Include="ui\GUI_1x.png" />
+    <Content Include="ui\icons\aseprite.png" />
+    <Content Include="ui\icons\blue_coin.png" />
+    <Content Include="ui\icons\boots.png" />
+    <Content Include="ui\icons\chestplate.png" />
+    <Content Include="ui\icons\defense.png" />
+    <Content Include="ui\icons\eye.png" />
+    <Content Include="ui\icons\gold_coin.png" />
+    <Content Include="ui\icons\heart.png" />
+    <Content Include="ui\icons\helmet.png" />
+    <Content Include="ui\icons\intelligence.png" />
+    <Content Include="ui\icons\key.png" />
+    <Content Include="ui\icons\leggings.png" />
+    <Content Include="ui\icons\luck.png" />
+    <Content Include="ui\icons\mana.png" />
+    <Content Include="ui\icons\sack.png" />
+    <Content Include="ui\icons\script.png" />
+    <Content Include="ui\icons\shop.png" />
+    <Content Include="ui\icons\silver_coin.png" />
+    <Content Include="ui\icons\stamina.png" />
+    <Content Include="ui\icons\strength.png" />
+    <Content Include="ui\icons\sword.png" />
     <Content Include="ui\itemslot1.png" />
-    <Content Include="ui\Level_0.png" />
     <Content Include="ui\MinimalFantasy\AttributesBar_41x9.png" />
     <Content Include="ui\MinimalFantasy\AttributesIcons_17x17.png" />
     <Content Include="ui\MinimalFantasy\BlackBigCircleBoxWithBorder_27x27.png" />

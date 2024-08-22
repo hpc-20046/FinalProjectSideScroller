@@ -47,6 +47,18 @@ def main():
     misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/leggings.png'), 6))
     misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
     misc_inventory.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
+    
+    misc_inventory.add(Icon(inventory, (250, 330), pygame.image.load('ui/icons/heart.png'), 7))
+    misc_inventory.add(Icon(inventory, (250, 470), pygame.image.load('ui/icons/strength.png'), 7))
+    misc_inventory.add(Icon(inventory, (250, 610), pygame.image.load('ui/icons/defense.png'), 7))
+    misc_inventory.add(Icon(inventory, (250, 750), pygame.image.load('ui/icons/stamina.png'), 7))
+    
+    attributes = [3, 5, 7, 2]
+    attribute_bars = []
+    attribute_bars.append(AttributeBar(inventory, (320, 330), 5))
+    attribute_bars.append(AttributeBar(inventory, (320, 470), 5))
+    attribute_bars.append(AttributeBar(inventory, (320, 610), 5))
+    attribute_bars.append(AttributeBar(inventory, (320, 750), 5))
 
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
@@ -89,7 +101,7 @@ def main():
                 elif event.key == pygame.K_z:
                     player.jump()
 
-                if event.key == pygame.K_e:
+                if event.key == pygame.K_i:
                     if inventory.showing:
                         inventory.showing = False
                     else:
@@ -144,6 +156,10 @@ def main():
         if inventory.showing:
             slots.draw(screen)
             misc_inventory.draw(screen)
+            j = 0
+            for i in attribute_bars:
+                i.draw(screen, attributes[j])
+                j += 1
         
         pygame.display.flip()
         clock.tick(60)

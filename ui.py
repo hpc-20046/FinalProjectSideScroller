@@ -1,6 +1,5 @@
 import math
 import pygame
-from numpy.core.defchararray import center
 
 from settings import *
 
@@ -85,3 +84,23 @@ class Icon(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale_by(image, scale)
         self.rect = self.image.get_rect(center=(pos[0], pos[1]))
+
+
+class AttributeBar:
+    def __init__(self, inventory, pos, scale):
+        self.image = pygame.transform.scale_by(pygame.image.load('ui/attributeBarEmpty.png'), scale)
+        self.fill_image = pygame.transform.scale_by(pygame.image.load('ui/attributeBarActive.png'), scale)
+        self.rect = self.image.get_rect(topleft=pos)
+        self.fill_image_rect = self.fill_image.get_rect()
+    
+    def draw(self, display, amount):
+        display.blit(self.image, self.rect)
+        for i in range(amount):
+            display.blit(self.fill_image, (self.rect.x + (i * self.fill_image_rect.w), self.rect.y))
+            
+
+class UiText:
+    def __init__(self):
+        pass
+        
+        
