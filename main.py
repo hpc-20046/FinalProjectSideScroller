@@ -1,3 +1,13 @@
+"""
+--------------------------------------------------
+Project: Programming and Complex Processes
+Standard: 91906, 91907
+School: Hauraki Plains College
+Author: Noah Fieten
+Date Started: 25-07-24
+Python: 3.10
+--------------------------------------------------
+"""
 import pygame
 import sys 
 import os
@@ -52,6 +62,8 @@ def main():
     misc_inventory.add(Icon(inventory, (250, 470), pygame.image.load('ui/icons/strength.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 610), pygame.image.load('ui/icons/defense.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 750), pygame.image.load('ui/icons/stamina.png'), 7))
+
+    misc_inventory.add(UiText('CON', 'fonts/BitPotionExt.ttf', 60, (0, 0, 0), (320, 280)))
     
     attributes = [3, 5, 7, 2]
     attribute_bars = []

@@ -1,6 +1,5 @@
 import math
 import pygame
-
 from settings import *
 
 
@@ -99,8 +98,11 @@ class AttributeBar:
             display.blit(self.fill_image, (self.rect.x + (i * self.fill_image_rect.w), self.rect.y))
             
 
-class UiText:
-    def __init__(self):
-        pass
+class UiText(pygame.sprite.Sprite):
+    def __init__(self, text, font, size, colour, pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.font = pygame.font.Font(font, size)
+        self.image = self.font.render(text, True, colour)
+        self.rect = self.image.get_rect(topleft=pos)
         
         
