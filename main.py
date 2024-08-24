@@ -63,8 +63,11 @@ def main():
     misc_inventory.add(Icon(inventory, (250, 610), pygame.image.load('ui/icons/defense.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 750), pygame.image.load('ui/icons/stamina.png'), 7))
 
-    misc_inventory.add(UiText('CON', 'fonts/BitPotionExt.ttf', 60, (0, 0, 0), (320, 280)))
-    
+    misc_inventory.add(UiText('Con', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 290)))
+    misc_inventory.add(UiText('Str', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 430)))
+    misc_inventory.add(UiText('Def', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 570)))
+    misc_inventory.add(UiText('Spe', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 710)))
+
     attributes = [3, 5, 7, 2]
     attribute_bars = []
     attribute_bars.append(AttributeBar(inventory, (320, 330), 5))
