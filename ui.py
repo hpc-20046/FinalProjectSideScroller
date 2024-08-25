@@ -97,6 +97,12 @@ class AttributeBar:
         for i in range(amount):
             display.blit(self.fill_image, (self.rect.x + (i * self.fill_image_rect.w), self.rect.y))
             
+class AttributeButton(pygame.sprite.Sprite):
+    def __init__(self, pos, scale):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale_by(pygame.image.load('ui/add.png'), scale)
+        self.rect = self.image.get_rect(center=pos)
+
 
 class UiText(pygame.sprite.Sprite):
     def __init__(self, text, font, size, colour, pos):

@@ -49,6 +49,7 @@ def main():
 
     inventory = Inventory((WIDTH / 2, HEIGHT / 2), 550, 4)
     misc_inventory = pygame.sprite.Group()
+    attribute_buttons = pygame.sprite.Group()
     slots = pygame.sprite.Group()
     misc_inventory.add(PlayerBorder(inventory, 8))
 
@@ -62,6 +63,11 @@ def main():
     misc_inventory.add(Icon(inventory, (250, 470), pygame.image.load('ui/icons/strength.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 610), pygame.image.load('ui/icons/defense.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 750), pygame.image.load('ui/icons/stamina.png'), 7))
+
+    attribute_buttons.add(AttributeButton((560, 352), 5))
+    attribute_buttons.add(AttributeButton((560, 492), 5))
+    attribute_buttons.add(AttributeButton((560, 632), 5))
+    attribute_buttons.add(AttributeButton((560, 772), 5))
 
     misc_inventory.add(UiText('Con', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 290)))
     misc_inventory.add(UiText('Str', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 430)))
@@ -171,6 +177,7 @@ def main():
         if inventory.showing:
             slots.draw(screen)
             misc_inventory.draw(screen)
+            attribute_buttons.draw(screen)
             j = 0
             for i in attribute_bars:
                 i.draw(screen, attributes[j])
