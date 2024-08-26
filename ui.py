@@ -1,4 +1,5 @@
 import math
+from tkinter import SEL
 import pygame
 from settings import *
 
@@ -111,4 +112,24 @@ class UiText(pygame.sprite.Sprite):
         self.image = self.font.render(text, True, colour)
         self.rect = self.image.get_rect(topleft=pos)
         
+
+class AnimatedImage(pygame.sprite.Sprite):
+    def __init__(self, images, pos, scale):
+        pygame.sprite.Sprite.__init__(self)
         
+        self.images = []
+        
+        for i in range(len(images)):
+            self.images.append(pygame.transform.scale_by(pygame.image.load(images[i]), scale))
+
+        self.image = self.images[0]
+        self.rect = self.image.get_rect(center=pos)
+        self.index = 0
+        
+    def update(self):
+        self.index += 1
+        if self.index > len(self.images) - 1:
+            self.index = 0
+        
+        self.image = self.images[self.index]
+

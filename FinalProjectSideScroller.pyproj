@@ -40,6 +40,7 @@
     <Folder Include="enemies\skeleton\" />
     <Folder Include="fonts\" />
     <Folder Include="misc_assets\" />
+    <Folder Include="misc_assets\player\" />
     <Folder Include="misc_assets\spirit_fire\" />
     <Folder Include="misc_assets\spirit_flame\" />
     <Folder Include="player\" />
@@ -99,6 +100,7 @@
     <Content Include="fonts\BitPotionExt.ttf" />
     <Content Include="levels\level1.json" />
     <Content Include="levels\level2.json" />
+    <Content Include="misc_assets\player\tile000.png" />
     <Content Include="misc_assets\spirit_fire\frame_00_delay-0.08s.png" />
     <Content Include="misc_assets\spirit_fire\frame_01_delay-0.08s.png" />
     <Content Include="misc_assets\spirit_fire\frame_02_delay-0.08s.png" />

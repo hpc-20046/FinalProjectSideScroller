@@ -71,12 +71,13 @@ class Player:
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
         #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
 
-    def update(self, dt, tiles, spikes, border, camera):
+    def update(self, dt, tiles, spikes, border, camera, inventory_showing):
         self.border = border
-        self.horizontal_movement(dt, camera)
-        self.check_collisions_x(tiles, spikes)
-        self.vertical_movement(dt)
-        self.check_collisions_y(tiles, spikes)
+        if not inventory_showing:
+            self.horizontal_movement(dt, camera)
+            self.check_collisions_x(tiles, spikes)
+            self.vertical_movement(dt)
+            self.check_collisions_y(tiles, spikes)
 
     def horizontal_movement(self, dt, camera):
         self.acceleration.x = 0
