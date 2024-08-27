@@ -61,7 +61,7 @@ def main():
     misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
     misc_inventory.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
     
-    misc_inventory.add(Icon(inventory, (WIDTH / 2, HEIGHT / 2), pygame.image.load('misc_assets/player/tile000.png'), 7))
+    misc_inventory.add(Icon(inventory, (WIDTH / 2 - 5, HEIGHT / 2 - 140), pygame.image.load('misc_assets/player/tile000.png'), 14))
     
     misc_inventory.add(Icon(inventory, (250, 330), pygame.image.load('ui/icons/heart.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 470), pygame.image.load('ui/icons/strength.png'), 7))
@@ -84,13 +84,6 @@ def main():
     attribute_bars.append(AttributeBar(inventory, (320, 470), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 610), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 750), 5))
-    
-    #animations.add(AnimatedImage([
-    #    'misc_assets/player/tile000.png',
-    #    'misc_assets/player/tile001.png',
-    #    'misc_assets/player/tile002.png',
-    #    'misc_assets/player/tile003.png'], (WIDTH / 2, HEIGHT / 2), 7))
-    
 
     
     animations.add(AnimatedImage([
@@ -121,7 +114,7 @@ def main():
         'misc_assets/spirit_fire/frame_24_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_25_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_26_delay-0.08s.png',
-        'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 200), 3))
+        'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3))
 
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
