@@ -16,11 +16,17 @@ class Inventory:
 
         self.showing = False
 
+        self.inventory = [1, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.moving_slot = -1
+
     def draw(self, display):
         if self.showing:
             display.blit(self.image, self.panel1)
             display.blit(self.middle_image, self.panel2)
             display.blit(self.image, self.panel3)
+
+    def update(self):
+        pass
 
 
 class InventorySlot(pygame.sprite.Sprite):
@@ -34,11 +40,58 @@ class InventorySlot(pygame.sprite.Sprite):
         self.spacing = 90
         self.line_height = 90
         self.slots_per_row = 4
+        self.slot_num = slot_num
         self.pos_x = (WIDTH / 2) + self.inventory_offset - (inventory.panel3.w / 2) + self.x_offset + (slot_num - ((math.floor(slot_num / self.slots_per_row)) * self.slots_per_row)) * self.spacing
         self.pos_y = ((HEIGHT / 2) - (inventory.panel3.h / 2) + self.y_offset) + (math.floor(slot_num / self.slots_per_row) * self.line_height)
 
+        self.icon_x = self.pos_x
+        self.icon_y = self.pos_y
+
         self.rect = self.image.get_rect(center=(self.pos_x, self.pos_y))
-        
+        self.icon = pygame.sprite.Group()
+
+        self.icon.add(Icon(inventory, (self.pos_x, self.pos_y), pygame.image.load('ui/icons/blank.png'), 1))
+
+    def update(self, inventory, screen):
+        self.icon.empty()
+
+        if inventory.moving_slot == self.slot_num:
+            self.icon_x = pygame.mouse.get_pos()[0]
+            self.icon_y = pygame.mouse.get_pos()[1]
+        else:
+            self.icon_x, self.icon_y = self.pos_x, self.pos_y
+
+
+        match inventory.inventory[self.slot_num]:
+            case 0:
+                self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/blank.png'), 1))
+            case 1:
+                self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile082.png'), 2))
+            case 2:
+                self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile081.png'), 2))
+            case 3:
+                self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile080.png'), 2))
+
+        self.icon.draw(screen)
+
+    def drag(self, inventory):
+        if self.rect.collidepoint(pygame.mouse.get_pos()) and inventory.moving_slot != self.slot_num:
+            inventory.moving_slot = self.slot_num
+
+    def drop(self, inventory):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            if inventory.moving_slot == self.slot_num:
+                inventory.moving_slot = -1
+            else:
+                if inventory.inventory[self.slot_num] != 0:
+                    inventory.moving_slot = -1
+                else:
+                    inventory.inventory[self.slot_num] = inventory.inventory[inventory.moving_slot]
+                    inventory.inventory[inventory.moving_slot] = 0
+                    inventory.moving_slot = -1
+
+
+
 
 class EquipSlot(pygame.sprite.Sprite):
     def __init__(self, inventory, slot_num, scale):
@@ -68,6 +121,12 @@ class EquipSlot(pygame.sprite.Sprite):
                 self.pos.y = 0
                 
         self.rect = self.image.get_rect(center=(self.pos.x, self.pos.y))
+
+    def drag(self, inventory):
+        pass
+
+    def drop(self, inventory):
+        pass
 
 
 class PlayerBorder(pygame.sprite.Sprite):

@@ -182,6 +182,19 @@ def main():
             
             if event.type == FIRE_ANIM:
                 animations.update()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for slot in slots.sprites():
+                    slot.drag(inventory)
+            if event.type == pygame.MOUSEBUTTONUP:
+                for slot in slots.sprites():
+                    slot.drop(inventory)
+
+                if inventory.moving_slot != -1:
+                    inventory.moving_slot = -1
+
+
+
         
         if not inventory.showing:
             if player.RIGHT_KEY:
@@ -216,6 +229,8 @@ def main():
         
         player.draw(screen)
 
+
+
         inventory.draw(screen)
         if inventory.showing:
             slots.draw(screen)
@@ -226,6 +241,7 @@ def main():
                 i.draw(screen, attributes[j])
                 j += 1
             animations.draw(screen)
+            slots.update(inventory, screen)
         
         pygame.display.flip()
         clock.tick(60)
