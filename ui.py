@@ -16,7 +16,7 @@ class Inventory:
         self.showing = False
 
         self.inventory = [1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.equip = [0, 0, 0, 0, 1]
+        self.equip = [0, 0, 0, 0, 3]
         self.moving_slot = -1
         self.moving_equip_slot = -1
 
@@ -85,17 +85,25 @@ class InventorySlot(pygame.sprite.Sprite):
         if self.rect.collidepoint(pygame.mouse.get_pos()) and inventory.moving_slot != self.slot_num:
             inventory.moving_slot = self.slot_num
 
-    def drop(self, inventory):
+    def drop(self, inventory: Inventory):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             if inventory.moving_slot == self.slot_num:
                 inventory.moving_slot = -1
+            elif inventory.moving_slot == -1 and inventory.moving_equip_slot == -1:
+                return
             else:
                 if inventory.inventory[self.slot_num] != 0:
                     inventory.moving_slot = -1
+                    inventory.moving_equip_slot = -1
                 else:
-                    inventory.inventory[self.slot_num] = inventory.inventory[inventory.moving_slot]
-                    inventory.inventory[inventory.moving_slot] = 0
-                    inventory.moving_slot = -1
+                    if inventory.moving_slot != -1:
+                        inventory.inventory[self.slot_num] = inventory.inventory[inventory.moving_slot]
+                        inventory.inventory[inventory.moving_slot] = 0
+                        inventory.moving_slot = -1
+                    elif inventory.moving_equip_slot != -1:
+                        inventory.inventory[self.slot_num] = inventory.equip[inventory.moving_equip_slot - 1]
+                        inventory.equip[inventory.moving_equip_slot - 1] = 0
+                        inventory.moving_equip_slot = -1
 
 
 
@@ -167,16 +175,25 @@ class EquipSlot(pygame.sprite.Sprite):
         if self.rect.collidepoint(pygame.mouse.get_pos()) and inventory.moving_equip_slot != self.slot_num:
             inventory.moving_equip_slot = self.slot_num
 
-    def drop(self, inventory):
+    def drop(self, inventory: Inventory):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
             if inventory.moving_equip_slot == self.slot_num:
                 inventory.moving_equip_slot = -1
+            elif inventory.moving_slot == -1 and inventory.moving_equip_slot == -1:
+                return
             else:
-                if inventory.equip[self.slot_num] != 0:
+                if inventory.equip[self.slot_num - 1] != 0:
                     inventory.moving_slot = -1
                     inventory.moving_equip_slot = -1
                 else:
-                    pass
+                    if inventory.moving_slot != -1:
+                        inventory.equip[self.slot_num - 1] = inventory.inventory[inventory.moving_slot]
+                        inventory.inventory[inventory.moving_slot] = 0
+                        inventory.moving_slot = -1
+                    elif inventory.moving_equip_slot != -1:
+                        inventory.equip[self.slot_num - 1] = inventory.equip[inventory.moving_equip_slot - 1]
+                        inventory.equip[inventory.moving_equip_slot - 1] = 0
+                        inventory.moving_equip_slot = -1
 
 
 class PlayerBorder(pygame.sprite.Sprite):

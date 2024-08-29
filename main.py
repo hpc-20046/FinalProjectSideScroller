@@ -42,7 +42,7 @@ def main():
 
     current_level = 1
 
-    player = Player(100, HEIGHT / 2, 3, WIDTH * 2)
+    player = Player(300, HEIGHT / 2, 3, WIDTH * 2)
     player_state = 'idle'
 
     camera = Camera(player)

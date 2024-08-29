@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>80be093d-eb38-401b-a899-057f4a864fdb</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>main.py</StartupFile>
+    <StartupFile>LevelEditor.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -43,6 +43,7 @@
     <Folder Include="misc_assets\player\" />
     <Folder Include="misc_assets\spirit_fire\" />
     <Folder Include="misc_assets\spirit_flame\" />
+    <Folder Include="test_levels\" />
     <Folder Include="player\" />
     <Folder Include="dungeon\" />
     <Folder Include="levels\" />
@@ -99,8 +100,12 @@
     <Content Include="enemies\skeleton\skeleton2_v2_4.png" />
     <Content Include="fonts\ARIAL.TTF" />
     <Content Include="fonts\BitPotionExt.ttf" />
-    <Content Include="levels\level1.json" />
-    <Content Include="levels\level2.json" />
+    <Content Include="levels\level1_1.json" />
+    <Content Include="levels\level1_2.json" />
+    <Content Include="levels\level2_1.json" />
+    <Content Include="levels\level2_2.json" />
+    <Content Include="test_levels\level1.json" />
+    <Content Include="test_levels\level2.json" />
     <Content Include="misc_assets\player\tile000.png" />
     <Content Include="misc_assets\spirit_fire\frame_00_delay-0.08s.png" />
     <Content Include="misc_assets\spirit_fire\frame_01_delay-0.08s.png" />
