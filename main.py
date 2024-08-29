@@ -4,7 +4,7 @@ Project: Programming and Complex Processes
 Standard: 91906, 91907
 School: Hauraki Plains College
 Author: Noah Fieten
-Date Started: 25-07-24
+Date Started: 25/7/24
 Python: 3.10
 --------------------------------------------------
 """
@@ -52,14 +52,15 @@ def main():
     attribute_buttons = pygame.sprite.Group()
     slots = pygame.sprite.Group()
     animations = pygame.sprite.Group()
+    slot_icons = pygame.sprite.Group()
     
     misc_inventory.add(PlayerBorder(inventory, 8))
 
-    misc_inventory.add(Icon(inventory, ((WIDTH / 2) - 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/helmet.png'), 6))
-    misc_inventory.add(Icon(inventory, ((WIDTH / 2) - 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/chestplate.png'), 6))
-    misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/leggings.png'), 6))
-    misc_inventory.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
-    misc_inventory.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
+    slot_icons.add(Icon(inventory, ((WIDTH / 2) - 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/helmet.png'), 6))
+    slot_icons.add(Icon(inventory, ((WIDTH / 2) - 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/chestplate.png'), 6))
+    slot_icons.add(Icon(inventory, ((WIDTH / 2) + 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/leggings.png'), 6))
+    slot_icons.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
+    slot_icons.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
     
     misc_inventory.add(Icon(inventory, (WIDTH / 2 - 5, HEIGHT / 2 - 140), pygame.image.load('misc_assets/player/tile000.png'), 14))
     
@@ -235,6 +236,11 @@ def main():
         if inventory.showing:
             slots.draw(screen)
             misc_inventory.draw(screen)
+            
+            for i in range(5):
+                if inventory.equip[i] == 0:
+                    slot_icons.sprites()[i].draw(screen)
+
             attribute_buttons.draw(screen)
             j = 0
             for i in attribute_bars:
