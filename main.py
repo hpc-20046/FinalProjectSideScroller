@@ -40,9 +40,9 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 1
+    current_level = 3
 
-    player = Player(300, HEIGHT / 2, 3, WIDTH * 2)
+    player = Player(300, HEIGHT / 2 + 200, 3, WIDTH * 2)
     player_state = 'idle'
 
     camera = Camera(player)
@@ -219,8 +219,8 @@ def main():
 
         screen.fill((0, 0, 0))
 
-        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level - 1], 0, 0, backgrounds[current_level - 1], 9, camera)
-        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level], 1, 0, backgrounds[current_level - 1], 9, camera)
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level - 1], 0, 0, backgrounds[0], 9, camera)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level], 1, 0, backgrounds[0], 9, camera)
 
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
