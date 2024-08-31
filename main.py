@@ -9,7 +9,7 @@ Python: 3.10
 --------------------------------------------------
 """
 import pygame
-import sys 
+import sys
 import os
 import json
 from settings import *
@@ -40,7 +40,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 7
+    current_level = 0
 
     player = Player(300, HEIGHT / 2 + 200, 3, WIDTH * 2)
     player_state = 'idle'
@@ -215,12 +215,114 @@ def main():
                     else:
                         player.update_frame('idle_right')
                         player_state = 'idle'
+
+
+
+        if player.rect.x > WIDTH:
+            match current_level:
+                case 0:
+                    pass
+                case 1:
+                    pass
+                case 2:
+                    pass
+                case 3:
+                    pass
+                case 4:
+                    pass
+                case 5:
+                    pass
+                case 6:
+                    pass
+                case 7:
+                    pass
+                case 8:
+                    pass
+                case 9:
+                    pass
+                case 10:
+                    pass
+
+        elif player.rect.x < 0:
+            match current_level:
+                case 0:
+                    pass
+                case 1:
+                    pass
+                case 2:
+                    pass
+                case 3:
+                    pass
+                case 4:
+                    pass
+                case 5:
+                    pass
+                case 6:
+                    pass
+                case 7:
+                    pass
+                case 8:
+                    pass
+                case 9:
+                    pass
+                case 10:
+                    pass
+
+        elif player.rect.y > HEIGHT:
+            match current_level:
+                case 0:
+                    pass
+                case 1:
+                    pass
+                case 2:
+                    pass
+                case 3:
+                    pass
+                case 4:
+                    pass
+                case 5:
+                    pass
+                case 6:
+                    pass
+                case 7:
+                    pass
+                case 8:
+                    pass
+                case 9:
+                    pass
+                case 10:
+                    pass
+
+        elif player.rect.y < 0:
+            match current_level:
+                case 0:
+                    pass
+                case 1:
+                    pass
+                case 2:
+                    pass
+                case 3:
+                    pass
+                case 4:
+                    pass
+                case 5:
+                    pass
+                case 6:
+                    pass
+                case 7:
+                    pass
+                case 8:
+                    pass
+                case 9:
+                    pass
+                case 10:
+                    pass
                     
 
         screen.fill((0, 0, 0))
 
-        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level - 1], 0, 0, backgrounds[0], 9, camera)
-        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level], 1, 0, backgrounds[0], 9, camera)
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, backgrounds[0], 9, camera)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, backgrounds[0], 9, camera)
 
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
