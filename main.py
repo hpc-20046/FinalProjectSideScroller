@@ -40,7 +40,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 9
+    current_level = 7
 
     player = Player(300, HEIGHT / 2 + 200, 3, WIDTH * 2)
     player_state = 'idle'
