@@ -40,9 +40,12 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 0
+    current_level = 2
 
-    player = Player(300, HEIGHT / 2 + 200, 3, WIDTH * 2)
+    border = WIDTH * 2
+
+    player = Player(300, HEIGHT / 2 + 200, 3, border)
+    #player = Player(WIDTH / 2 - 150, HEIGHT - 50, 3, border)
     player_state = 'idle'
 
     camera = Camera(player)
@@ -218,26 +221,56 @@ def main():
 
 
 
-        if player.rect.x > WIDTH:
+        if player.rect.x > WIDTH - player.rect.w:
             match current_level:
                 case 0:
-                    pass
+                    current_level = 1
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH * 2
                 case 1:
-                    pass
+                    current_level = 2
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH * 2
                 case 2:
-                    pass
+                    current_level = 3
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH
                 case 3:
-                    pass
+                    current_level = 8
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH
                 case 4:
                     pass
                 case 5:
-                    pass
+                    current_level = 4
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH
                 case 6:
-                    pass
+                    current_level = 5
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH * 2
                 case 7:
                     pass
                 case 8:
-                    pass
+                    print("END")
                 case 9:
                     pass
                 case 10:
@@ -248,21 +281,51 @@ def main():
                 case 0:
                     pass
                 case 1:
-                    pass
+                    current_level = 0
+                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = WIDTH
+                    camera.offset = WIDTH
+                    border = WIDTH * 2
                 case 2:
-                    pass
+                    current_level = 1
+                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = WIDTH
+                    camera.offset = WIDTH
+                    border = WIDTH * 2
                 case 3:
-                    pass
+                    current_level = 2
+                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
+                    player.velocity.y = 0
+                    camera.offset_float = WIDTH
+                    camera.offset = WIDTH
+                    border = WIDTH * 2
                 case 4:
-                    pass
+                    current_level = 5
+                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = WIDTH
+                    camera.offset = WIDTH
+                    border = WIDTH * 2
                 case 5:
-                    pass
+                    current_level = 6
+                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
+                    player.velocity.y = 0
+                    camera.offset_float = WIDTH
+                    camera.offset = WIDTH
+                    border = WIDTH
                 case 6:
                     pass
                 case 7:
                     pass
                 case 8:
-                    pass
+                    current_level = 3
+                    player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 280)
+                    player.velocity.y = 0
+                    camera.offset_float = 0
+                    camera.offset = 0
+                    border = WIDTH
                 case 9:
                     pass
                 case 10:
@@ -277,19 +340,28 @@ def main():
                 case 2:
                     pass
                 case 3:
-                    pass
+                    current_level = 10
+                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    camera.offset = 0
+                    border = WIDTH
                 case 4:
                     pass
                 case 5:
                     pass
                 case 6:
-                    pass
+                    current_level = 7
+                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    camera.offset = 0
+                    border = WIDTH
                 case 7:
                     pass
                 case 8:
                     pass
                 case 9:
-                    pass
+                    current_level = 2
+                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    camera.offset = 0
+                    border = WIDTH * 2
                 case 10:
                     pass
 
@@ -300,9 +372,16 @@ def main():
                 case 1:
                     pass
                 case 2:
-                    pass
+                    current_level = 9
+                    player.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT - 50)
+                    player.velocity.y = -10
+                    camera.offset = 0
+                    border = WIDTH
                 case 3:
-                    pass
+                    current_level = 4
+                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    camera.offset = 0
+                    border = WIDTH
                 case 4:
                     pass
                 case 5:
@@ -316,7 +395,10 @@ def main():
                 case 9:
                     pass
                 case 10:
-                    pass
+                    current_level = 3
+                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    camera.offset = 0
+                    border = WIDTH
                     
 
         screen.fill((0, 0, 0))
@@ -327,7 +409,7 @@ def main():
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
         
-        player.update(dt, tile_rects, spike_rects, WIDTH * 2, camera, inventory.showing)
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing)
         camera.scroll()
         
         player.draw(screen)
