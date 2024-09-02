@@ -149,12 +149,12 @@ class Player:
                 self.velocity.y = 0
                 self.position.y = tile.bottom + self.rect.h
                 self.rect.bottom = self.position.y
-        if self.position.y > HEIGHT:
-            self.on_ground = True
-            self.is_jumping = False
-            self.velocity.y = 0
-            self.position.y = HEIGHT
-            self.rect.bottom = self.position.y
+        #if self.position.y > HEIGHT:
+        #    self.on_ground = True
+        #    self.is_jumping = False
+        #    self.velocity.y = 0
+        #    self.position.y = HEIGHT
+        #    self.rect.bottom = self.position.y
 
     def update_frame(self, state):
         if not self.on_ground:

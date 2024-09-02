@@ -40,9 +40,9 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 2
+    current_level = 3
 
-    border = WIDTH * 2
+    border = WIDTH
 
     player = Player(300, HEIGHT / 2 + 200, 3, border)
     #player = Player(WIDTH / 2 - 150, HEIGHT - 50, 3, border)
@@ -310,7 +310,7 @@ def main():
                     border = WIDTH * 2
                 case 5:
                     current_level = 6
-                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 200)
                     player.velocity.y = 0
                     camera.offset_float = WIDTH
                     camera.offset = WIDTH
@@ -341,16 +341,19 @@ def main():
                     pass
                 case 3:
                     current_level = 10
-                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(870, player.rect.h)
                     camera.offset = 0
                     border = WIDTH
                 case 4:
-                    pass
+                    current_level = 3
+                    player.position = pygame.math.Vector2(180, player.rect.h)
+                    camera.offset_float = 0
+                    border = WIDTH
                 case 5:
                     pass
                 case 6:
                     current_level = 7
-                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(864, player.rect.h)
                     camera.offset = 0
                     border = WIDTH
                 case 7:
@@ -359,8 +362,10 @@ def main():
                     pass
                 case 9:
                     current_level = 2
-                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
-                    camera.offset = 0
+                    player.position = pygame.math.Vector2(WIDTH + 120, player.rect.h)
+                    camera.offset_float = 1230.0
+                    camera.offset = 1230
+                    
                     border = WIDTH * 2
                 case 10:
                     pass
@@ -373,13 +378,14 @@ def main():
                     pass
                 case 2:
                     current_level = 9
-                    player.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT - 50)
+                    player.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT)
                     player.velocity.y = -10
                     camera.offset = 0
                     border = WIDTH
                 case 3:
                     current_level = 4
-                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(880, HEIGHT)
+                    player.velocity.y = -10
                     camera.offset = 0
                     border = WIDTH
                 case 4:
@@ -396,7 +402,8 @@ def main():
                     pass
                 case 10:
                     current_level = 3
-                    player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(970, HEIGHT)
+                    player.velocity.y = -15
                     camera.offset = 0
                     border = WIDTH
                     
@@ -432,6 +439,9 @@ def main():
                 j += 1
             animations.draw(screen)
             slots.update(inventory, screen)
+        
+        print("offset: " + str(camera.offset_float))
+        print("pos: " + str(player.position))
         
         pygame.display.flip()
         clock.tick(60)

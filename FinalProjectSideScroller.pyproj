@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>80be093d-eb38-401b-a899-057f4a864fdb</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>LevelEditor.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -104,6 +104,24 @@
     <Content Include="levels\level1_2.json" />
     <Content Include="levels\level2_1.json" />
     <Content Include="levels\level2_2.json" />
+    <Content Include="levels\level3_1.json" />
+    <Content Include="levels\level3_2.json" />
+    <Content Include="levels\level4_1.json" />
+    <Content Include="levels\level4_2.json" />
+    <Content Include="levels\level5_1.json" />
+    <Content Include="levels\level5_2.json" />
+    <Content Include="levels\level6_1.json" />
+    <Content Include="levels\level6_2.json" />
+    <Content Include="levels\level7_1.json" />
+    <Content Include="levels\level7_2.json" />
+    <Content Include="levels\level8_1.json" />
+    <Content Include="levels\level8_2.json" />
+    <Content Include="levels\level9_1.json" />
+    <Content Include="levels\level9_2.json" />
+    <Content Include="levels\zdeadend_1_1.json" />
+    <Content Include="levels\zdeadend_1_2.json" />
+    <Content Include="levels\zdeadend_2_1.json" />
+    <Content Include="levels\zdeadend_2_2.json" />
     <Content Include="test_levels\level1.json" />
     <Content Include="test_levels\level2.json" />
     <Content Include="misc_assets\player\tile000.png" />
