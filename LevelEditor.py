@@ -20,7 +20,7 @@ with tile_list as tiles:
 total_tiles = len(tile_surfaces)
 
 # open level file to be edited
-file = "levels/zdeadend_2_1.json"
+file = "levels/level5_1.json"
 #file = "backgrounds/level1.json"
 
 try:

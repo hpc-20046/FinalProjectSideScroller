@@ -40,12 +40,11 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 3
+    current_level = 0
 
-    border = WIDTH
+    border = WIDTH * 2
 
     player = Player(300, HEIGHT / 2 + 200, 3, border)
-    #player = Player(WIDTH / 2 - 150, HEIGHT - 50, 3, border)
     player_state = 'idle'
 
     camera = Camera(player)
@@ -255,7 +254,7 @@ def main():
                     pass
                 case 5:
                     current_level = 4
-                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
                     player.velocity.y = 0
                     camera.offset_float = 0
                     camera.offset = 0
@@ -303,7 +302,7 @@ def main():
                     border = WIDTH * 2
                 case 4:
                     current_level = 5
-                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
+                    player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
                     player.velocity.y = 0
                     camera.offset_float = WIDTH
                     camera.offset = WIDTH
