@@ -125,14 +125,14 @@ def main():
     for i in range(5):
         slots.add(EquipSlot(inventory, i + 1, 4.5))
         
-
-    test = Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
+    test = pygame.sprite.Group()
+    test.add(Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
                   'enemies/TinyDungeon/skelet_idle_anim_f1.png',
                   'enemies/TinyDungeon/skelet_idle_anim_f2.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_idle_anim_f0.png',
-                                                                   'enemies/TinyDungeon/skelet_idle_anim_f0.png',
-                                                                   'enemies/TinyDungeon/skelet_idle_anim_f0.png',
-                                                                   'enemies/TinyDungeon/skelet_idle_anim_f0.png'], (0,0), 4)
+                  'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f1.png',
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f2.png',
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], (200, 200), 3))
     
 
 
@@ -140,6 +140,8 @@ def main():
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
     FIRE_ANIM = pygame.USEREVENT + 1
     pygame.time.set_timer(FIRE_ANIM, 80)
+    ENEMY_ANIM = pygame.USEREVENT + 2
+    pygame.time.set_timer(ENEMY_ANIM, 150)
     
     loading = 0
 
@@ -195,6 +197,9 @@ def main():
             
             if event.type == FIRE_ANIM:
                 animations.update()
+
+            if event.type == ENEMY_ANIM:
+                test.sprites()[0].update_frame(False)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -391,6 +396,7 @@ def main():
         player.draw(screen)
         
         test.update()
+        test.draw(screen)
 
 
 
