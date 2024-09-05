@@ -12,6 +12,7 @@ import pygame
 import sys
 import os
 import json
+from enemy import Enemy
 from settings import *
 from player import Player
 from tilemap import TileMap
@@ -123,6 +124,15 @@ def main():
         slots.add(InventorySlot(inventory, i, 4.5))
     for i in range(5):
         slots.add(EquipSlot(inventory, i + 1, 4.5))
+        
+
+    test = Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                  'enemies/TinyDungeon/skelet_idle_anim_f1.png',
+                  'enemies/TinyDungeon/skelet_idle_anim_f2.png',
+                  'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                                                                   'enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                                                                   'enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                                                                   'enemies/TinyDungeon/skelet_idle_anim_f0.png'], (0,0), 4)
     
 
 
@@ -250,8 +260,6 @@ def main():
                     camera.offset_float = 0
                     camera.offset = 0
                     border = WIDTH
-                case 4:
-                    pass
                 case 5:
                     current_level = 4
                     player.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
@@ -266,19 +274,13 @@ def main():
                     camera.offset_float = 0
                     camera.offset = 0
                     border = WIDTH * 2
-                case 7:
-                    pass
                 case 8:
                     print("END")
-                case 9:
-                    pass
-                case 10:
+                case _:
                     pass
 
         elif player.rect.x < 0:
             match current_level:
-                case 0:
-                    pass
                 case 1:
                     current_level = 0
                     player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 200)
@@ -314,10 +316,6 @@ def main():
                     camera.offset_float = WIDTH
                     camera.offset = WIDTH
                     border = WIDTH
-                case 6:
-                    pass
-                case 7:
-                    pass
                 case 8:
                     current_level = 3
                     player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 280)
@@ -325,19 +323,11 @@ def main():
                     camera.offset_float = 0
                     camera.offset = 0
                     border = WIDTH
-                case 9:
-                    pass
-                case 10:
+                case _:
                     pass
 
         elif player.rect.y > HEIGHT:
             match current_level:
-                case 0:
-                    pass
-                case 1:
-                    pass
-                case 2:
-                    pass
                 case 3:
                     current_level = 10
                     player.position = pygame.math.Vector2(870, player.rect.h)
@@ -348,17 +338,11 @@ def main():
                     player.position = pygame.math.Vector2(180, player.rect.h)
                     camera.offset_float = 0
                     border = WIDTH
-                case 5:
-                    pass
                 case 6:
                     current_level = 7
                     player.position = pygame.math.Vector2(864, player.rect.h)
                     camera.offset = 0
                     border = WIDTH
-                case 7:
-                    pass
-                case 8:
-                    pass
                 case 9:
                     current_level = 2
                     player.position = pygame.math.Vector2(WIDTH + 120, player.rect.h)
@@ -366,15 +350,11 @@ def main():
                     camera.offset = 1230
                     
                     border = WIDTH * 2
-                case 10:
+                case _:
                     pass
 
         elif player.rect.y < 0:
             match current_level:
-                case 0:
-                    pass
-                case 1:
-                    pass
                 case 2:
                     current_level = 9
                     player.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT)
@@ -387,24 +367,14 @@ def main():
                     player.velocity.y = -10
                     camera.offset = 0
                     border = WIDTH
-                case 4:
-                    pass
-                case 5:
-                    pass
-                case 6:
-                    pass
-                case 7:
-                    pass
-                case 8:
-                    pass
-                case 9:
-                    pass
                 case 10:
                     current_level = 3
                     player.position = pygame.math.Vector2(970, HEIGHT)
                     player.velocity.y = -15
                     camera.offset = 0
                     border = WIDTH
+                case _:
+                    pass
                     
 
         screen.fill((0, 0, 0))
@@ -419,6 +389,8 @@ def main():
         camera.scroll()
         
         player.draw(screen)
+        
+        test.update()
 
 
 
@@ -439,8 +411,6 @@ def main():
             animations.draw(screen)
             slots.update(inventory, screen)
         
-        print("offset: " + str(camera.offset_float))
-        print("pos: " + str(player.position))
         
         pygame.display.flip()
         clock.tick(60)
