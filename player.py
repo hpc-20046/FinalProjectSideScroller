@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from ui import AnimatedImage
 
 
 class Player:
@@ -67,12 +68,17 @@ class Player:
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
-    def draw(self, display):
-        display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
-        #pygame.draw.rect(display, (255, 255, 255), self.rect, width=1)
+        self.arc = pygame.sprite.Group()
+        self.poof = pygame.sprite.Group()
 
-    def update(self, dt, tiles, spikes, border, camera, inventory_showing):
+    def draw(self, display):
+        self.arc.draw(display)
+        self.poof.draw(display)
+        display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
+
+    def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies):
         self.border = border
+        self.arc.update(self, enemies)
         if not inventory_showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
@@ -149,12 +155,6 @@ class Player:
                 self.velocity.y = 0
                 self.position.y = tile.bottom + self.rect.h
                 self.rect.bottom = self.position.y
-        #if self.position.y > HEIGHT:
-        #    self.on_ground = True
-        #    self.is_jumping = False
-        #    self.velocity.y = 0
-        #    self.position.y = HEIGHT
-        #    self.rect.bottom = self.position.y
 
     def update_frame(self, state):
         if not self.on_ground:
@@ -234,3 +234,103 @@ class Player:
             state = "run_left"
 
         self.update_frame(state)
+
+    def attack(self):
+        if not self.arc.sprites():
+            self.arc.add(Arc(['misc_assets/slash_fx/tile099.png',
+                                        'misc_assets/slash_fx/tile100.png',
+                                        'misc_assets/slash_fx/tile101.png',
+                                        'misc_assets/slash_fx/tile102.png'], 40, (self.rect.x, self.rect.y), 1, self.FACING_LEFT))
+
+
+
+class Arc(pygame.sprite.Sprite):
+    def __init__(self, frames, interval, pos, scale, facingleft):
+        pygame.sprite.Sprite.__init__(self)
+        self.right_frames = []
+        self.left_frames = []
+        for frame in frames:
+            self.right_frames.append(pygame.transform.scale(pygame.transform.scale_by(pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)))
+            self.left_frames.append(pygame.transform.flip(pygame.transform.scale(pygame.transform.scale_by(pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)), 1, 0))
+
+        self.interval = interval
+        self.timer = 0
+        self.timer_start = 0
+
+        self.index = 0
+        self.facingleft = facingleft
+
+        self.pos = pos
+        self.offset_right = pygame.math.Vector2(-10, -20)
+        self.offset_left = pygame.math.Vector2(-45, -20)
+
+        if self.facingleft:
+            self.current_frames = self.left_frames
+            self.offset = self.offset_left
+        else:
+            self.current_frames = self.right_frames
+            self.offset = self.offset_right
+
+        self.pos = (self.pos[0] + self.offset.x, self.pos[1] + self.offset.y)
+
+        self.image = self.current_frames[self.index]
+        self.rect = self.image.get_rect(topleft=self.pos)
+
+
+    def update(self, player, enemies):
+        self.timer = pygame.time.get_ticks()
+        if self.timer_start == 0:
+            self.timer_start = self.timer
+
+        if self.timer - self.timer_start > self.interval:
+            self.index += 1
+            self.timer_start = self.timer
+            if self.index >= len(self.current_frames):
+                self.kill()
+                self.index = 0
+
+        self.image = self.current_frames[self.index]
+        self.rect.x = player.rect.x + self.offset.x
+        self.rect.y = player.rect.y + self.offset.y
+
+        kills = self.check_kill(enemies)
+        for kill in kills:
+            kill.kill()
+            player.poof.add(AnimatedImage([
+                "misc_assets/smoke_fx/tile252.png",
+                "misc_assets/smoke_fx/tile253.png",
+                "misc_assets/smoke_fx/tile254.png",
+                "misc_assets/smoke_fx/tile255.png",
+                "misc_assets/smoke_fx/tile256.png",
+                "misc_assets/smoke_fx/tile257.png",
+                "misc_assets/smoke_fx/tile258.png",
+                "misc_assets/smoke_fx/tile259.png",
+                "misc_assets/smoke_fx/tile260.png",
+                "misc_assets/smoke_fx/tile261.png",
+                "misc_assets/smoke_fx/tile262.png",
+                "misc_assets/smoke_fx/tile263.png",
+            ], (kill.rect.centerx, kill.rect.centery), 1, True))
+
+
+    def check_kill(self, enemies):
+        hits = []
+        for enemy in enemies:
+            if self.rect.colliderect(enemy.rect):
+                hits.append(enemy)
+
+        return hits
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

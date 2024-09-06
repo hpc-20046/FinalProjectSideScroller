@@ -243,7 +243,7 @@ class UiText(pygame.sprite.Sprite):
         
 
 class AnimatedImage(pygame.sprite.Sprite):
-    def __init__(self, images, pos, scale):
+    def __init__(self, images, pos, scale, playonce):
         pygame.sprite.Sprite.__init__(self)
         
         self.images = []
@@ -254,11 +254,17 @@ class AnimatedImage(pygame.sprite.Sprite):
         self.image = self.images[0]
         self.rect = self.image.get_rect(center=pos)
         self.index = 0
+        self.playonce = playonce
         
     def update(self):
         self.index += 1
         if self.index > len(self.images) - 1:
-            self.index = 0
+            if self.playonce:
+                self.kill()
+                print("kill")
+                self.index = 0
+            else:
+                self.index = 0
         
         self.image = self.images[self.index]
 

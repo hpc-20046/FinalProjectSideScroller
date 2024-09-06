@@ -118,7 +118,7 @@ def main():
         'misc_assets/spirit_fire/frame_24_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_25_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_26_delay-0.08s.png',
-        'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3))
+        'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3, False))
 
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
@@ -132,7 +132,7 @@ def main():
                   'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
                                                                    'enemies/TinyDungeon/skelet_run_anim_f1.png',
                                                                    'enemies/TinyDungeon/skelet_run_anim_f2.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], (200, 200), 3))
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], (200, HEIGHT / 2), 3))
     
 
 
@@ -142,6 +142,8 @@ def main():
     pygame.time.set_timer(FIRE_ANIM, 80)
     ENEMY_ANIM = pygame.USEREVENT + 2
     pygame.time.set_timer(ENEMY_ANIM, 150)
+    SMOKE_ANIM = pygame.USEREVENT + 3
+    pygame.time.set_timer(SMOKE_ANIM, 40)
     
     loading = 0
 
@@ -176,6 +178,9 @@ def main():
                     elif event.key == pygame.K_z:
                         player.jump()
 
+                    if event.key == pygame.K_x:
+                        player.attack()
+
                 if event.key == pygame.K_i:
                     if inventory.showing:
                         inventory.showing = False
@@ -191,6 +196,8 @@ def main():
                     if player.is_jumping:
                         player.velocity.y *= 0.25
                         player.is_jumping = False
+
+
             if not inventory.showing:
                 if event.type == NEW_PLAYER_FRAME:
                     player.update_frame(player.state)
@@ -199,7 +206,11 @@ def main():
                 animations.update()
 
             if event.type == ENEMY_ANIM:
-                test.sprites()[0].update_frame(False)
+                if test.sprites():
+                    test.sprites()[0].update_frame()
+
+            if event.type == SMOKE_ANIM:
+                player.poof.update()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -390,12 +401,13 @@ def main():
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
         
-        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing)
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, test.sprites())
         camera.scroll()
         
         player.draw(screen)
-        
-        test.update()
+
+        if not inventory.showing:
+            test.update(dt, camera, tile_rects)
         test.draw(screen)
 
 
