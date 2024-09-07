@@ -71,6 +71,8 @@ class Player:
         self.arc = pygame.sprite.Group()
         self.poof = pygame.sprite.Group()
 
+        self.damage = 1
+
     def draw(self, display):
         self.arc.draw(display)
         self.poof.draw(display)
@@ -78,7 +80,7 @@ class Player:
 
     def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies):
         self.border = border
-        self.arc.update(self, enemies)
+        self.arc.update(self, enemies, camera)
         if not inventory_showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
@@ -235,7 +237,7 @@ class Player:
 
         self.update_frame(state)
 
-    def attack(self):
+    def attack(self, camera):
         if not self.arc.sprites():
             self.arc.add(Arc(['misc_assets/slash_fx/tile099.png',
                                         'misc_assets/slash_fx/tile100.png',
@@ -276,8 +278,10 @@ class Arc(pygame.sprite.Sprite):
         self.image = self.current_frames[self.index]
         self.rect = self.image.get_rect(topleft=self.pos)
 
+        self.damaged = False
 
-    def update(self, player, enemies):
+
+    def update(self, player, enemies, camera):
         self.timer = pygame.time.get_ticks()
         if self.timer_start == 0:
             self.timer_start = self.timer
@@ -295,21 +299,27 @@ class Arc(pygame.sprite.Sprite):
 
         kills = self.check_kill(enemies)
         for kill in kills:
-            kill.kill()
-            player.poof.add(AnimatedImage([
-                "misc_assets/smoke_fx/tile252.png",
-                "misc_assets/smoke_fx/tile253.png",
-                "misc_assets/smoke_fx/tile254.png",
-                "misc_assets/smoke_fx/tile255.png",
-                "misc_assets/smoke_fx/tile256.png",
-                "misc_assets/smoke_fx/tile257.png",
-                "misc_assets/smoke_fx/tile258.png",
-                "misc_assets/smoke_fx/tile259.png",
-                "misc_assets/smoke_fx/tile260.png",
-                "misc_assets/smoke_fx/tile261.png",
-                "misc_assets/smoke_fx/tile262.png",
-                "misc_assets/smoke_fx/tile263.png",
-            ], (kill.rect.centerx, kill.rect.centery), 1, True))
+            if not self.damaged:
+                kill.health -= player.damage
+                self.damaged = True
+                kill.knockback(player.FACING_LEFT)
+
+            if kill.health == 0:
+                kill.kill()
+                player.poof.add(AnimatedImage([
+                    "misc_assets/smoke_fx/tile252.png",
+                    "misc_assets/smoke_fx/tile253.png",
+                    "misc_assets/smoke_fx/tile254.png",
+                    "misc_assets/smoke_fx/tile255.png",
+                    "misc_assets/smoke_fx/tile256.png",
+                    "misc_assets/smoke_fx/tile257.png",
+                    "misc_assets/smoke_fx/tile258.png",
+                    "misc_assets/smoke_fx/tile259.png",
+                    "misc_assets/smoke_fx/tile260.png",
+                    "misc_assets/smoke_fx/tile261.png",
+                    "misc_assets/smoke_fx/tile262.png",
+                    "misc_assets/smoke_fx/tile263.png",
+                ], (kill.position.x, kill.position.y - kill.rect.h - 10), 1, True, True, camera, False))
 
 
     def check_kill(self, enemies):

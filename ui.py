@@ -243,28 +243,46 @@ class UiText(pygame.sprite.Sprite):
         
 
 class AnimatedImage(pygame.sprite.Sprite):
-    def __init__(self, images, pos, scale, playonce):
+    def __init__(self, images, pos, scale, playonce, usingcamera, camera, use_center):
         pygame.sprite.Sprite.__init__(self)
         
         self.images = []
+        self.using_camera = usingcamera
         
         for i in range(len(images)):
             self.images.append(pygame.transform.scale_by(pygame.image.load(images[i]), scale))
 
+        self.pos = pos
+        self.use_center = use_center
+
         self.image = self.images[0]
-        self.rect = self.image.get_rect(center=pos)
+        if use_center:
+            if self.using_camera:
+                self.rect = self.image.get_rect(center=(pos[0] - camera.offset_float, pos[1]))
+            else:
+                self.rect = self.image.get_rect(center=pos)
+        else:
+            if self.using_camera:
+                self.rect = self.image.get_rect(topleft=(pos[0] - camera.offset_float, pos[1]))
+            else:
+                self.rect = self.image.get_rect(topleft=pos)
         self.index = 0
         self.playonce = playonce
         
-    def update(self):
+    def update(self, camera):
         self.index += 1
         if self.index > len(self.images) - 1:
             if self.playonce:
                 self.kill()
-                print("kill")
                 self.index = 0
             else:
                 self.index = 0
         
         self.image = self.images[self.index]
-
+        if self.using_camera:
+            if self.use_center:
+                self.rect.centerx = self.pos[0] - camera.offset_float
+                self.rect.centery = self.pos[1]
+            else:
+                self.rect.x = self.pos[0] - camera.offset_float
+                self.rect.y = self.pos[1]

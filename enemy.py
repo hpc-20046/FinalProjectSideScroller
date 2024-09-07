@@ -4,7 +4,7 @@ import random
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, idle_images, walk_images, pos, scale):
+    def __init__(self, idle_images, walk_images, pos, scale, health):
         pygame.sprite.Sprite.__init__(self)
         
         self.idle_right_images = []
@@ -28,7 +28,7 @@ class Enemy(pygame.sprite.Sprite):
         
         self.current_time = 0
         self.timer_start = 0
-        self.facing_left = True
+        self.facing_left = random.choice([True, False])
         
         self.time_until_state_change = random.randrange(500, 5000)
 
@@ -36,9 +36,11 @@ class Enemy(pygame.sprite.Sprite):
         self.walk_time = pygame.math.Vector2(4000, 15000)
 
         self.movement_speed = 1
-        self.velocity = 0
+        self.velocity = pygame.math.Vector2(0, 0)
         self.gravity = 0.35
         self.terminal_velocity = 10
+
+        self.health = health
         
     def update_frame(self):
         self.index += 1
@@ -91,35 +93,64 @@ class Enemy(pygame.sprite.Sprite):
         self.y_movement(dt)
         self.y_collisions(tiles)
 
-    def y_movement(self, dt):
-        self.velocity += self.gravity * dt
-        if self.velocity > self.terminal_velocity:
-            self.velocity = self.terminal_velocity
 
-        self.position.y += self.velocity * dt + (self.gravity * 0.5) * (dt * dt)
+    def y_movement(self, dt):
+        self.velocity.y += self.gravity * dt
+        if self.velocity.y > self.terminal_velocity:
+            self.velocity.y = self.terminal_velocity
+
+        self.position.y += self.velocity.y * dt + (self.gravity * 0.5) * (dt * dt)
         self.rect.bottom = self.position.y
 
     def y_collisions(self, tiles):
         self.rect.bottom += 1
         collisions = self.get_collisions(tiles)
         for tile in collisions:
-            self.velocity = 0
+            self.velocity.y = 0
             self.position.y = tile.top
             self.rect.bottom = self.position.y
 
     def x_movement(self, camera):
         if self.state == 'walk':
-            if self.facing_left:
-                self.position.x += -self.movement_speed
-            else:
-                self.position.x += self.movement_speed
+            if self.velocity.x == 0:
+                if self.facing_left:
+                    self.position.x += -self.movement_speed
+                else:
+                    self.position.x += self.movement_speed
+
+        self.position.x += self.velocity.x
+        if self.velocity.x > 0:
+            self.velocity.x -= 1
+        elif self.velocity.x < 0:
+            self.velocity.x += 1
+        elif abs(self.velocity.x) < 2:
+            self.velocity.x = 0
 
         self.rect.x = self.position.x - camera.offset_float
 
     def x_collisions(self, tiles):
         collisions = self.get_collisions(tiles)
+        for tile in collisions:
+            if not self.facing_left:
+                temp_rect = self.rect.x
+                self.rect.x = tile.left - self.rect.w
+                adjust_factor = self.rect.x - temp_rect
+                self.position.x += adjust_factor
+                self.position.x = int(self.position.x) - 1
+                self.velocity.x = 0
+                print('collide right')
+            elif self.facing_left:
+                temp_rect = self.rect.x
+                self.rect.x = tile.right
+                adjust_factor = self.rect.x - temp_rect
+                self.position.x += adjust_factor
+                self.position.x = int(self.position.x) + 1
+                self.velocity.x = 0
+                print("collide left")
+
         if collisions:
             self.change_direction()
+
 
 
     def get_collisions(self, tiles):
@@ -128,4 +159,15 @@ class Enemy(pygame.sprite.Sprite):
             if self.rect.colliderect(tile):
                 hits.append(tile)
         return hits
+
+    def knockback(self, left):
+        if self.facing_left != left:
+            self.change_direction()
+        self.facing_left = left
+        if left:
+            self.velocity.x = -15
+            self.velocity.y = -5
+        else:
+            self.velocity.x = 15
+            self.velocity.y = -5
             

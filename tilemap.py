@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 import os
+from enemy import Enemy
 
 
 def load_tiles(path):
@@ -11,6 +12,18 @@ def load_tiles(path):
             tile_surfaces.append(pygame.transform.scale(pygame.image.load(tile.path), (cell_width, cell_height)))
     total_tiles = len(tile_surfaces)
     return tile_surfaces, total_tiles
+
+def spawn_enemies(pos):
+    group = pygame.sprite.Group()
+    for i in range(len(pos)):
+        group.add(Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                  'enemies/TinyDungeon/skelet_idle_anim_f1.png',
+                  'enemies/TinyDungeon/skelet_idle_anim_f2.png',
+                  'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f1.png',
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f2.png',
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], pos[i], 3, 5))
+    return group
 
 
 class TileMap:

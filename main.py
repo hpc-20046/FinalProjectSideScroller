@@ -15,7 +15,7 @@ import json
 from enemy import Enemy
 from settings import *
 from player import Player
-from tilemap import TileMap
+from tilemap import TileMap, spawn_enemies
 from camera import Camera
 from ui import *
 
@@ -118,23 +118,14 @@ def main():
         'misc_assets/spirit_fire/frame_24_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_25_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_26_delay-0.08s.png',
-        'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3, False))
+        'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3, False, False, camera, True))
 
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
     for i in range(5):
         slots.add(EquipSlot(inventory, i + 1, 4.5))
-        
-    test = pygame.sprite.Group()
-    test.add(Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f1.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f2.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f1.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f2.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], (200, HEIGHT / 2), 3))
-    
 
+    enemies = pygame.sprite.Group()
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
@@ -179,7 +170,9 @@ def main():
                         player.jump()
 
                     if event.key == pygame.K_x:
-                        player.attack()
+                        player.attack(camera)
+                    if event.key == pygame.K_s:
+                        enemies = spawn_enemies([(200, HEIGHT / 2), (400, HEIGHT / 2)])
 
                 if event.key == pygame.K_i:
                     if inventory.showing:
@@ -203,14 +196,15 @@ def main():
                     player.update_frame(player.state)
             
             if event.type == FIRE_ANIM:
-                animations.update()
+                animations.update(camera)
 
             if event.type == ENEMY_ANIM:
-                if test.sprites():
-                    test.sprites()[0].update_frame()
+                if enemies.sprites():
+                    for sprite in enemies.sprites():
+                        sprite.update_frame()
 
             if event.type == SMOKE_ANIM:
-                player.poof.update()
+                player.poof.update(camera)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -247,6 +241,7 @@ def main():
 
 
         if player.rect.x > WIDTH - player.rect.w:
+            enemies.empty()
             match current_level:
                 case 0:
                     current_level = 1
@@ -255,6 +250,8 @@ def main():
                     camera.offset_float = 0
                     camera.offset = 0
                     border = WIDTH * 2
+
+                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)])
                 case 1:
                     current_level = 2
                     player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
@@ -262,6 +259,8 @@ def main():
                     camera.offset_float = 0
                     camera.offset = 0
                     border = WIDTH * 2
+
+                    enemies = spawn_enemies([(994, 800), (3193, 760)])
                 case 2:
                     current_level = 3
                     player.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
@@ -290,12 +289,15 @@ def main():
                     camera.offset_float = 0
                     camera.offset = 0
                     border = WIDTH * 2
+
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)])
                 case 8:
                     print("END")
                 case _:
                     pass
 
         elif player.rect.x < 0:
+            enemies.empty()
             match current_level:
                 case 1:
                     current_level = 0
@@ -311,6 +313,8 @@ def main():
                     camera.offset_float = WIDTH
                     camera.offset = WIDTH
                     border = WIDTH * 2
+
+                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)])
                 case 3:
                     current_level = 2
                     player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
@@ -318,6 +322,8 @@ def main():
                     camera.offset_float = WIDTH
                     camera.offset = WIDTH
                     border = WIDTH * 2
+
+                    enemies = spawn_enemies([(994, 800), (3193, 760)])
                 case 4:
                     current_level = 5
                     player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
@@ -325,6 +331,8 @@ def main():
                     camera.offset_float = WIDTH
                     camera.offset = WIDTH
                     border = WIDTH * 2
+
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)])
                 case 5:
                     current_level = 6
                     player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 200)
@@ -343,6 +351,7 @@ def main():
                     pass
 
         elif player.rect.y > HEIGHT:
+            enemies.empty()
             match current_level:
                 case 3:
                     current_level = 10
@@ -359,6 +368,8 @@ def main():
                     player.position = pygame.math.Vector2(864, player.rect.h)
                     camera.offset = 0
                     border = WIDTH
+
+                    enemies = spawn_enemies([(1548, 920), (514, 920), (155, 920)])
                 case 9:
                     current_level = 2
                     player.position = pygame.math.Vector2(WIDTH + 120, player.rect.h)
@@ -370,6 +381,7 @@ def main():
                     pass
 
         elif player.rect.y < 0:
+            enemies.empty()
             match current_level:
                 case 2:
                     current_level = 9
@@ -401,14 +413,14 @@ def main():
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
         
-        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, test.sprites())
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites())
         camera.scroll()
         
         player.draw(screen)
 
         if not inventory.showing:
-            test.update(dt, camera, tile_rects)
-        test.draw(screen)
+            enemies.update(dt, camera, tile_rects)
+        enemies.draw(screen)
 
 
 
@@ -428,7 +440,8 @@ def main():
                 j += 1
             animations.draw(screen)
             slots.update(inventory, screen)
-        
+
+        print(player.position)
         
         pygame.display.flip()
         clock.tick(60)
