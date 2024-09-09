@@ -29,6 +29,7 @@
     <Compile Include="main.py" />
     <Compile Include="player.py" />
     <Compile Include="settings.py" />
+    <Compile Include="spirit.py" />
     <Compile Include="tilemap.py" />
     <Compile Include="ui.py" />
   </ItemGroup>

@@ -138,7 +138,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.position.x += adjust_factor
                 self.position.x = int(self.position.x) - 1
                 self.velocity.x = 0
-                print('collide right')
             elif self.facing_left:
                 temp_rect = self.rect.x
                 self.rect.x = tile.right
@@ -146,7 +145,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.position.x += adjust_factor
                 self.position.x = int(self.position.x) + 1
                 self.velocity.x = 0
-                print("collide left")
 
         if collisions:
             self.change_direction()

@@ -447,8 +447,6 @@ def main():
                 j += 1
             animations.draw(screen)
             slots.update(inventory, screen)
-
-        print(player.position)
         
         pygame.display.flip()
         clock.tick(60)

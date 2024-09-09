@@ -74,7 +74,7 @@ class Player:
         self.poof = pygame.sprite.Group()
         self.flame = pygame.sprite.Group()
 
-        self.damage = 10
+        self.damage = 1
         self.spirit = 0
 
     def draw(self, display):
@@ -87,6 +87,7 @@ class Player:
         self.border = border
         self.arc.update(self, enemies, camera)
         self.flame.update(camera, self)
+        print(self.spirit)
         if not inventory_showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
@@ -337,18 +338,4 @@ class Arc(pygame.sprite.Sprite):
                 hits.append(enemy)
 
         return hits
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
