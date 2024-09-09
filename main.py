@@ -135,6 +135,8 @@ def main():
     pygame.time.set_timer(ENEMY_ANIM, 150)
     SMOKE_ANIM = pygame.USEREVENT + 3
     pygame.time.set_timer(SMOKE_ANIM, 40)
+    FLAME_ANIM = pygame.USEREVENT + 4
+    pygame.time.set_timer(FLAME_ANIM, 300)
     
     loading = 0
 
@@ -205,6 +207,11 @@ def main():
 
             if event.type == SMOKE_ANIM:
                 player.poof.update(camera)
+
+            if event.type == FLAME_ANIM:
+                if player.flame.sprites():
+                    for flame in player.flame.sprites():
+                        flame.update_frame()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():

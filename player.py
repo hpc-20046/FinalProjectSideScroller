@@ -1,6 +1,8 @@
 import pygame
 from settings import *
+from spirit import SpiritFlame
 from ui import AnimatedImage
+import spirit
 
 
 class Player:
@@ -70,17 +72,21 @@ class Player:
 
         self.arc = pygame.sprite.Group()
         self.poof = pygame.sprite.Group()
+        self.flame = pygame.sprite.Group()
 
-        self.damage = 1
+        self.damage = 10
+        self.spirit = 0
 
     def draw(self, display):
         self.arc.draw(display)
+        self.flame.draw(display)
         self.poof.draw(display)
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
 
     def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies):
         self.border = border
         self.arc.update(self, enemies, camera)
+        self.flame.update(camera, self)
         if not inventory_showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
@@ -304,7 +310,7 @@ class Arc(pygame.sprite.Sprite):
                 self.damaged = True
                 kill.knockback(player.FACING_LEFT)
 
-            if kill.health == 0:
+            if kill.health <= 0:
                 kill.kill()
                 player.poof.add(AnimatedImage([
                     "misc_assets/smoke_fx/tile252.png",
@@ -320,6 +326,8 @@ class Arc(pygame.sprite.Sprite):
                     "misc_assets/smoke_fx/tile262.png",
                     "misc_assets/smoke_fx/tile263.png",
                 ], (kill.position.x, kill.position.y - kill.rect.h - 10), 1, True, True, camera, False))
+
+                player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h), 3, (1, 3)))
 
 
     def check_kill(self, enemies):
