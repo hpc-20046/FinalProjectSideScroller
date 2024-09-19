@@ -87,7 +87,6 @@ class Player:
         self.border = border
         self.arc.update(self, enemies, camera)
         self.flame.update(camera, self)
-        print(self.spirit)
         if not inventory_showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)

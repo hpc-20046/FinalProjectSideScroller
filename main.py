@@ -56,6 +56,7 @@ def main():
     slots = pygame.sprite.Group()
     animations = pygame.sprite.Group()
     slot_icons = pygame.sprite.Group()
+    spirit_amount = pygame.sprite.Group()
     
     misc_inventory.add(PlayerBorder(inventory, 8))
 
@@ -81,6 +82,8 @@ def main():
     misc_inventory.add(UiText('Str', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 430)))
     misc_inventory.add(UiText('Def', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 570)))
     misc_inventory.add(UiText('Spe', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 710)))
+    
+    spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [(WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440),]))
 
     attributes = [3, 5, 7, 2]
     attribute_bars = []
@@ -130,7 +133,7 @@ def main():
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
     FIRE_ANIM = pygame.USEREVENT + 1
-    pygame.time.set_timer(FIRE_ANIM, 80)
+    #pygame.time.set_timer(FIRE_ANIM, 80)
     ENEMY_ANIM = pygame.USEREVENT + 2
     pygame.time.set_timer(ENEMY_ANIM, 150)
     SMOKE_ANIM = pygame.USEREVENT + 3
@@ -199,6 +202,7 @@ def main():
             
             if event.type == FIRE_ANIM:
                 animations.update(camera)
+                spirit_amount.update(player.spirit)
 
             if event.type == ENEMY_ANIM:
                 if enemies.sprites():
@@ -447,6 +451,7 @@ def main():
                 j += 1
             animations.draw(screen)
             slots.update(inventory, screen)
+            spirit_amount.draw(screen)
         
         pygame.display.flip()
         clock.tick(60)

@@ -1,4 +1,5 @@
 import math
+from typing import Any
 import pygame
 from settings import *
 
@@ -266,7 +267,7 @@ class AnimatedImage(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(topleft=(pos[0] - camera.offset_float, pos[1]))
             else:
                 self.rect = self.image.get_rect(topleft=pos)
-        self.index = 0
+        self.index = 11
         self.playonce = playonce
         
     def update(self, camera):
@@ -286,3 +287,25 @@ class AnimatedImage(pygame.sprite.Sprite):
             else:
                 self.rect.x = self.pos[0] - camera.offset_float
                 self.rect.y = self.pos[1]
+
+
+
+class SpiritAmount(pygame.sprite.Sprite):
+    def __init__(self, text, font, size, colour, positions):
+        pygame.sprite.Sprite.__init__(self)
+        
+        self.colour = colour
+        self.font = pygame.font.Font(font, size)
+        self.image = self.font.render(str(text), True, colour)
+        self.positions = positions
+        self.index = 11
+        self.rect = self.image.get_rect(center=positions[self.index])
+        
+    def update(self, amount):
+        self.image = self.font.render(str(amount), True, self.colour)
+
+        self.index += 1
+        if self.index >= len(self.positions):
+            self.index = 0
+        self.rect.centerx = self.positions[self.index][0]
+        self.rect.centery = self.positions[self.index][1]
