@@ -255,8 +255,9 @@ class AnimatedImage(pygame.sprite.Sprite):
 
         self.pos = pos
         self.use_center = use_center
+        self.index = 0
 
-        self.image = self.images[0]
+        self.image = self.images[self.index]
         if use_center:
             if self.using_camera:
                 self.rect = self.image.get_rect(center=(pos[0] - camera.offset_float, pos[1]))
@@ -267,7 +268,6 @@ class AnimatedImage(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect(topleft=(pos[0] - camera.offset_float, pos[1]))
             else:
                 self.rect = self.image.get_rect(topleft=pos)
-        self.index = 11
         self.playonce = playonce
         
     def update(self, camera):
@@ -298,14 +298,84 @@ class SpiritAmount(pygame.sprite.Sprite):
         self.font = pygame.font.Font(font, size)
         self.image = self.font.render(str(text), True, colour)
         self.positions = positions
-        self.index = 11
+        self.index = 0
         self.rect = self.image.get_rect(center=positions[self.index])
+
+        self.offset = 7
         
     def update(self, amount):
         self.image = self.font.render(str(amount), True, self.colour)
+        offset = 0
+        if amount > 9:
+            offset = self.offset
+        if amount > 99:
+            offset = self.offset * 2
+        if amount > 999:
+            offset = self.offset * 3
 
         self.index += 1
         if self.index >= len(self.positions):
             self.index = 0
-        self.rect.centerx = self.positions[self.index][0]
+        self.rect.centerx = self.positions[self.index][0] - offset
         self.rect.centery = self.positions[self.index][1]
+
+
+class TutorialText(pygame.sprite.Sprite):
+    def __init__(self, text, font, size, colour, pos, level):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.colour = colour
+        self.text = text
+        self.font = pygame.font.Font(font, size)
+        self.image = self.font.render(text, True, self.colour)
+        self.rect = self.image.get_rect(topleft=pos)
+        self.pos = pos
+        self.level = level
+
+    def update(self, camera, current_level):
+        if not current_level == self.level:
+            self.image = self.font.render(' ', True, self.colour)
+        else:
+            self.image = self.font.render(self.text, True, self.colour)
+            self.rect.x = self.pos[0] - camera.offset_float
+
+
+class AnimatedLevelImage(pygame.sprite.Sprite):
+    def __init__(self, images, pos, scale, level):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.images = []
+        for image in images:
+            self.images.append(pygame.transform.scale_by(pygame.image.load(image), scale))
+
+        self.index = 0
+        self.image = self.images[self.index]
+        self.rect = self.image.get_rect(center=pos)
+        self.level = level
+        self.showing = False
+
+    def update(self, current_level):
+        if self.level == current_level:
+            self.showing = True
+            self.image = self.images[self.index]
+        else:
+            self.showing = False
+            self.image = pygame.image.load('ui/icons/blank.png')
+
+    def update_frame(self):
+        self.index += 1
+
+        if self.index >= len(self.images):
+            self.index = 0
+
+        if self.showing:
+            self.image = self.images[self.index]
+        else:
+            self.image = pygame.image.load('ui/icons/blank.png')
+
+    def delete(self):
+        self.kill()
+        self.image = pygame.image.load('ui/icons/blank.png')
+        self.showing = False
+
+

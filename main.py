@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 0
+    current_level = 6
 
     border = WIDTH * 2
 
@@ -57,6 +57,8 @@ def main():
     animations = pygame.sprite.Group()
     slot_icons = pygame.sprite.Group()
     spirit_amount = pygame.sprite.Group()
+    tutorial_text = pygame.sprite.Group()
+    level_animations = pygame.sprite.Group()
     
     misc_inventory.add(PlayerBorder(inventory, 8))
 
@@ -83,7 +85,7 @@ def main():
     misc_inventory.add(UiText('Def', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 570)))
     misc_inventory.add(UiText('Spe', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 710)))
     
-    spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [(WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440),]))
+    spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [(WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440)]))
 
     attributes = [3, 5, 7, 2]
     attribute_bars = []
@@ -92,7 +94,20 @@ def main():
     attribute_bars.append(AttributeBar(inventory, (320, 610), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 750), 5))
 
-    
+    tutorial_text.add(TutorialText('ARROW KEYS to move', 'fonts/pixel.ttf', 40, (255, 255, 255), (200, 100), 0))
+    tutorial_text.add(TutorialText('Z to jump', 'fonts/pixel.ttf', 40, (255, 255, 255), (200, 160), 0))
+    tutorial_text.add(TutorialText('SPIKES can kill you', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 800, 160), 0))
+
+    tutorial_text.add(TutorialText('X to attack', 'fonts/pixel.ttf', 40, (255, 255, 255), (900, 400), 1))
+    tutorial_text.add(TutorialText('enemies will drop SPIRIT', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 500, 100), 1))
+    tutorial_text.add(TutorialText('use SPIRIT to UPGRADE', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 500, 200), 1))
+    tutorial_text.add(TutorialText('your character and open DOORS', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 500, 260), 1))
+
+    tutorial_text.add(TutorialText('I to open inventory', 'fonts/pixel.ttf', 40, (255, 255, 255), (300, 400), 2))
+    tutorial_text.add(TutorialText('this is where you EQUIP items,', 'fonts/pixel.ttf', 40, (255, 255, 255), (1000, 500), 2))
+    tutorial_text.add(TutorialText('UPGRADE you character, and see your SPIRIT', 'fonts/pixel.ttf', 40, (255, 255, 255), (1000, 560), 2))
+    tutorial_text.add(TutorialText('UPGRADES use SPIRIT', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 500, 300), 2))
+
     animations.add(AnimatedImage([
         'misc_assets/spirit_fire/frame_00_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_01_delay-0.08s.png',
@@ -123,6 +138,31 @@ def main():
         'misc_assets/spirit_fire/frame_26_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3, False, False, camera, True))
 
+    level_animations.add(AnimatedLevelImage([
+        'misc_assets/heart/frame_0_delay-0.1s.png',
+        'misc_assets/heart/frame_1_delay-0.1s.png',
+        'misc_assets/heart/frame_2_delay-0.1s.png',
+        'misc_assets/heart/frame_3_delay-0.1s.png',
+        'misc_assets/heart/frame_4_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png',
+        'misc_assets/heart/frame_5_delay-0.1s.png'
+    ], (980, 700), 0.3, 7))
+
+
+
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
     for i in range(5):
@@ -133,13 +173,15 @@ def main():
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
     FIRE_ANIM = pygame.USEREVENT + 1
-    #pygame.time.set_timer(FIRE_ANIM, 80)
+    pygame.time.set_timer(FIRE_ANIM, 80)
     ENEMY_ANIM = pygame.USEREVENT + 2
     pygame.time.set_timer(ENEMY_ANIM, 150)
     SMOKE_ANIM = pygame.USEREVENT + 3
     pygame.time.set_timer(SMOKE_ANIM, 40)
     FLAME_ANIM = pygame.USEREVENT + 4
     pygame.time.set_timer(FLAME_ANIM, 300)
+    HEART_ANIM = pygame.USEREVENT + 5
+    pygame.time.set_timer(HEART_ANIM, 100)
     
     loading = 0
 
@@ -216,6 +258,9 @@ def main():
                 if player.flame.sprites():
                     for flame in player.flame.sprites():
                         flame.update_frame()
+
+            if event.type == HEART_ANIM:
+                level_animations.sprites()[0].update_frame()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -376,7 +421,7 @@ def main():
                     border = WIDTH
                 case 6:
                     current_level = 7
-                    player.position = pygame.math.Vector2(864, player.rect.h)
+                    player.position = pygame.math.Vector2(400, player.rect.h)
                     camera.offset = 0
                     border = WIDTH
 
@@ -423,14 +468,23 @@ def main():
 
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
-        
-        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites())
-        camera.scroll()
-        
-        player.draw(screen)
+
+        tutorial_text.update(camera, current_level)
 
         if not inventory.showing:
             enemies.update(dt, camera, tile_rects)
+
+        level_animations.update(current_level)
+        
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites())
+        camera.scroll()
+
+        tutorial_text.draw(screen)
+
+        level_animations.draw(screen)
+
+        player.draw(screen)
+
         enemies.draw(screen)
 
 
@@ -452,6 +506,8 @@ def main():
             animations.draw(screen)
             slots.update(inventory, screen)
             spirit_amount.draw(screen)
+
+        print(player.position)
         
         pygame.display.flip()
         clock.tick(60)
