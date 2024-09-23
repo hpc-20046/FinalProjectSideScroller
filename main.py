@@ -182,6 +182,8 @@ def main():
     pygame.time.set_timer(FLAME_ANIM, 300)
     HEART_ANIM = pygame.USEREVENT + 5
     pygame.time.set_timer(HEART_ANIM, 100)
+    ROLL_ANIM = pygame.USEREVENT + 6
+    pygame.time.set_timer(ROLL_ANIM, 25)
     
     loading = 0
 
@@ -220,6 +222,8 @@ def main():
                         player.attack(camera)
                     if event.key == pygame.K_s:
                         enemies = spawn_enemies([(200, HEIGHT / 2), (400, HEIGHT / 2)])
+                    if event.key == pygame.K_c:
+                        player.roll()
 
                 if event.key == pygame.K_i:
                     if inventory.showing:
@@ -240,7 +244,8 @@ def main():
 
             if not inventory.showing:
                 if event.type == NEW_PLAYER_FRAME:
-                    player.update_frame(player.state)
+                    player.update_frame(player.state, False)
+                    
             
             if event.type == FIRE_ANIM:
                 animations.update(camera)
@@ -261,6 +266,9 @@ def main():
 
             if event.type == HEART_ANIM:
                 level_animations.sprites()[0].update_frame()
+                
+            if event.type == ROLL_ANIM:
+                player.update_frame("roll", True)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -279,19 +287,19 @@ def main():
             if player.RIGHT_KEY:
                 if not player_state == 'run':
                     player_state = 'run'
-                    player.update_frame('run_right')
+                    player.update_frame('run_right', False)
 
             elif player.LEFT_KEY:
                 if not player_state == 'run':
                     player_state = 'run'
-                    player.update_frame('run_left')
+                    player.update_frame('run_left', False)
             else:
                 if not player_state == 'idle':
                     if player.FACING_LEFT:
-                        player.update_frame('idle_left')
+                        player.update_frame('idle_left', False)
                         player_state = 'idle'
                     else:
-                        player.update_frame('idle_right')
+                        player.update_frame('idle_right', False)
                         player_state = 'idle'
 
 

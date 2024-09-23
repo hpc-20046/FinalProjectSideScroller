@@ -45,6 +45,27 @@ class Player:
         self.run_jump_right_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/right/tile032.png'), scale_factor)
         self.run_jump_left_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/left/tile036.png'), scale_factor)
 
+        self.roll_left_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile044.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile045.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile046.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile047.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile052.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile053.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile054.png'), scale_factor),    
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile055.png'), scale_factor)   
+        ]
+        self.roll_right_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile040.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile041.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile042.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile043.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile048.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile049.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile050.png'), scale_factor),        
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile051.png'), scale_factor)       
+        ]
+
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
         self.image = self.idle_right_frames[self.frame_index]
@@ -54,6 +75,7 @@ class Player:
         self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
         
         self.state = "idle_right"
+        self.temp_state = ""
 
         self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False
         self.is_jumping, self.on_ground = False, False
@@ -76,6 +98,13 @@ class Player:
 
         self.damage = 1
         self.spirit = 0
+        
+        self.time = 0
+        self.time_start = 0
+        self.cooldown = 2000
+        self.dash = False
+        self.dashing = False
+        
 
     def draw(self, display):
         self.arc.draw(display)
@@ -84,14 +113,21 @@ class Player:
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
 
     def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies):
+        self.time = pygame.time.get_ticks()
+        if self.time - self.time_start >= 200:
+            self.max_velocity = 4
+            self.dash = False
+            self.dashing = False
+
         self.border = border
         self.arc.update(self, enemies, camera)
         self.flame.update(camera, self)
         if not inventory_showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
-            self.vertical_movement(dt)
-            self.check_collisions_y(tiles, spikes)
+            if not self.dash:
+                self.vertical_movement(dt)
+                self.check_collisions_y(tiles, spikes)
 
     def horizontal_movement(self, dt, camera):
         self.acceleration.x = 0
@@ -163,74 +199,121 @@ class Player:
                 self.velocity.y = 0
                 self.position.y = tile.bottom + self.rect.h
                 self.rect.bottom = self.position.y
-
-    def update_frame(self, state):
-        if not self.on_ground:
-            if abs(self.velocity.x) > 0:
-                if self.FACING_LEFT:
-                    self.image = self.run_jump_left_frames
-                else:
-                    self.image = self.run_jump_right_frames
-            else:
-                if self.FACING_LEFT:
-                    self.image = self.idle_jump_left_frames
-                else:
-                    self.image = self.idle_jump_right_frames
-                    
-            match state:
-                    case "idle_right":
-                        self.state_frames = self.idle_right_frames
-                        self.frame_index = 0
-                        self.state = state
-                    case "idle_left":
-                        self.state_frames = self.idle_left_frames
-                        self.frame_index = 0
-                        self.state = state
-                    case "run_right":
-                        self.state_frames = self.run_right_frames
-                        self.frame_index = 0
-                        self.state = state
-                    case "run_left":
-                        self.state_frames = self.run_left_frames
-                        self.frame_index = 0
-                        self.state = state
-                    case _:
-                        self.state_frames = self.idle_right_frames
-                        self.frame_index = 0
-                        self.state = "idle_right"
+                
+    def roll(self):
+        if not self.time - self.time_start >= self.cooldown:
+            return
+        
+        if self.FACING_LEFT:
+            self.time_start = self.time
+            self.velocity.x -= 20
+            self.velocity.y = 0
+            self.max_velocity = 20
+            self.dash = True
         else:
-            if self.state == state:
-                self.frame_index += 1
-                if self.frame_index >= len(self.state_frames):
+            self.time_start = self.time
+            self.velocity.x += 20
+            self.velocity.y = 0
+            self.max_velocity = 20
+            self.dash = True
+        self.update_frame("roll", True)
+
+
+    def update_frame(self, state, roll):
+        if self.dash:
+            self.temp_state = state
+            if not self.dashing:
+                if self.FACING_LEFT:
+                    self.state_frames = self.roll_left_frames
                     self.frame_index = 0
-                self.image = self.state_frames[self.frame_index]
+                    self.image = self.state_frames[self.frame_index]
+                    self.dashing = True
+                else:
+                    self.state_frames = self.roll_right_frames
+                    self.frame_index = 0
+                    self.image = self.state_frames[self.frame_index]
+                    self.dashing = True
             else:
-                match state:
-                    case "idle_right":
-                        self.state_frames = self.idle_right_frames
-                        self.frame_index = 0
+                if roll:
+                    self.frame_index += 1
+                    if self.frame_index >= len(self.state_frames):
+                        self.frame_index -= 1
+                    self.image = self.state_frames[self.frame_index]
+
+
+
+        else:
+            if not roll:
+                if not self.temp_state == "": 
+                    self.state = self.temp_state
+                    self.temp_state = ""
+
+                if not self.on_ground:
+                    if abs(self.velocity.x) > 0:
+                        if self.FACING_LEFT:
+                            self.image = self.run_jump_left_frames
+                        else:
+                            self.image = self.run_jump_right_frames
+                    else:
+                        if self.FACING_LEFT:
+                            self.image = self.idle_jump_left_frames
+                        else:
+                            self.image = self.idle_jump_right_frames
+                    
+                    match state:
+                            case "idle_right":
+                                self.state_frames = self.idle_right_frames
+                                self.frame_index = 0
+                                self.state = state
+                            case "idle_left":
+                                self.state_frames = self.idle_left_frames
+                                self.frame_index = 0
+                                self.state = state
+                            case "run_right":
+                                self.state_frames = self.run_right_frames
+                                self.frame_index = 0
+                                self.state = state
+                            case "run_left":
+                                self.state_frames = self.run_left_frames
+                                self.frame_index = 0
+                                self.state = state
+                            case _:
+                                self.state_frames = self.idle_right_frames
+                                self.frame_index = 0
+                                self.state = "idle_right"
+                else:
+                    if self.state == state:
+                        self.frame_index += 1
+                        if self.frame_index >= len(self.state_frames):
+                            self.frame_index = 0
                         self.image = self.state_frames[self.frame_index]
-                        self.state = state
-                    case "idle_left":
-                        self.state_frames = self.idle_left_frames
-                        self.frame_index = 0
-                        self.image = self.state_frames[self.frame_index]
-                        self.state = state
-                    case "run_right":
-                        self.state_frames = self.run_right_frames
-                        self.frame_index = 0
-                        self.image = self.state_frames[self.frame_index]
-                        self.state = state
-                    case "run_left":
-                        self.state_frames = self.run_left_frames
-                        self.frame_index = 0
-                        self.image = self.state_frames[self.frame_index]
-                        self.state = state
-                    case _:
-                        self.state_frames = self.idle_right_frames
-                        self.frame_index = 0
-                        self.image = self.state_frames[self.frame_index]
-                        self.state = "idle_right"
+                    else:
+                        match state:
+                            case "idle_right":
+                                self.state_frames = self.idle_right_frames
+                                self.frame_index = 0
+                                self.image = self.state_frames[self.frame_index]
+                                self.state = state
+                            case "idle_left":
+                                self.state_frames = self.idle_left_frames
+                                self.frame_index = 0
+                                self.image = self.state_frames[self.frame_index]
+                                self.state = state
+                            case "run_right":
+                                self.state_frames = self.run_right_frames
+                                self.frame_index = 0
+                                self.image = self.state_frames[self.frame_index]
+                                self.state = state
+                            case "run_left":
+                                self.state_frames = self.run_left_frames
+                                self.frame_index = 0
+                                self.image = self.state_frames[self.frame_index]
+                                self.state = state
+                            case _:
+                                self.state_frames = self.idle_right_frames
+                                self.frame_index = 0
+                                self.image = self.state_frames[self.frame_index]
+                                self.state = "idle_right"
 
     def turn(self, turning_left):
         state = "idle_right"
@@ -241,7 +324,7 @@ class Player:
         elif turning_left:
             state = "run_left"
 
-        self.update_frame(state)
+        self.update_frame(state, False)
 
     def attack(self, camera):
         if not self.arc.sprites():
