@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 6
+    current_level = 0
 
     border = WIDTH * 2
 
@@ -168,6 +168,8 @@ def main():
     for i in range(5):
         slots.add(EquipSlot(inventory, i + 1, 4.5))
 
+    health_bar = HealthBar(2.5, (60, HEIGHT - 80))
+
     enemies = pygame.sprite.Group()
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
@@ -183,7 +185,7 @@ def main():
     HEART_ANIM = pygame.USEREVENT + 5
     pygame.time.set_timer(HEART_ANIM, 100)
     ROLL_ANIM = pygame.USEREVENT + 6
-    pygame.time.set_timer(ROLL_ANIM, 25)
+    pygame.time.set_timer(ROLL_ANIM, 50)
     
     loading = 0
 
@@ -221,7 +223,7 @@ def main():
                     if event.key == pygame.K_x:
                         player.attack(camera)
                     if event.key == pygame.K_s:
-                        enemies = spawn_enemies([(200, HEIGHT / 2), (400, HEIGHT / 2)])
+                        health_bar.damage(10)
                     if event.key == pygame.K_c:
                         player.roll()
 
@@ -480,7 +482,7 @@ def main():
         tutorial_text.update(camera, current_level)
 
         if not inventory.showing:
-            enemies.update(dt, camera, tile_rects)
+            enemies.update(dt, camera, tile_rects, health_bar, player)
 
         level_animations.update(current_level)
         
@@ -494,7 +496,6 @@ def main():
         player.draw(screen)
 
         enemies.draw(screen)
-
 
 
         inventory.draw(screen)
@@ -514,6 +515,8 @@ def main():
             animations.draw(screen)
             slots.update(inventory, screen)
             spirit_amount.draw(screen)
+        else:
+            health_bar.draw(screen)
 
         print(player.position)
         

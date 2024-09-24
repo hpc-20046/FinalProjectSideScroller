@@ -379,3 +379,26 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.showing = False
 
 
+class HealthBar:
+    def __init__(self, scale, pos):
+        self.empty = pygame.transform.scale_by(pygame.image.load('ui/MinimalFantasy/ValueBar_128x16.png'), scale)
+        self.bar = pygame.transform.scale_by(pygame.image.load('ui/MinimalFantasy/ValueRed_120x8.png'), scale)
+        self.offset = pygame.math.Vector2(4, 4)
+
+        self.rect = self.empty.get_rect(topleft=pos)
+        self.bar_rect = self.bar.get_rect(topleft=(pos[0] + self.offset.x * scale, pos[1] + self.offset.y * scale))
+
+        self.amount = 100
+
+    def draw(self, display):
+        bar_width = self.bar_rect.w * (self.amount / 100)
+
+        display.blit(self.empty, self.rect)
+        display.blit(self.bar, self.bar_rect, area=(0, 0, bar_width, self.bar_rect.h))
+
+    def damage(self, damage):
+        self.amount -= damage
+        if self.amount < 0:
+            self.amount = 0
+
+

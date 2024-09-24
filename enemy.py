@@ -4,7 +4,7 @@ import random
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, idle_images, walk_images, pos, scale, health):
+    def __init__(self, idle_images, walk_images, pos, scale, health, damage):
         pygame.sprite.Sprite.__init__(self)
         
         self.idle_right_images = []
@@ -41,6 +41,7 @@ class Enemy(pygame.sprite.Sprite):
         self.terminal_velocity = 10
 
         self.health = health
+        self.damage = damage
         
     def update_frame(self):
         self.index += 1
@@ -60,7 +61,7 @@ class Enemy(pygame.sprite.Sprite):
             self.index = 0
             self.image = self.current_frames[self.index]
 
-    def update(self, dt, camera, tiles):
+    def update(self, dt, camera, tiles, bar, player):
         self.current_time = pygame.time.get_ticks()
         if self.current_time - self.timer_start >= self.time_until_state_change:
             if self.state == 'idle':
@@ -92,6 +93,8 @@ class Enemy(pygame.sprite.Sprite):
         self.x_collisions(tiles)
         self.y_movement(dt)
         self.y_collisions(tiles)
+
+        self.check_player_collisions(bar, player)
 
 
     def y_movement(self, dt):
@@ -168,4 +171,8 @@ class Enemy(pygame.sprite.Sprite):
         else:
             self.velocity.x = 15
             self.velocity.y = -5
+
+    def check_player_collisions(self, bar, player):
+        if player.rect.colliderect(self.rect):
+            bar.damage(self.damage)
             

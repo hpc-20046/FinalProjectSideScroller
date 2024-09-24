@@ -101,7 +101,7 @@ class Player:
         
         self.time = 0
         self.time_start = 0
-        self.cooldown = 2000
+        self.cooldown = 1500
         self.dash = False
         self.dashing = False
         
@@ -114,7 +114,7 @@ class Player:
 
     def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies):
         self.time = pygame.time.get_ticks()
-        if self.time - self.time_start >= 200:
+        if self.time - self.time_start >= 400:
             self.max_velocity = 4
             self.dash = False
             self.dashing = False
@@ -206,15 +206,15 @@ class Player:
         
         if self.FACING_LEFT:
             self.time_start = self.time
-            self.velocity.x -= 20
+            self.velocity.x -= 10
             self.velocity.y = 0
-            self.max_velocity = 20
+            self.max_velocity = 10
             self.dash = True
         else:
             self.time_start = self.time
-            self.velocity.x += 20
+            self.velocity.x += 10
             self.velocity.y = 0
-            self.max_velocity = 20
+            self.max_velocity = 10
             self.dash = True
         self.update_frame("roll", True)
 

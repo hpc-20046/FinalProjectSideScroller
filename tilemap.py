@@ -22,7 +22,7 @@ def spawn_enemies(pos):
                   'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
                                                                    'enemies/TinyDungeon/skelet_run_anim_f1.png',
                                                                    'enemies/TinyDungeon/skelet_run_anim_f2.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], pos[i], 3, 5))
+                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], pos[i], 3, 5, 5))
     return group
 
 
