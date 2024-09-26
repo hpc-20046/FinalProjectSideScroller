@@ -44,7 +44,6 @@ class Player:
         self.idle_jump_right_frames = pygame.transform.scale_by(pygame.image.load('player/idle_jump/right/tile024.png'), scale_factor)
         self.run_jump_right_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/right/tile032.png'), scale_factor)
         self.run_jump_left_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/left/tile036.png'), scale_factor)
-
         self.roll_left_frames = [
             pygame.transform.scale_by(pygame.image.load('player/roll/left/tile044.png'), scale_factor),    
             pygame.transform.scale_by(pygame.image.load('player/roll/left/tile045.png'), scale_factor),    
@@ -65,6 +64,19 @@ class Player:
             pygame.transform.scale_by(pygame.image.load('player/roll/right/tile050.png'), scale_factor),        
             pygame.transform.scale_by(pygame.image.load('player/roll/right/tile051.png'), scale_factor)       
         ]
+        self.hit_right_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/hit/right/tile064.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/hit/right/tile065.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/hit/right/tile066.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/hit/right/tile067.png'), scale_factor)
+        ]
+        self.hit_left_frames = [
+            pygame.transform.scale_by(pygame.image.load('player/hit/left/tile068.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/hit/left/tile069.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/hit/left/tile070.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/hit/left/tile071.png'), scale_factor)
+        ]
+
 
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
@@ -104,6 +116,8 @@ class Player:
         self.cooldown = 1500
         self.dash = False
         self.dashing = False
+        self.hit = False
+        self.hurt = False
         
 
     def draw(self, display):
@@ -216,10 +230,10 @@ class Player:
             self.velocity.y = 0
             self.max_velocity = 10
             self.dash = True
-        self.update_frame("roll", True)
+        self.update_frame("roll", True, False)
 
 
-    def update_frame(self, state, roll):
+    def update_frame(self, state, roll, hit):
         if self.dash:
             self.temp_state = state
             if not self.dashing:
@@ -239,13 +253,55 @@ class Player:
                     if self.frame_index >= len(self.state_frames):
                         self.frame_index -= 1
                     self.image = self.state_frames[self.frame_index]
-
-
+                    
+        elif self.hit:
+            self.temp_state = state
+            if not self.hurt:
+                if self.FACING_LEFT:
+                    self.state_frames = self.hit_left_frames
+                    self.frame_index = 0
+                    self.image = self.state_frames[self.frame_index]
+                    self.hurt = True
+                else:
+                    self.state_frames = self.hit_right_frames
+                    self.frame_index = 0
+                    self.image = self.state_frames[self.frame_index]
+                    self.hurt = True
+            else:
+                if hit:
+                    self.frame_index += 1
+                    if self.frame_index >= len(self.state_frames):
+                        self.frame_index -= 1
+                        self.hit = False
+                        self.hurt = False
+                    self.image = self.state_frames[self.frame_index]
 
         else:
-            if not roll:
+            if not roll and not hit:
                 if not self.temp_state == "": 
-                    self.state = self.temp_state
+                    
+                    match self.temp_state:
+                            case "idle_right":
+                                self.state_frames = self.idle_right_frames
+                                self.frame_index = 0
+                                self.state = self.temp_state
+                            case "idle_left":
+                                self.state_frames = self.idle_left_frames
+                                self.frame_index = 0
+                                self.state = self.temp_state
+                            case "run_right":
+                                self.state_frames = self.run_right_frames
+                                self.frame_index = 0
+                                self.state = self.temp_state
+                            case "run_left":
+                                self.state_frames = self.run_left_frames
+                                self.frame_index = 0
+                                self.state = self.temp_state
+                            case _:
+                                self.state_frames = self.idle_right_frames
+                                self.frame_index = 0
+                                self.state = "idle_right"
+
                     self.temp_state = ""
 
                 if not self.on_ground:
@@ -324,7 +380,7 @@ class Player:
         elif turning_left:
             state = "run_left"
 
-        self.update_frame(state, False)
+        self.update_frame(state, False, False)
 
     def attack(self, camera):
         if not self.arc.sprites():

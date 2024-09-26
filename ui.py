@@ -389,6 +389,18 @@ class HealthBar:
         self.bar_rect = self.bar.get_rect(topleft=(pos[0] + self.offset.x * scale, pos[1] + self.offset.y * scale))
 
         self.amount = 100
+        
+        self.time = 0
+        self.iframe_start = 0
+        self.iframe_length = 500
+        
+        self.damageable = True
+        
+    def update(self):
+        self.time = pygame.time.get_ticks()
+        
+        if self.time - self.iframe_start >= self.iframe_length:
+            self.damageable = True
 
     def draw(self, display):
         bar_width = self.bar_rect.w * (self.amount / 100)
@@ -396,9 +408,14 @@ class HealthBar:
         display.blit(self.empty, self.rect)
         display.blit(self.bar, self.bar_rect, area=(0, 0, bar_width, self.bar_rect.h))
 
-    def damage(self, damage):
-        self.amount -= damage
-        if self.amount < 0:
-            self.amount = 0
+    def damage(self, damage, player):
+        if self.damageable:
+            self.amount -= damage
+            if self.amount < 0:
+                self.amount = 0
+            self.iframe_start = self.time
+            self.damageable = False
+            player.hit = True
+
 
 

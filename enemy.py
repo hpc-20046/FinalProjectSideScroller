@@ -174,5 +174,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def check_player_collisions(self, bar, player):
         if player.rect.colliderect(self.rect):
-            bar.damage(self.damage)
+            bar.damage(self.damage, player)
+            
+    
             

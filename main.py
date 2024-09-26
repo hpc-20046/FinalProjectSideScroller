@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 0
+    current_level = 1
 
     border = WIDTH * 2
 
@@ -186,6 +186,8 @@ def main():
     pygame.time.set_timer(HEART_ANIM, 100)
     ROLL_ANIM = pygame.USEREVENT + 6
     pygame.time.set_timer(ROLL_ANIM, 50)
+    HIT_ANIM = pygame.USEREVENT + 7
+    pygame.time.set_timer(HIT_ANIM, 80)
     
     loading = 0
 
@@ -246,7 +248,7 @@ def main():
 
             if not inventory.showing:
                 if event.type == NEW_PLAYER_FRAME:
-                    player.update_frame(player.state, False)
+                    player.update_frame(player.state, False, False)
                     
             
             if event.type == FIRE_ANIM:
@@ -270,7 +272,10 @@ def main():
                 level_animations.sprites()[0].update_frame()
                 
             if event.type == ROLL_ANIM:
-                player.update_frame("roll", True)
+                player.update_frame("roll", True, False)
+                
+            if event.type == HIT_ANIM:
+                player.update_frame("hit", False, True)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -289,19 +294,19 @@ def main():
             if player.RIGHT_KEY:
                 if not player_state == 'run':
                     player_state = 'run'
-                    player.update_frame('run_right', False)
+                    player.update_frame('run_right', False, False)
 
             elif player.LEFT_KEY:
                 if not player_state == 'run':
                     player_state = 'run'
-                    player.update_frame('run_left', False)
+                    player.update_frame('run_left', False, False)
             else:
                 if not player_state == 'idle':
                     if player.FACING_LEFT:
-                        player.update_frame('idle_left', False)
+                        player.update_frame('idle_left', False, False)
                         player_state = 'idle'
                     else:
-                        player.update_frame('idle_right', False)
+                        player.update_frame('idle_right', False, False)
                         player_state = 'idle'
 
 
@@ -485,6 +490,8 @@ def main():
             enemies.update(dt, camera, tile_rects, health_bar, player)
 
         level_animations.update(current_level)
+        
+        health_bar.update()
         
         player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites())
         camera.scroll()
