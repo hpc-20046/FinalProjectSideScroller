@@ -388,7 +388,7 @@ class HealthBar:
         self.rect = self.empty.get_rect(topleft=pos)
         self.bar_rect = self.bar.get_rect(topleft=(pos[0] + self.offset.x * scale, pos[1] + self.offset.y * scale))
 
-        self.amount = 100
+        self.amount = 30
         
         self.time = 0
         self.iframe_start = 0

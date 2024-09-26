@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 1
+    current_level = 0
 
     border = WIDTH * 2
 
@@ -187,7 +187,7 @@ def main():
     ROLL_ANIM = pygame.USEREVENT + 6
     pygame.time.set_timer(ROLL_ANIM, 50)
     HIT_ANIM = pygame.USEREVENT + 7
-    pygame.time.set_timer(HIT_ANIM, 80)
+    pygame.time.set_timer(HIT_ANIM, 150)
     
     loading = 0
 
@@ -211,23 +211,24 @@ def main():
                     running = False
                     
                 if not inventory.showing:
-                    if event.key == pygame.K_LEFT:
-                        player.turn(True)
-                        player.RIGHT_KEY = False
-                        player.LEFT_KEY, player.FACING_LEFT = True, True
-                    elif event.key == pygame.K_RIGHT:
-                        player.turn(False)
-                        player.LEFT_KEY = False
-                        player.RIGHT_KEY, player.FACING_LEFT = True, False
-                    elif event.key == pygame.K_z:
-                        player.jump()
+                    if not player.dead:
+                        if event.key == pygame.K_LEFT:
+                            player_state = player.turn(True, player_state)
+                            player.RIGHT_KEY = False
+                            player.LEFT_KEY, player.FACING_LEFT = True, True
+                        elif event.key == pygame.K_RIGHT:
+                            player_state = player.turn(False, player_state)
+                            player.LEFT_KEY = False
+                            player.RIGHT_KEY, player.FACING_LEFT = True, False
+                        elif event.key == pygame.K_z:
+                            player.jump()
 
-                    if event.key == pygame.K_x:
-                        player.attack(camera)
-                    if event.key == pygame.K_s:
-                        health_bar.damage(10)
-                    if event.key == pygame.K_c:
-                        player.roll()
+                        if event.key == pygame.K_x:
+                            player.attack(camera)
+                        if event.key == pygame.K_s:
+                            health_bar.damage(10, player)
+                        if event.key == pygame.K_c:
+                            player.roll()
 
                 if event.key == pygame.K_i:
                     if inventory.showing:
@@ -248,7 +249,7 @@ def main():
 
             if not inventory.showing:
                 if event.type == NEW_PLAYER_FRAME:
-                    player.update_frame(player.state, False, False)
+                    player_state = player.update_frame(player.state, False, False, player_state)
                     
             
             if event.type == FIRE_ANIM:
@@ -272,10 +273,10 @@ def main():
                 level_animations.sprites()[0].update_frame()
                 
             if event.type == ROLL_ANIM:
-                player.update_frame("roll", True, False)
+                player_state = player.update_frame("roll", True, False, player_state)
                 
             if event.type == HIT_ANIM:
-                player.update_frame("hit", False, True)
+                player_state = player.update_frame("hit", False, True, player_state)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
@@ -291,23 +292,24 @@ def main():
 
         
         if not inventory.showing:
-            if player.RIGHT_KEY:
-                if not player_state == 'run':
-                    player_state = 'run'
-                    player.update_frame('run_right', False, False)
+            if not player.dead:
+                if player.RIGHT_KEY:
+                    if not player_state == 'run':
+                        player_state = 'run'
+                        player_state = player.update_frame('run_right', False, False, player_state)
 
-            elif player.LEFT_KEY:
-                if not player_state == 'run':
-                    player_state = 'run'
-                    player.update_frame('run_left', False, False)
-            else:
-                if not player_state == 'idle':
-                    if player.FACING_LEFT:
-                        player.update_frame('idle_left', False, False)
-                        player_state = 'idle'
-                    else:
-                        player.update_frame('idle_right', False, False)
-                        player_state = 'idle'
+                elif player.LEFT_KEY:
+                    if not player_state == 'run':
+                        player_state = 'run'
+                        player_state = player.update_frame('run_left', False, False, player_state)
+                else:
+                    if not player_state == 'idle':
+                        if player.FACING_LEFT:
+                            player.update_frame('idle_left', False, False, player_state)
+                            player_state = player_state = 'idle'
+                        else:
+                            player.update_frame('idle_right', False, False, player_state)
+                            player_state = player_state = 'idle'
 
 
 
@@ -493,7 +495,8 @@ def main():
         
         health_bar.update()
         
-        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites())
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites(), health_bar)
+        
         camera.scroll()
 
         tutorial_text.draw(screen)
