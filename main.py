@@ -223,12 +223,15 @@ def main():
                         elif event.key == pygame.K_z:
                             player.jump()
 
+
                         if event.key == pygame.K_x:
                             player.attack(camera)
                         if event.key == pygame.K_s:
                             health_bar.damage(10, player)
                         if event.key == pygame.K_c:
                             player.roll()
+                    else:
+                        player.LEFT_KEY, player.RIGHT_KEY = False, False
 
                 if event.key == pygame.K_i:
                     if inventory.showing:
@@ -495,7 +498,7 @@ def main():
         
         health_bar.update()
         
-        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites(), health_bar)
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites(), health_bar, current_level)
         
         camera.scroll()
 

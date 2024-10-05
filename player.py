@@ -125,14 +125,17 @@ class Player:
         
         self.time = 0
         self.time_start = 0
+        self.death_time_start = 0
         self.cooldown = 1500
         self.dash = False
         self.dashing = False
         self.hit = False
         self.hurt = False
         self.dead = False
+
         self.death_anim = False
         self.alternate = False
+        self.temp_facing = False
         
 
     def draw(self, display):
@@ -141,7 +144,7 @@ class Player:
         self.poof.draw(display)
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
 
-    def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies, bar):
+    def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies, bar, current_level):
         self.time = pygame.time.get_ticks()
         if self.time - self.time_start >= 400:
             self.max_velocity = 4
@@ -157,6 +160,11 @@ class Player:
             if not self.dash:
                 self.vertical_movement(dt)
                 self.check_collisions_y(tiles, spikes)
+
+        if self.time - self.death_time_start >= 3000 and self.death_anim:
+            self.dead = False
+            self.death_anim = False
+            self.respawn(current_level, camera)
                 
         if bar.amount <= 0:
             self.dead = True
@@ -228,6 +236,8 @@ class Player:
         self.on_ground = False
         self.rect.bottom += 1
         collisions, spike = self.get_collisions(tiles, spikes)
+        if spike:
+            self.dead = True
         for tile in collisions:
             if self.velocity.y > 0:
                 self.on_ground = True
@@ -239,8 +249,7 @@ class Player:
                 self.velocity.y = 0
                 self.position.y = tile.bottom + self.rect.h
                 self.rect.bottom = self.position.y
-        if spike:
-            self.dead = True
+
                 
     def roll(self):
         if not self.time - self.time_start >= self.cooldown:
@@ -263,17 +272,21 @@ class Player:
 
     def update_frame(self, state, roll, hit, player_state):
         if self.dead:
+            self.temp_state = state
             if not self.death_anim:
                 if self.FACING_LEFT:
                     self.state_frames = self.death_left_frames
                     self.frame_index = 0
                     self.image = self.state_frames[self.frame_index]
                     self.death_anim = True
+                    self.rect.bottom = self.position.y
                 else:
                     self.state_frames = self.death_right_frames
                     self.frame_index = 0
                     self.image = self.state_frames[self.frame_index]
                     self.death_anim = True
+                    self.rect.bottom = self.position.y
+                self.death_time_start = self.time
             else:
                 if not roll and not hit:
                     if self.alternate:
@@ -283,11 +296,6 @@ class Player:
                         self.image = self.state_frames[self.frame_index]
                     
                     self.alternate = not self.alternate
-                
-
-
-
-
 
         else:
             if self.dash:
@@ -323,8 +331,16 @@ class Player:
                         self.frame_index = 0
                         self.image = self.state_frames[self.frame_index]
                         self.hurt = True
+                    self.temp_facing = self.FACING_LEFT
                 else:
                     if hit:
+                        if self.temp_facing != self.FACING_LEFT:
+                            if self.FACING_LEFT:
+                                self.state_frames = self.hit_left_frames
+                            else:
+                                self.state_frames = self.hit_right_frames
+                            self.temp_facing = self.FACING_LEFT
+
                         self.frame_index += 1
                         if self.frame_index >= len(self.state_frames):
                             self.frame_index -= 1
@@ -428,7 +444,26 @@ class Player:
                                     self.frame_index = 0
                                     self.image = self.state_frames[self.frame_index]
                                     self.state = "idle_right"
+
+
+
+
         return player_state
+
+    def respawn(self, current_level, camera):
+        match current_level:
+            case 0:
+                self.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                camera.offset_float = 0
+                self.velocity.y = 0
+            case 1:
+                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                camera.offset_float = 0
+                self.velocity.y = 0
+            case 2:
+                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                camera.offset_float = 0
+                self.velocity.y = 0
 
     def turn(self, turning_left, player_state):
         state = "idle_right"
