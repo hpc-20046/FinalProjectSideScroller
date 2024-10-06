@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 0
+    current_level = 2
 
     border = WIDTH * 2
 
@@ -290,6 +290,8 @@ def main():
 
                 if inventory.moving_slot != -1:
                     inventory.moving_slot = -1
+                elif inventory.moving_equip_slot != -1:
+                    inventory.moving_equip_slot = -1
 
 
 
@@ -318,6 +320,8 @@ def main():
 
         if player.rect.x > WIDTH - player.rect.w:
             enemies.empty()
+            player.flame.empty()
+            player.item.empty()
             match current_level:
                 case 0:
                     current_level = 1
@@ -327,7 +331,7 @@ def main():
                     camera.offset = 0
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)])
+                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)], [1, 1, 1, 1, 1])
                 case 1:
                     current_level = 2
                     player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
@@ -336,7 +340,7 @@ def main():
                     camera.offset = 0
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(994, 800), (3193, 760)])
+                    enemies = spawn_enemies([(994, 800), (3193, 760)], [2, 1])
                 case 2:
                     current_level = 3
                     player.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
@@ -366,7 +370,7 @@ def main():
                     camera.offset = 0
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)])
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 1, 1, 1, 1, 1])
                 case 8:
                     print("END")
                 case _:
@@ -374,6 +378,8 @@ def main():
 
         elif player.rect.x < 0:
             enemies.empty()
+            player.flame.empty()
+            player.item.empty()
             match current_level:
                 case 1:
                     current_level = 0
@@ -390,7 +396,7 @@ def main():
                     camera.offset = WIDTH
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)])
+                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)], [1, 1, 1, 1, 1])
                 case 3:
                     current_level = 2
                     player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
@@ -399,7 +405,7 @@ def main():
                     camera.offset = WIDTH
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(994, 800), (3193, 760)])
+                    enemies = spawn_enemies([(994, 800), (3193, 760)], [1, 1])
                 case 4:
                     current_level = 5
                     player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
@@ -408,7 +414,7 @@ def main():
                     camera.offset = WIDTH
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)])
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 1, 1, 1, 1, 1])
                 case 5:
                     current_level = 6
                     player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 200)
@@ -428,6 +434,8 @@ def main():
 
         elif player.rect.y > HEIGHT:
             enemies.empty()
+            player.flame.empty()
+            player.item.empty()
             match current_level:
                 case 3:
                     current_level = 10
@@ -458,6 +466,8 @@ def main():
 
         elif player.rect.y < 0:
             enemies.empty()
+            player.flame.empty()
+            player.item.empty()
             match current_level:
                 case 2:
                     current_level = 9
@@ -498,7 +508,7 @@ def main():
         
         health_bar.update()
         
-        player.update(dt, tile_rects, spike_rects, border, camera, inventory.showing, enemies.sprites(), health_bar, current_level)
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
         
         camera.scroll()
 
@@ -509,7 +519,6 @@ def main():
         player.draw(screen)
 
         enemies.draw(screen)
-
 
         inventory.draw(screen)
         if inventory.showing:

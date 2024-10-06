@@ -4,7 +4,7 @@ import random
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, idle_images, walk_images, pos, scale, health, damage):
+    def __init__(self, idle_images, walk_images, pos, scale, health, damage, etype):
         pygame.sprite.Sprite.__init__(self)
         
         self.idle_right_images = []
@@ -42,6 +42,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.health = health
         self.damage = damage
+        self.type = etype
         
     def update_frame(self):
         self.index += 1

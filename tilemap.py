@@ -13,16 +13,39 @@ def load_tiles(path):
     total_tiles = len(tile_surfaces)
     return tile_surfaces, total_tiles
 
-def spawn_enemies(pos):
+def spawn_enemies(pos, etype):
     group = pygame.sprite.Group()
     for i in range(len(pos)):
-        group.add(Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f1.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f2.png',
-                  'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f1.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f2.png',
-                                                                   'enemies/TinyDungeon/skelet_run_anim_f3.png'], pos[i], 3, 5, 5))
+        match etype[i]:
+            case 1:
+                group.add(Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                          'enemies/TinyDungeon/skelet_idle_anim_f1.png',
+                          'enemies/TinyDungeon/skelet_idle_anim_f2.png',
+                          'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
+                                                                           'enemies/TinyDungeon/skelet_run_anim_f1.png',
+                                                                           'enemies/TinyDungeon/skelet_run_anim_f2.png',
+                                                                           'enemies/TinyDungeon/skelet_run_anim_f3.png'], pos[i], 3, 5, 5, etype[i]))
+            case 2:
+                group.add(Enemy([
+                    'enemies/TinyDungeon/goblin_idle_anim_f0.png',
+                    'enemies/TinyDungeon/goblin_idle_anim_f1.png',
+                    'enemies/TinyDungeon/goblin_idle_anim_f2.png',
+                    'enemies/TinyDungeon/goblin_idle_anim_f3.png',
+                ], [
+                    'enemies/TinyDungeon/goblin_run_anim_f0.png',
+                    'enemies/TinyDungeon/goblin_run_anim_f1.png',
+                    'enemies/TinyDungeon/goblin_run_anim_f2.png',
+                    'enemies/TinyDungeon/goblin_run_anim_f3.png',
+                ], pos[i], 3, 7, 5, etype[i]))
+            case _:
+                group.add(Enemy(['enemies/TinyDungeon/skelet_idle_anim_f0.png',
+                                 'enemies/TinyDungeon/skelet_idle_anim_f1.png',
+                                 'enemies/TinyDungeon/skelet_idle_anim_f2.png',
+                                 'enemies/TinyDungeon/skelet_idle_anim_f3.png'], ['enemies/TinyDungeon/skelet_run_anim_f0.png',
+                                                                                  'enemies/TinyDungeon/skelet_run_anim_f1.png',
+                                                                                  'enemies/TinyDungeon/skelet_run_anim_f2.png',
+                                                                                  'enemies/TinyDungeon/skelet_run_anim_f3.png'],
+                                pos[i], 3, 5, 5, etype[i]))
     return group
 
 

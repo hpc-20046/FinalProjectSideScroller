@@ -1,13 +1,13 @@
+import random
 import pygame
 from settings import *
 from spirit import SpiritFlame
-from ui import AnimatedImage
-import spirit
+from ui import AnimatedImage, Item
 
 
 class Player:
     def __init__(self, start_x, start_y, scale_factor, border):
-        
+
         self.idle_right_frames = [
             pygame.transform.scale_by(pygame.image.load("player/idle/right/tile000.png"), scale_factor),
             pygame.transform.scale_by(pygame.image.load("player/idle/right/tile001.png"), scale_factor),
@@ -45,24 +45,24 @@ class Player:
         self.run_jump_right_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/right/tile032.png'), scale_factor)
         self.run_jump_left_frames = pygame.transform.scale_by(pygame.image.load('player/run_jump/left/tile036.png'), scale_factor)
         self.roll_left_frames = [
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile044.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile045.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile046.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile047.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile052.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile053.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile054.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile055.png'), scale_factor)   
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile044.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile045.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile046.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile047.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile052.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile053.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile054.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/left/tile055.png'), scale_factor)
         ]
         self.roll_right_frames = [
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile040.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile041.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile042.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile043.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile048.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile049.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile050.png'), scale_factor),        
-            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile051.png'), scale_factor)       
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile040.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile041.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile042.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile043.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile048.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile049.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile050.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/roll/right/tile051.png'), scale_factor)
         ]
         self.hit_right_frames = [
             pygame.transform.scale_by(pygame.image.load('player/hit/right/tile064.png'), scale_factor),
@@ -77,10 +77,10 @@ class Player:
             pygame.transform.scale_by(pygame.image.load('player/hit/left/tile071.png'), scale_factor)
         ]
         self.death_left_frames = [
-            pygame.transform.scale_by(pygame.image.load('player/death/left/tile076.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/death/left/tile077.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/death/left/tile078.png'), scale_factor),    
-            pygame.transform.scale_by(pygame.image.load('player/death/left/tile079.png'), scale_factor)    
+            pygame.transform.scale_by(pygame.image.load('player/death/left/tile076.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/death/left/tile077.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/death/left/tile078.png'), scale_factor),
+            pygame.transform.scale_by(pygame.image.load('player/death/left/tile079.png'), scale_factor)
         ]
         self.death_right_frames = [
             pygame.transform.scale_by(pygame.image.load('player/death/right/tile072.png'), scale_factor),
@@ -97,7 +97,7 @@ class Player:
         self.border = border
 
         self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
-        
+
         self.state = "idle_right"
         self.temp_state = ""
 
@@ -119,10 +119,11 @@ class Player:
         self.arc = pygame.sprite.Group()
         self.poof = pygame.sprite.Group()
         self.flame = pygame.sprite.Group()
+        self.item = pygame.sprite.Group()
 
-        self.damage = 1
+        self.damage = 5
         self.spirit = 0
-        
+
         self.time = 0
         self.time_start = 0
         self.death_time_start = 0
@@ -132,19 +133,19 @@ class Player:
         self.hit = False
         self.hurt = False
         self.dead = False
-
         self.death_anim = False
         self.alternate = False
         self.temp_facing = False
-        
+
 
     def draw(self, display):
         self.arc.draw(display)
         self.flame.draw(display)
+        self.item.draw(display)
         self.poof.draw(display)
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
 
-    def update(self, dt, tiles, spikes, border, camera, inventory_showing, enemies, bar, current_level):
+    def update(self, dt, tiles, spikes, border, camera, inventory, enemies, bar, current_level):
         self.time = pygame.time.get_ticks()
         if self.time - self.time_start >= 400:
             self.max_velocity = 4
@@ -154,7 +155,8 @@ class Player:
         self.border = border
         self.arc.update(self, enemies, camera)
         self.flame.update(camera, self)
-        if not inventory_showing:
+        self.item.update(self, camera, inventory)
+        if not inventory.showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
             if not self.dash:
@@ -164,8 +166,10 @@ class Player:
         if self.time - self.death_time_start >= 3000 and self.death_anim:
             self.dead = False
             self.death_anim = False
-            self.respawn(current_level, camera)
-                
+            self.hit = False
+            self.hurt = False
+            self.respawn(current_level, camera, bar)
+
         if bar.amount <= 0:
             self.dead = True
 
@@ -206,7 +210,7 @@ class Player:
         for tile in tiles:
             if self.rect.colliderect(tile):
                 hits.append(tile)
-                
+
         for spike in spikes:
             if self.rect.colliderect(spike):
                 impaled = True
@@ -250,11 +254,11 @@ class Player:
                 self.position.y = tile.bottom + self.rect.h
                 self.rect.bottom = self.position.y
 
-                
+
     def roll(self):
         if not self.time - self.time_start >= self.cooldown:
             return
-        
+
         if self.FACING_LEFT:
             self.time_start = self.time
             self.velocity.x -= 10
@@ -294,7 +298,7 @@ class Player:
                         if self.frame_index >= len(self.state_frames):
                             self.frame_index -= 1
                         self.image = self.state_frames[self.frame_index]
-                    
+
                     self.alternate = not self.alternate
 
         else:
@@ -317,7 +321,7 @@ class Player:
                         if self.frame_index >= len(self.state_frames):
                             self.frame_index -= 1
                         self.image = self.state_frames[self.frame_index]
-                    
+
             elif self.hit:
                 self.temp_state = state
                 if not self.hurt:
@@ -350,8 +354,8 @@ class Player:
 
             else:
                 if not roll and not hit:
-                    if not self.temp_state == "": 
-                    
+                    if not self.temp_state == "":
+
                         player_state = ""
 
                         match self.temp_state:
@@ -389,7 +393,7 @@ class Player:
                                 self.image = self.idle_jump_left_frames
                             else:
                                 self.image = self.idle_jump_right_frames
-                    
+
                         match state:
                                 case "idle_right":
                                     self.state_frames = self.idle_right_frames
@@ -450,7 +454,7 @@ class Player:
 
         return player_state
 
-    def respawn(self, current_level, camera):
+    def respawn(self, current_level, camera, bar):
         match current_level:
             case 0:
                 self.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
@@ -464,6 +468,44 @@ class Player:
                 self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
                 camera.offset_float = 0
                 self.velocity.y = 0
+            case 3:
+                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
+                camera.offset_float = 0
+                self.velocity.y = 0
+            case 4:
+                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
+                camera.offset_float = 0
+                self.velocity.y = 0
+            case 5:
+                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                camera.offset_float = 0
+                self.velocity.y = 0
+            case 6:
+                self.position = pygame.math.Vector2(WIDTH - self.rect.w, HEIGHT / 2 + 200)
+                camera.offset_float = WIDTH
+                self.velocity.y = 0
+            case 7:
+                self.position = pygame.math.Vector2(400, self.rect.h)
+                camera.offset_float = WIDTH
+                self.velocity.y = 0
+            case 8:
+                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                camera.offset_float = 0
+                self.velocity.y = 0
+            case 9:
+                self.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT)
+                camera.offset_float = 0
+                self.velocity.y = -10
+            case 10:
+                self.position = pygame.math.Vector2(870, self.rect.h)
+                camera.offset_float = 0
+                self.velocity.y = 0
+
+        if bar.amount > 0:
+            bar.damage(10, self)
+        else:
+            bar.amount = 100
+
 
     def turn(self, turning_left, player_state):
         state = "idle_right"
@@ -475,7 +517,7 @@ class Player:
             state = "run_left"
 
         player_state = self.update_frame(state, False, False, player_state)
-        
+
         return player_state
 
     def attack(self, camera):
@@ -562,8 +604,12 @@ class Arc(pygame.sprite.Sprite):
                     "misc_assets/smoke_fx/tile263.png",
                 ], (kill.position.x, kill.position.y - kill.rect.h - 10), 1, True, True, camera, False))
 
-                player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h), 3, (1, 3)))
-
+                if kill.type == 2:
+                    player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), 1, 1.5))
+                else:
+                    player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h - 20), 3, (1, 3)))
+                    if random.random() <= 0.2:
+                        player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), random.randrange(1, 6), 1.5))
 
     def check_kill(self, enemies):
         hits = []

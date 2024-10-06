@@ -1,5 +1,4 @@
 import math
-from typing import Any
 import pygame
 from settings import *
 
@@ -16,7 +15,7 @@ class Inventory:
 
         self.showing = False
 
-        self.inventory = [1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.inventory = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         self.equip = [0, 0, 0, 0, 3]
         self.moving_slot = -1
         self.moving_equip_slot = -1
@@ -388,7 +387,8 @@ class HealthBar:
         self.rect = self.empty.get_rect(topleft=pos)
         self.bar_rect = self.bar.get_rect(topleft=(pos[0] + self.offset.x * scale, pos[1] + self.offset.y * scale))
 
-        self.amount = 30
+        self.amount = 100
+        self.total = 100
         
         self.time = 0
         self.iframe_start = 0
@@ -403,7 +403,7 @@ class HealthBar:
             self.damageable = True
 
     def draw(self, display):
-        bar_width = self.bar_rect.w * (self.amount / 100)
+        bar_width = self.bar_rect.w * (self.amount / self.total)
 
         display.blit(self.empty, self.rect)
         display.blit(self.bar, self.bar_rect, area=(0, 0, bar_width, self.bar_rect.h))
@@ -418,4 +418,39 @@ class HealthBar:
             player.hit = True
 
 
+class Item(pygame.sprite.Sprite):
+    def __init__(self, pos, item_num, scale):
+        pygame.sprite.Sprite.__init__(self)
 
+        match item_num:
+            case 1:
+                self.image = pygame.transform.scale_by(pygame.image.load('ui/icons/items/tile082.png'), scale)
+            case 2:
+                self.image = pygame.transform.scale_by(pygame.image.load('ui/icons/items/tile081.png'), scale)
+            case 3:
+                self.image = pygame.transform.scale_by(pygame.image.load('ui/icons/items/tile080.png'), scale)
+            case 4:
+                self.image = pygame.transform.scale_by(pygame.image.load('ui/icons/items/tile115.png'), scale)
+            case 5:
+                self.image = pygame.transform.scale_by(pygame.image.load('ui/icons/items/tile119.png'), scale)
+            case 6:
+                self.image = pygame.transform.scale_by(pygame.image.load('ui/icons/items/tile131.png'), scale)
+
+        self.rect = self.image.get_rect(center=pos)
+        self.pos = pos
+        self.x = 0
+        self.y = 0
+        self.item_num = item_num
+
+    def update(self, player, camera, inventory):
+        self.x += 0.05
+        self.y = math.sin(self.x) * 10
+        self.rect.y = self.pos[1] + self.y
+        self.rect.x = self.pos[0] - camera.offset_float
+
+        if self.rect.colliderect(player.rect):
+            try:
+                inventory.inventory[inventory.inventory.index(0)] = self.item_num
+                self.kill()
+            except ValueError:
+                return
