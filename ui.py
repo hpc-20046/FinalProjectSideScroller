@@ -228,10 +228,22 @@ class AttributeBar:
             display.blit(self.fill_image, (self.rect.x + (i * self.fill_image_rect.w), self.rect.y))
             
 class AttributeButton(pygame.sprite.Sprite):
-    def __init__(self, pos, scale):
+    def __init__(self, pos, scale, attr_num):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale_by(pygame.image.load('ui/add.png'), scale)
         self.rect = self.image.get_rect(center=pos)
+        self.attr_num = attr_num
+
+    def click(self, player):
+        if self.rect.collidepoint(pygame.mouse.get_pos()):
+            player.attributes[self.attr_num] += 1
+            if player.attributes[self.attr_num] > 10:
+                player.attributes[self.attr_num] -= 1
+                return
+            if player.spirit < 5:
+                player.attributes[self.attr_num] -= 1
+            else:
+                player.spirit -= 5
 
 
 class UiText(pygame.sprite.Sprite):
@@ -340,7 +352,7 @@ class TutorialText(pygame.sprite.Sprite):
 
 
 class AnimatedLevelImage(pygame.sprite.Sprite):
-    def __init__(self, images, pos, scale, level):
+    def __init__(self, images, pos, scale, level, attackable, health):
         pygame.sprite.Sprite.__init__(self)
 
         self.images = []
@@ -350,8 +362,16 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.index = 0
         self.image = self.images[self.index]
         self.rect = self.image.get_rect(center=pos)
+        self.pos = pos
         self.level = level
         self.showing = False
+        self.attackable = attackable
+        self.shaking = True
+        self.timex = 0
+        self.timey = 0
+        self.x = 0
+        self.y = 0
+
 
     def update(self, current_level):
         if self.level == current_level:
@@ -360,6 +380,13 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         else:
             self.showing = False
             self.image = pygame.image.load('ui/icons/blank.png')
+
+        self.shake()
+        self.timex += 0.1
+        self.timey += 0.05
+
+        self.y = math.sin(self.timey) * 5
+        self.rect.centery = self.pos[1] + self.y
 
     def update_frame(self):
         self.index += 1
@@ -377,6 +404,11 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.image = pygame.image.load('ui/icons/blank.png')
         self.showing = False
 
+    def shake(self):
+        if self.shaking:
+            self.x = math.exp(-0.5 * self.timex) * math.cos(10 * self.timex) * 10
+            self.rect.centerx = self.pos[0] + self.x
+
 
 class HealthBar:
     def __init__(self, scale, pos):
@@ -389,6 +421,7 @@ class HealthBar:
 
         self.amount = 100
         self.total = 100
+        self.start_total = 100
         
         self.time = 0
         self.iframe_start = 0
@@ -396,8 +429,11 @@ class HealthBar:
         
         self.damageable = True
         
-    def update(self):
+    def update(self, player):
         self.time = pygame.time.get_ticks()
+
+        self.total = self.start_total + player.attributes[0] * 10
+
         
         if self.time - self.iframe_start >= self.iframe_length:
             self.damageable = True
@@ -410,6 +446,9 @@ class HealthBar:
 
     def damage(self, damage, player):
         if self.damageable:
+            damage = damage - player.attributes[2]
+            if damage < 0:
+                damage = 0
             self.amount -= damage
             if self.amount < 0:
                 self.amount = 0

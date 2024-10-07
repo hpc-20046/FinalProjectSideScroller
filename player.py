@@ -111,6 +111,7 @@ class Player:
         self.jump_height = 10
         self.terminal_velocity = 10
         self.speed = 2
+        self.current_speed = 4
 
         self.position = pygame.math.Vector2(start_x, start_y)
         self.velocity = pygame.math.Vector2(0, 0)
@@ -121,8 +122,11 @@ class Player:
         self.flame = pygame.sprite.Group()
         self.item = pygame.sprite.Group()
 
-        self.damage = 5
+        self.damage = 1
+        self.strength = 1
         self.spirit = 0
+        self.attributes = [0, 0, 0, 0]
+
 
         self.time = 0
         self.time_start = 0
@@ -151,6 +155,10 @@ class Player:
             self.max_velocity = 4
             self.dash = False
             self.dashing = False
+
+        self.damage = self.strength + self.attributes[1]
+        if not self.dash:
+            self.max_velocity = self.current_speed + (self.attributes[3] / 2)
 
         self.border = border
         self.arc.update(self, enemies, camera)
@@ -504,7 +512,7 @@ class Player:
         if bar.amount > 0:
             bar.damage(10, self)
         else:
-            bar.amount = 100
+            bar.amount = bar.total
 
 
     def turn(self, turning_left, player_state):
@@ -608,7 +616,7 @@ class Arc(pygame.sprite.Sprite):
                     player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), 1, 1.5))
                 else:
                     player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h - 20), 3, (1, 3)))
-                    if random.random() <= 0.2:
+                    if random.random() <= 0.1:
                         player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), random.randrange(1, 6), 1.5))
 
     def check_kill(self, enemies):

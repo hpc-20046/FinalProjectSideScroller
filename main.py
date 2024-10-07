@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 2
+    current_level = 6
 
     border = WIDTH * 2
 
@@ -75,10 +75,10 @@ def main():
     misc_inventory.add(Icon(inventory, (250, 610), pygame.image.load('ui/icons/defense.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 750), pygame.image.load('ui/icons/stamina.png'), 7))
 
-    attribute_buttons.add(AttributeButton((560, 352), 5))
-    attribute_buttons.add(AttributeButton((560, 492), 5))
-    attribute_buttons.add(AttributeButton((560, 632), 5))
-    attribute_buttons.add(AttributeButton((560, 772), 5))
+    attribute_buttons.add(AttributeButton((560, 352), 5, 0))
+    attribute_buttons.add(AttributeButton((560, 492), 5, 1))
+    attribute_buttons.add(AttributeButton((560, 632), 5, 2))
+    attribute_buttons.add(AttributeButton((560, 772), 5, 3))
 
     misc_inventory.add(UiText('Con', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 290)))
     misc_inventory.add(UiText('Str', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 430)))
@@ -87,7 +87,6 @@ def main():
     
     spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [(WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440)]))
 
-    attributes = [3, 5, 7, 2]
     attribute_bars = []
     attribute_bars.append(AttributeBar(inventory, (320, 330), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 470), 5))
@@ -159,7 +158,7 @@ def main():
         'misc_assets/heart/frame_5_delay-0.1s.png',
         'misc_assets/heart/frame_5_delay-0.1s.png',
         'misc_assets/heart/frame_5_delay-0.1s.png'
-    ], (980, 700), 0.3, 7))
+    ], (980, 700), 0.3, 7, True, 100))
 
 
 
@@ -227,7 +226,7 @@ def main():
                         if event.key == pygame.K_x:
                             player.attack(camera)
                         if event.key == pygame.K_s:
-                            health_bar.damage(10, player)
+                            level_animations.sprites()[0].timex = 0
                         if event.key == pygame.K_c:
                             player.roll()
                     else:
@@ -284,6 +283,8 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
                     slot.drag(inventory)
+                for button in attribute_buttons.sprites():
+                    button.click(player)
             if event.type == pygame.MOUSEBUTTONUP:
                 for slot in slots.sprites():
                     slot.drop(inventory)
@@ -453,7 +454,7 @@ def main():
                     camera.offset = 0
                     border = WIDTH
 
-                    enemies = spawn_enemies([(1548, 920), (514, 920), (155, 920)])
+                    enemies = spawn_enemies([(1548, 920), (514, 920), (155, 920)], [1, 1, 1])
                 case 9:
                     current_level = 2
                     player.position = pygame.math.Vector2(WIDTH + 120, player.rect.h)
@@ -506,7 +507,7 @@ def main():
 
         level_animations.update(current_level)
         
-        health_bar.update()
+        health_bar.update(player)
         
         player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
         
@@ -532,7 +533,7 @@ def main():
             attribute_buttons.draw(screen)
             j = 0
             for i in attribute_bars:
-                i.draw(screen, attributes[j])
+                i.draw(screen, player.attributes[j])
                 j += 1
             animations.draw(screen)
             slots.update(inventory, screen)
