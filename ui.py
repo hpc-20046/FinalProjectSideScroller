@@ -367,19 +367,34 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.showing = False
         self.attackable = attackable
         self.shaking = True
-        self.timex = 0
+        self.timex = 8
         self.timey = 0
         self.x = 0
         self.y = 0
+        self.damagable = True
+        self.health = health
 
 
-    def update(self, current_level):
+    def update(self, current_level, player):
         if self.level == current_level:
             self.showing = True
             self.image = self.images[self.index]
         else:
             self.showing = False
             self.image = pygame.image.load('ui/icons/blank.png')
+
+        if player.arc.sprites():
+            if self.rect.colliderect(player.arc.sprites()[0]):
+                if self.attackable:
+                    self.timex = 0
+                    self.attackable = False
+                    self.health -= 1
+
+        if self.timex > 4:
+            self.attackable = True
+
+        if self.health <= 0:
+            self.delete()
 
         self.shake()
         self.timex += 0.1
@@ -406,7 +421,7 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
 
     def shake(self):
         if self.shaking:
-            self.x = math.exp(-0.5 * self.timex) * math.cos(10 * self.timex) * 10
+            self.x = math.exp(-self.timex) * math.cos(15 * self.timex) * 15
             self.rect.centerx = self.pos[0] + self.x
 
 

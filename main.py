@@ -158,7 +158,7 @@ def main():
         'misc_assets/heart/frame_5_delay-0.1s.png',
         'misc_assets/heart/frame_5_delay-0.1s.png',
         'misc_assets/heart/frame_5_delay-0.1s.png'
-    ], (980, 700), 0.3, 7, True, 100))
+    ], (980, 700), 0.3, 7, True, 10))
 
 
 
@@ -272,7 +272,8 @@ def main():
                         flame.update_frame()
 
             if event.type == HEART_ANIM:
-                level_animations.sprites()[0].update_frame()
+                if level_animations.sprites():
+                    level_animations.sprites()[0].update_frame()
                 
             if event.type == ROLL_ANIM:
                 player_state = player.update_frame("roll", True, False, player_state)
@@ -505,7 +506,7 @@ def main():
         if not inventory.showing:
             enemies.update(dt, camera, tile_rects, health_bar, player)
 
-        level_animations.update(current_level)
+        level_animations.update(current_level, player)
         
         health_bar.update(player)
         
