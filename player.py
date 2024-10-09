@@ -140,6 +140,7 @@ class Player:
         self.death_anim = False
         self.alternate = False
         self.temp_facing = False
+        self.explosion = False
 
 
     def draw(self, display):

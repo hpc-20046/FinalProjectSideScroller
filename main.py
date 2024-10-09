@@ -169,6 +169,8 @@ def main():
 
     health_bar = HealthBar(2.5, (60, HEIGHT - 80))
 
+    explosion = Dummy()
+
     enemies = pygame.sprite.Group()
 
     NEW_PLAYER_FRAME = pygame.USEREVENT
@@ -226,7 +228,7 @@ def main():
                         if event.key == pygame.K_x:
                             player.attack(camera)
                         if event.key == pygame.K_s:
-                            level_animations.sprites()[0].timex = 0
+                            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10, (255, 0, 0), (0, 360), (1000, 3000), 0.05)
                         if event.key == pygame.K_c:
                             player.roll()
                     else:
@@ -503,12 +505,18 @@ def main():
 
         tutorial_text.update(camera, current_level)
 
+        if player.explosion:
+            player.explosion = False
+            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160),200, 10, (255, 0, 0), (0, 360), (1000, 3000), 0.05)
+
         if not inventory.showing:
             enemies.update(dt, camera, tile_rects, health_bar, player)
 
         level_animations.update(current_level, player)
         
         health_bar.update(player)
+
+        explosion.update(dt)
         
         player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
         
@@ -521,6 +529,8 @@ def main():
         player.draw(screen)
 
         enemies.draw(screen)
+
+        explosion.draw(screen)
 
         inventory.draw(screen)
         if inventory.showing:

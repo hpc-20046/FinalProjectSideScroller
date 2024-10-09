@@ -1,4 +1,6 @@
 import math
+import random
+
 import pygame
 from settings import *
 
@@ -394,7 +396,7 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
             self.attackable = True
 
         if self.health <= 0:
-            self.delete()
+            self.delete(player)
 
         self.shake()
         self.timex += 0.1
@@ -414,7 +416,8 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         else:
             self.image = pygame.image.load('ui/icons/blank.png')
 
-    def delete(self):
+    def delete(self, player):
+        player.explosion = True
         self.kill()
         self.image = pygame.image.load('ui/icons/blank.png')
         self.showing = False
@@ -508,3 +511,68 @@ class Item(pygame.sprite.Sprite):
                 self.kill()
             except ValueError:
                 return
+
+
+class Explosion:
+    def __init__(self, pos_range, num_of_particles, size, colour, angle_range, speed_range, gravity):
+
+        self.particles = pygame.sprite.Group()
+        for i in range(num_of_particles):
+            self.particles.add(Particle((random.randrange(pos_range[0], pos_range[1]), random.randrange(pos_range[2], pos_range[3])), colour, size, random.randrange(angle_range[0], angle_range[1]), random.randrange(speed_range[0], speed_range[1]) / 1000, gravity))
+
+    def update(self, dt):
+        if self.particles.sprites():
+            self.particles.update(dt)
+
+    def draw(self, display):
+        self.particles.draw(display)
+
+
+
+class Particle(pygame.sprite.Sprite):
+    def __init__(self, pos, colour, size, angle, speed, gravity):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = pygame.Surface((size, size), pygame.SRCALPHA, 32).convert_alpha()
+
+        self.time = pygame.time.get_ticks()
+        self.creation = self.time
+        self.time_offset = int(random.random() * 100)
+        self.angle = math.radians(angle)
+        self.origin = pos
+        self.speed = speed
+        self.gravity = gravity
+        self.rect = self.image.get_rect(center=pos)
+        self.colour = colour
+        self.size = size
+
+        self.velocity = pygame.math.Vector2(self.speed * math.sin(self.angle), self.speed * math.cos(self.angle))
+        self.position = pygame.math.Vector2(self.origin[0], self.origin[1])
+
+    def update(self, dt):
+        self.time = pygame.time.get_ticks()
+        if self.time - self.creation > self.time_offset:
+            pygame.draw.circle(self.image, self.colour, (self.size / 2, self.size / 2), self.size / 2)
+            self.velocity.y += self.gravity
+            self.position.y += self.velocity.y * dt
+            self.position.x += self.velocity.x * dt
+
+            self.rect.x = self.position.x
+            self.rect.y = self.position.y
+
+            if self.rect.x > WIDTH or self.rect.x < 0 or self.rect.y < 0 or self.rect.y > HEIGHT:
+                self.kill()
+
+
+class Dummy:
+    def __init__(self):
+        pass
+
+    def update(self, dummy):
+        pass
+
+    def draw(self, display):
+        pass
+
+
+
