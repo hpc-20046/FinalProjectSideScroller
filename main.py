@@ -170,6 +170,12 @@ def main():
     health_bar = HealthBar(2.5, (60, HEIGHT - 80))
 
     explosion = Dummy()
+    fade = pygame.sprite.Group()
+    fadeout = True
+
+    fade_text = pygame.Surface((0,0))
+    fade_rect = fade_text.get_rect(topleft=(0, 0))
+    dungeon_font = pygame.font.Font('fonts/DungeonFont.ttf', 80)
 
     enemies = pygame.sprite.Group()
 
@@ -192,8 +198,12 @@ def main():
     
     loading = 0
 
+    fade_time = 0
+
     running = True
     while running:
+
+        time = pygame.time.get_ticks()
 
         # delta time - so player speed will look the same no matter the frame rate
         if loading <= 2:
@@ -228,7 +238,7 @@ def main():
                         if event.key == pygame.K_x:
                             player.attack(camera)
                         if event.key == pygame.K_s:
-                            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10, (255, 0, 0), (0, 360), (1000, 3000), 0.05)
+                            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10, (255, 0, 0), (0, 360), (3000, 10000), 0)
                         if event.key == pygame.K_c:
                             player.roll()
                     else:
@@ -507,7 +517,34 @@ def main():
 
         if player.explosion:
             player.explosion = False
-            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160),200, 10, (255, 0, 0), (0, 360), (1000, 3000), 0.05)
+            fadeout = True
+            fade.add(Fade(0))
+            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10,(255, 0, 0), (0, 360), (3000, 8000), 0)
+
+        if not explosion.particles.sprites():
+            current_level = 0
+            player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+            player.velocity.y = 0
+            camera.offset_float = 0
+            camera.offset = 0
+            border = WIDTH * 2
+            enemies.empty()
+            explosion = Dummy()
+
+            fade_time = time
+            fade_text = dungeon_font.render('You have acquired Wind Dash', True, (255, 255, 255))
+            fade_rect = fade_text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+
+
+        print(fade_time)
+
+        if (time - fade_time > 5000) and fade_time != 0:
+            fade.empty()
+            fade_text = dungeon_font.render('', True, (255, 255, 255))
+            fade.add(Fade(255))
+            fade_time = 0
+            fadeout = False
+
 
         if not inventory.showing:
             enemies.update(dt, camera, tile_rects, health_bar, player)
@@ -517,6 +554,7 @@ def main():
         health_bar.update(player)
 
         explosion.update(dt)
+        fade.update(fadeout)
         
         player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
         
@@ -529,6 +567,10 @@ def main():
         player.draw(screen)
 
         enemies.draw(screen)
+
+        fade.draw(screen)
+
+        screen.blit(fade_text, fade_rect)
 
         explosion.draw(screen)
 

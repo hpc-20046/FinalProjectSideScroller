@@ -374,6 +374,7 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.x = 0
         self.y = 0
         self.damagable = True
+        self.exploded = False
         self.health = health
 
 
@@ -387,7 +388,7 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
 
         if player.arc.sprites():
             if self.rect.colliderect(player.arc.sprites()[0]):
-                if self.attackable:
+                if self.attackable and not self.exploded:
                     self.timex = 0
                     self.attackable = False
                     self.health -= 1
@@ -396,7 +397,9 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
             self.attackable = True
 
         if self.health <= 0:
-            self.delete(player)
+            player.explosion = True
+            self.health = 100000
+            self.exploded = True
 
         self.shake()
         self.timex += 0.1
@@ -566,7 +569,8 @@ class Particle(pygame.sprite.Sprite):
 
 class Dummy:
     def __init__(self):
-        pass
+        self.particles = pygame.sprite.Group()
+        self.particles.add(Particle((0, 0), (0, 0, 0), 0, 0, 0, 0))
 
     def update(self, dummy):
         pass
@@ -575,4 +579,31 @@ class Dummy:
         pass
 
 
+class Fade(pygame.sprite.Sprite):
+    def __init__(self, alpha):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = pygame.Surface((WIDTH, HEIGHT))
+        self.image.fill((0, 0, 0, alpha))
+        self.rect = self.image.get_rect(topleft=(0, 0))
+        self.opacity = 0
+
+    def update(self, fadeout):
+        if fadeout:
+             self.opacity += 2
+             if self.opacity > 255:
+                 self.opacity = 255
+                 return
+             self.image.set_alpha(self.opacity)
+        else:
+            self.opacity += 2
+            if self.opacity > 255:
+                self.opacity = 255
+                self.delete()
+                return
+            self.image.set_alpha(255 - self.opacity)
+
+
+    def delete(self):
+        self.kill()
 
