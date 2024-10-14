@@ -238,6 +238,7 @@ class AttributeButton(pygame.sprite.Sprite):
         self.image = pygame.transform.scale_by(pygame.image.load('ui/add.png'), scale)
         self.rect = self.image.get_rect(center=pos)
         self.attr_num = attr_num
+        self.click_sound = pygame.mixer.Sound('audio/better click.wav')
 
     def click(self, player):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -247,8 +248,10 @@ class AttributeButton(pygame.sprite.Sprite):
                 return
             if player.spirit < 5:
                 player.attributes[self.attr_num] -= 1
+                return
             else:
                 player.spirit -= 5
+            self.click_sound.play()
 
 
 class UiText(pygame.sprite.Sprite):
@@ -379,6 +382,9 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.damagable = True
         self.exploded = False
         self.health = health
+        
+        self.hurt_sound = pygame.mixer.Sound('audio/heart_hit.wav')
+        self.kill_sound = pygame.mixer.Sound('audio/heart_kill.wav')
 
 
     def update(self, current_level, player):
@@ -395,6 +401,10 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
                     self.timex = 0
                     self.attackable = False
                     self.health -= 1
+                    
+                    if self.health != 0:
+                        self.hurt_sound.play()
+                    
 
         if self.timex > 4:
             self.attackable = True
@@ -403,6 +413,7 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
             player.explosion = True
             self.health = 100000
             self.exploded = True
+            self.kill_sound.play()
 
         self.shake()
         self.timex += 0.1
@@ -453,6 +464,8 @@ class HealthBar:
         
         self.damageable = True
         
+        self.hurt_sound = pygame.mixer.Sound('audio/Hurt.wav')
+        
     def update(self, player):
         self.time = pygame.time.get_ticks()
 
@@ -484,6 +497,7 @@ class HealthBar:
             self.iframe_start = self.time
             self.damageable = False
             player.hit = True
+            self.hurt_sound.play()
 
 
 class Item(pygame.sprite.Sprite):

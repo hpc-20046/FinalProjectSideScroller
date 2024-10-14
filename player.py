@@ -124,7 +124,7 @@ class Player:
 
         self.damage = 1
         self.strength = 1
-        self.spirit = 50
+        self.spirit = 49
         self.attributes = [0, 0, 0, 0]
         self.equip = [0, 0, 0, 0, 0]
         self.power = False
@@ -146,6 +146,13 @@ class Player:
         self.animation = False
         self.animation_counter = 4
         self.door = True
+        self.door_opened = False
+        
+        self.attack_sound = pygame.mixer.Sound('audio/Sword_Slash.wav')
+        self.jump_sound = pygame.mixer.Sound('audio/Jump.wav')
+        self.dash_sound = pygame.mixer.Sound('audio/dash.wav')
+        self.door_sound = pygame.mixer.Sound('audio/door open.wav')
+        
 
 
     def draw(self, display):
@@ -170,12 +177,16 @@ class Player:
             case _:
                 temp_damage = 0
 
-        if self.spirit >= 50:
+        if self.spirit >= 50 and not self.door_opened:
             self.door = False
+            self.door_opened = True
+            self.door_sound.play()
 
         self.damage = self.strength + self.attributes[1] + temp_damage
         if not self.dash and current_level != 8:
             self.max_velocity = self.current_speed + (self.attributes[3] / 2)
+        elif self.dash:
+            self.max_velocity = 10
         else:
             self.max_velocity = 4
 
@@ -226,6 +237,7 @@ class Player:
             self.is_jumping = True
             self.velocity.y -= self.jump_height
             self.on_ground = False
+            self.jump_sound.play()
 
     def limit_velocity(self, max_vel):
         self.velocity.x = max(min(max_vel, self.velocity.x), -max_vel)
@@ -303,6 +315,7 @@ class Player:
             self.max_velocity = 10
             self.dash = True
         self.update_frame("roll", True, False, "")
+        self.dash_sound.play()
 
 
     def update_frame(self, state, roll, hit, player_state):
@@ -536,6 +549,10 @@ class Player:
             bar.damage(10, self)
         else:
             bar.amount = bar.total
+            
+    def sound_test(self):
+        pygame.mixer.Sound('audio/heart_kill.wav').play()
+        
 
 
     def turn(self, turning_left, player_state):
@@ -557,6 +574,7 @@ class Player:
                                         'misc_assets/slash_fx/tile100.png',
                                         'misc_assets/slash_fx/tile101.png',
                                         'misc_assets/slash_fx/tile102.png'], 40, (self.rect.x, self.rect.y), 1, self.FACING_LEFT))
+            #self.attack_sound.play()
 
 
 
@@ -593,6 +611,7 @@ class Arc(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=self.pos)
 
         self.damaged = False
+        self.hit_sound = pygame.mixer.Sound('audio/better hit.wav')
 
 
     def update(self, player, enemies, camera):
@@ -617,6 +636,7 @@ class Arc(pygame.sprite.Sprite):
                 kill.health -= player.damage
                 self.damaged = True
                 kill.knockback(player.FACING_LEFT)
+                self.hit_sound.play()
 
             if kill.health <= 0:
                 kill.kill()

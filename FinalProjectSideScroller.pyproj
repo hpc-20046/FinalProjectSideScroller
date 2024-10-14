@@ -37,6 +37,7 @@
     <InterpreterReference Include="Global|PythonCore|3.10" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="audio\" />
     <Folder Include="enemies\" />
     <Folder Include="enemies\Grave revenant\" />
     <Folder Include="enemies\TinyDungeon\" />
@@ -78,6 +79,18 @@
     <Folder Include="ui\MinimalFantasy\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="audio\better click.wav" />
+    <Content Include="audio\better hit.wav" />
+    <Content Include="audio\dash.wav" />
+    <Content Include="audio\door open.wav" />
+    <Content Include="audio\heart_hit.wav" />
+    <Content Include="audio\heart_kill.wav" />
+    <Content Include="audio\Hurt.wav" />
+    <Content Include="audio\Jump.wav" />
+    <Content Include="audio\Menu_In.wav" />
+    <Content Include="audio\Menu_Out.wav" />
+    <Content Include="audio\PZKRWFA-net-swoosh %281%29.mp3" />
+    <Content Include="audio\Sword_Slash.wav" />
     <Content Include="backgrounds\level1.json" />
     <Content Include="dungeon\a.png" />
     <Content Include="dungeon\f.png" />

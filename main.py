@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 3
+    current_level = 6
 
     border = WIDTH * 2
 
@@ -162,6 +162,9 @@ def main():
 
     door_surf = pygame.transform.scale_by(pygame.image.load('ui/Level_0__Tiles.png'), 2.5)
     door_rect = door_surf.get_rect(topright=(WIDTH, 14*40))
+    
+    inventory_in = pygame.mixer.Sound('audio/Menu_In.wav')
+    inventory_out = pygame.mixer.Sound('audio/Menu_Out.wav')
 
 
 
@@ -241,7 +244,7 @@ def main():
                         if event.key == pygame.K_x:
                             player.attack(camera)
                         if event.key == pygame.K_s:
-                            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10, (255, 0, 0), (0, 360), (3000, 10000), 0)
+                            player.sound_test()
                         if event.key == pygame.K_c:
                             player.roll()
                     else:
@@ -250,8 +253,10 @@ def main():
                 if event.key == pygame.K_i:
                     if inventory.showing:
                         inventory.showing = False
+                        inventory_out.play()
                     else:
                         inventory.showing = True
+                        inventory_in.play()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -595,12 +600,6 @@ def main():
 
         enemies.draw(screen)
 
-        fade.draw(screen)
-
-        screen.blit(fade_text, fade_rect)
-
-        explosion.draw(screen)
-
         inventory.draw(screen)
         if inventory.showing:
             slots.draw(screen)
@@ -620,6 +619,12 @@ def main():
             spirit_amount.draw(screen)
         else:
             health_bar.draw(screen)
+            
+        fade.draw(screen)
+
+        screen.blit(fade_text, fade_rect)
+
+        explosion.draw(screen)
 
         print(player.position)
         
