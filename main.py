@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 6
+    current_level = 3
 
     border = WIDTH * 2
 
@@ -160,6 +160,9 @@ def main():
         'misc_assets/heart/frame_5_delay-0.1s.png'
     ], (980, 700), 0.3, 7, True, 10))
 
+    door_surf = pygame.transform.scale_by(pygame.image.load('ui/Level_0__Tiles.png'), 2.5)
+    door_rect = door_surf.get_rect(topright=(WIDTH, 14*40))
+
 
 
     for i in range(24):
@@ -263,7 +266,19 @@ def main():
 
             if not inventory.showing:
                 if event.type == NEW_PLAYER_FRAME:
-                    player_state = player.update_frame(player.state, False, False, player_state)
+                    if player.animation:
+                        if player.alternate_1 >= 6:
+                            player.alternate_1 = 0
+                            player.animation_counter -= 1
+                            if player.animation_counter < 0:
+                                player.animation = False
+                                player_state = player.update_frame(player.state, False, False, player_state)
+                            else:
+                                player.image = player.death_right_frames[player.animation_counter]
+                        else:
+                            player.alternate_1 += 1
+                    else:
+                        player_state = player.update_frame(player.state, False, False, player_state)
                     
             
             if event.type == FIRE_ANIM:
@@ -330,6 +345,9 @@ def main():
                             player.update_frame('idle_right', False, False, player_state)
                             player_state = player_state = 'idle'
 
+
+        if player.dead or player.animation:
+            player.LEFT_KEY, player.RIGHT_KEY = False, False
 
 
         if player.rect.x > WIDTH - player.rect.w:
@@ -510,7 +528,12 @@ def main():
         tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, backgrounds[0], 9, camera)
         tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, backgrounds[0], 9, camera)
 
-        tile_rects = tile_rects1 + tile_rects2
+        door = []
+        if current_level == 3 and player.door:
+            door.append(door_rect)
+            screen.blit(door_surf, door_rect)
+
+        tile_rects = tile_rects1 + tile_rects2 + door
         spike_rects = spike_rects1 + spike_rects2
 
         tutorial_text.update(camera, current_level)
@@ -530,13 +553,15 @@ def main():
             border = WIDTH * 2
             enemies.empty()
             explosion = Dummy()
+            player.power = True
+            tutorial_text.empty()
+            tutorial_text.add(TutorialText('C to dash', 'fonts/pixel.ttf', 40, (255, 255, 255), (500, 100), 0))
 
             fade_time = time
             fade_text = dungeon_font.render('You have acquired Wind Dash', True, (255, 255, 255))
             fade_rect = fade_text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
 
 
-        print(fade_time)
 
         if (time - fade_time > 5000) and fade_time != 0:
             fade.empty()
@@ -544,6 +569,8 @@ def main():
             fade.add(Fade(255))
             fade_time = 0
             fadeout = False
+            player.animation = True
+            pygame.event.post(pygame.event.Event(NEW_PLAYER_FRAME))
 
 
         if not inventory.showing:

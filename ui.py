@@ -1,6 +1,5 @@
 import math
 import random
-
 import pygame
 from settings import *
 
@@ -18,7 +17,7 @@ class Inventory:
         self.showing = False
 
         self.inventory = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.equip = [0, 0, 0, 0, 3]
+        self.equip = [0, 0, 0, 0, 0]
         self.moving_slot = -1
         self.moving_equip_slot = -1
 
@@ -80,6 +79,8 @@ class InventorySlot(pygame.sprite.Sprite):
                 self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile119.png'), 2))
             case 6:
                 self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile131.png'), 2))
+            case 7:
+                self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile122.png'), 2))
 
         self.icon.draw(screen)
 
@@ -170,6 +171,8 @@ class EquipSlot(pygame.sprite.Sprite):
                 self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile119.png'), 2))
             case 6:
                 self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile131.png'), 2))
+            case 7:
+                self.icon.add(Icon(inventory, (self.icon_x, self.icon_y), pygame.image.load('ui/icons/items/tile122.png'), 2))
 
         self.icon.draw(screen)
 
@@ -466,8 +469,13 @@ class HealthBar:
         display.blit(self.bar, self.bar_rect, area=(0, 0, bar_width, self.bar_rect.h))
 
     def damage(self, damage, player):
+        temp_def = 0
+        for i in range(4):
+            if player.equip[i] > 0:
+                temp_def += 1
+
         if self.damageable:
-            damage = damage - player.attributes[2]
+            damage = damage - player.attributes[2] - temp_def
             if damage < 0:
                 damage = 0
             self.amount -= damage

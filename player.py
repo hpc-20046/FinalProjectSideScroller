@@ -124,9 +124,10 @@ class Player:
 
         self.damage = 1
         self.strength = 1
-        self.spirit = 0
+        self.spirit = 50
         self.attributes = [0, 0, 0, 0]
-
+        self.equip = [0, 0, 0, 0, 0]
+        self.power = False
 
         self.time = 0
         self.time_start = 0
@@ -139,8 +140,12 @@ class Player:
         self.dead = False
         self.death_anim = False
         self.alternate = False
+        self.alternate_1 = 4
         self.temp_facing = False
         self.explosion = False
+        self.animation = False
+        self.animation_counter = 4
+        self.door = True
 
 
     def draw(self, display):
@@ -157,10 +162,24 @@ class Player:
             self.dash = False
             self.dashing = False
 
-        self.damage = self.strength + self.attributes[1]
-        if not self.dash:
-            self.max_velocity = self.current_speed + (self.attributes[3] / 2)
+        match self.equip[4]:
+            case 1:
+                temp_damage = 2
+            case 2:
+                temp_damage = 1
+            case _:
+                temp_damage = 0
 
+        if self.spirit >= 50:
+            self.door = False
+
+        self.damage = self.strength + self.attributes[1] + temp_damage
+        if not self.dash and current_level != 8:
+            self.max_velocity = self.current_speed + (self.attributes[3] / 2)
+        else:
+            self.max_velocity = 4
+
+        self.equip = inventory.equip
         self.border = border
         self.arc.update(self, enemies, camera)
         self.flame.update(camera, self)
@@ -265,6 +284,9 @@ class Player:
 
 
     def roll(self):
+        if not self.power:
+            return
+
         if not self.time - self.time_start >= self.cooldown:
             return
 
@@ -614,11 +636,11 @@ class Arc(pygame.sprite.Sprite):
                 ], (kill.position.x, kill.position.y - kill.rect.h - 10), 1, True, True, camera, False))
 
                 if kill.type == 2:
-                    player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), 1, 1.5))
+                    player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), 3, 1.5))
                 else:
                     player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h - 20), 3, (1, 3)))
                     if random.random() <= 0.1:
-                        player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), random.randrange(1, 6), 1.5))
+                        player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), random.randrange(1, 7), 1.5))
 
     def check_kill(self, enemies):
         hits = []
