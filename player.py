@@ -140,7 +140,7 @@ class Player:
         self.dead = False
         self.death_anim = False
         self.alternate = False
-        self.alternate_1 = 4
+        self.alternate_1 = 6
         self.temp_facing = False
         self.explosion = False
         self.animation = False
@@ -148,10 +148,9 @@ class Player:
         self.door = True
         self.door_opened = False
         
-        self.attack_sound = pygame.mixer.Sound('audio/Sword_Slash.wav')
         self.jump_sound = pygame.mixer.Sound('audio/Jump.wav')
         self.dash_sound = pygame.mixer.Sound('audio/dash.wav')
-        self.door_sound = pygame.mixer.Sound('audio/door open.wav')
+        self.door_sound = pygame.mixer.Sound('audio/door_open.wav')
         
 
 
@@ -574,7 +573,6 @@ class Player:
                                         'misc_assets/slash_fx/tile100.png',
                                         'misc_assets/slash_fx/tile101.png',
                                         'misc_assets/slash_fx/tile102.png'], 40, (self.rect.x, self.rect.y), 1, self.FACING_LEFT))
-            #self.attack_sound.play()
 
 
 
@@ -611,7 +609,9 @@ class Arc(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=self.pos)
 
         self.damaged = False
-        self.hit_sound = pygame.mixer.Sound('audio/better hit.wav')
+        self.sound_played = False
+        self.attack_sound = pygame.mixer.Sound('audio/slash.wav')
+        self.hit_sound = pygame.mixer.Sound('audio/hit.wav')
 
 
     def update(self, player, enemies, camera):
@@ -637,6 +637,7 @@ class Arc(pygame.sprite.Sprite):
                 self.damaged = True
                 kill.knockback(player.FACING_LEFT)
                 self.hit_sound.play()
+                self.sound_played = True
 
             if kill.health <= 0:
                 kill.kill()
@@ -661,6 +662,10 @@ class Arc(pygame.sprite.Sprite):
                     player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h - 20), 3, (1, 3)))
                     if random.random() <= 0.1:
                         player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), random.randrange(1, 7), 1.5))
+        if not self.sound_played:
+            self.attack_sound.play()
+            self.sound_played = True
+
 
     def check_kill(self, enemies):
         hits = []

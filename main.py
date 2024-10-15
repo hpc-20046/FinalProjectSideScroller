@@ -41,7 +41,7 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 6
+    current_level = 0
 
     border = WIDTH * 2
 
@@ -185,6 +185,10 @@ def main():
 
     enemies = pygame.sprite.Group()
 
+    music = pygame.mixer.Sound('audio/(Loop) Forest Exploration.wav')
+    music.play(-1)
+    music.set_volume(0.6)
+
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
     FIRE_ANIM = pygame.USEREVENT + 1
@@ -205,6 +209,7 @@ def main():
     loading = 0
 
     fade_time = 0
+    fade_anim = False
 
     running = True
     while running:
@@ -228,7 +233,7 @@ def main():
                     running = False
                     
                 if not inventory.showing:
-                    if not player.dead:
+                    if not player.dead and not fade_anim and not player.animation:
                         if event.key == pygame.K_LEFT:
                             player_state = player.turn(True, player_state)
                             player.RIGHT_KEY = False
@@ -251,12 +256,13 @@ def main():
                         player.LEFT_KEY, player.RIGHT_KEY = False, False
 
                 if event.key == pygame.K_i:
-                    if inventory.showing:
-                        inventory.showing = False
-                        inventory_out.play()
-                    else:
-                        inventory.showing = True
-                        inventory_in.play()
+                    if not fade_anim and not player.animation:
+                        if inventory.showing:
+                            inventory.showing = False
+                            inventory_out.play()
+                        else:
+                            inventory.showing = True
+                            inventory_in.play()
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
@@ -538,6 +544,9 @@ def main():
             door.append(door_rect)
             screen.blit(door_surf, door_rect)
 
+        if current_level == 7:
+            music.fadeout(1000)
+
         tile_rects = tile_rects1 + tile_rects2 + door
         spike_rects = spike_rects1 + spike_rects2
 
@@ -546,6 +555,7 @@ def main():
         if player.explosion:
             player.explosion = False
             fadeout = True
+            fade_anim = True
             fade.add(Fade(0))
             explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10,(255, 0, 0), (0, 360), (3000, 8000), 0)
 
@@ -574,8 +584,10 @@ def main():
             fade.add(Fade(255))
             fade_time = 0
             fadeout = False
+            fade_anim = False
             player.animation = True
             pygame.event.post(pygame.event.Event(NEW_PLAYER_FRAME))
+            music.play(-1)
 
 
         if not inventory.showing:

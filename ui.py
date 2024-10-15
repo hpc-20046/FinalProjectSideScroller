@@ -238,7 +238,7 @@ class AttributeButton(pygame.sprite.Sprite):
         self.image = pygame.transform.scale_by(pygame.image.load('ui/add.png'), scale)
         self.rect = self.image.get_rect(center=pos)
         self.attr_num = attr_num
-        self.click_sound = pygame.mixer.Sound('audio/better click.wav')
+        self.click_sound = pygame.mixer.Sound('audio/click.wav')
 
     def click(self, player):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -384,6 +384,7 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
         self.health = health
         
         self.hurt_sound = pygame.mixer.Sound('audio/heart_hit.wav')
+        self.hurt_sound.set_volume(0.3)
         self.kill_sound = pygame.mixer.Sound('audio/heart_kill.wav')
 
 
@@ -397,12 +398,13 @@ class AnimatedLevelImage(pygame.sprite.Sprite):
 
         if player.arc.sprites():
             if self.rect.colliderect(player.arc.sprites()[0]):
-                if self.attackable and not self.exploded:
+                if self.attackable and not self.exploded and self.showing:
                     self.timex = 0
                     self.attackable = False
                     self.health -= 1
                     
                     if self.health != 0:
+                        player.arc.sprites()[0].sound_played = True
                         self.hurt_sound.play()
                     
 
