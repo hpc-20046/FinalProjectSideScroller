@@ -124,10 +124,10 @@ class Player:
 
         self.damage = 1
         self.strength = 1
-        self.spirit = 49
+        self.spirit = 50
         self.attributes = [0, 0, 0, 0]
         self.equip = [0, 0, 0, 0, 0]
-        self.power = False
+        self.power = True
 
         self.time = 0
         self.time_start = 0
@@ -147,10 +147,12 @@ class Player:
         self.animation_counter = 4
         self.door = True
         self.door_opened = False
+        self.end_game = False
         
         self.jump_sound = pygame.mixer.Sound('audio/Jump.wav')
         self.dash_sound = pygame.mixer.Sound('audio/dash.wav')
         self.door_sound = pygame.mixer.Sound('audio/door_open.wav')
+        self.death_sound = pygame.mixer.Sound('audio/death.wav')
         
 
 
@@ -198,8 +200,9 @@ class Player:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
             if not self.dash:
-                self.vertical_movement(dt)
-                self.check_collisions_y(tiles, spikes)
+                if not self.end_game:
+                    self.vertical_movement(dt)
+                    self.check_collisions_y(tiles, spikes)
 
         if self.time - self.death_time_start >= 3000 and self.death_anim:
             self.dead = False
@@ -321,6 +324,7 @@ class Player:
         if self.dead:
             self.temp_state = state
             if not self.death_anim:
+                self.death_sound.play()
                 if self.FACING_LEFT:
                     self.state_frames = self.death_left_frames
                     self.frame_index = 0

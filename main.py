@@ -41,9 +41,9 @@ def main():
             with open(back.path, 'r') as openfile:
                 backgrounds.append(json.load(openfile))
 
-    current_level = 0
+    current_level = 3
 
-    border = WIDTH * 2
+    border = WIDTH
 
     player = Player(300, HEIGHT / 2 + 200, 3, border)
     player_state = 'idle'
@@ -182,10 +182,27 @@ def main():
     fade_text = pygame.Surface((0,0))
     fade_rect = fade_text.get_rect(topleft=(0, 0))
     dungeon_font = pygame.font.Font('fonts/DungeonFont.ttf', 80)
+    title_font = pygame.font.Font('fonts/DungeonFont.ttf', 120)
+    button_font = pygame.font.Font('fonts/DungeonFont.ttf', 60)
+
+    title_text = title_font.render('Main Title', True, (255, 255, 255))
+    title_rect = title_text.get_rect(center=(WIDTH / 2, 300))
+
+    start_text = button_font.render('start', True, (255, 255, 255))
+    start_rect = start_text.get_rect(center=(WIDTH / 2, 600))
+
+    options_text = button_font.render('options', True, (255, 255, 255))
+    options_rect = options_text.get_rect(center=(WIDTH / 2, 700))
+
+    quit_text = button_font.render('quit', True, (255, 255, 255))
+    quit_rect = quit_text.get_rect(center=(WIDTH / 2, 800))
+
 
     enemies = pygame.sprite.Group()
 
-    music = pygame.mixer.Sound('audio/(Loop) Forest Exploration.wav')
+    title_sound = pygame.mixer.Sound('audio/title.wav')
+
+    music = pygame.mixer.Sound('audio/(Loop) Powerful Relic Theme.wav')
     music.play(-1)
     music.set_volume(0.6)
 
@@ -212,6 +229,47 @@ def main():
     fade_anim = False
 
     running = True
+    main_menu = True
+    end_game = True
+    while main_menu:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                main_menu = False
+                end_game = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                    main_menu = False
+                    end_game = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_rect.collidepoint(pygame.mouse.get_pos()):
+                    main_menu = False
+                elif options_rect.collidepoint(pygame.mouse.get_pos()):
+                    options_text = button_font.render('lol theres no options', True, (255, 255, 255))
+                    options_rect = options_text.get_rect(center=(WIDTH / 2, 700))
+                elif quit_rect.collidepoint(pygame.mouse.get_pos()):
+                    main_menu = False
+                    running = False
+
+        screen.fill((0, 0, 0))
+
+        screen.blit(title_text, title_rect)
+        screen.blit(start_text, start_rect)
+        screen.blit(options_text, options_rect)
+        screen.blit(quit_text, quit_rect)
+
+
+        pygame.display.flip()
+
+
+    music.stop()
+    music = pygame.mixer.Sound('audio/(Loop) Forest Exploration.wav')
+    music.play(-1)
+    music.set_volume(0.6)
+
     while running:
 
         time = pygame.time.get_ticks()
@@ -228,9 +286,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                end_game = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                    end_game = False
                     
                 if not inventory.showing:
                     if not player.dead and not fade_anim and not player.animation:
@@ -415,7 +475,7 @@ def main():
 
                     enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 1, 1, 1, 1, 1])
                 case 8:
-                    print("END")
+                    running = False
                 case _:
                     pass
 
@@ -575,6 +635,7 @@ def main():
             fade_time = time
             fade_text = dungeon_font.render('You have acquired Wind Dash', True, (255, 255, 255))
             fade_rect = fade_text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+            title_sound.play()
 
 
 
@@ -643,6 +704,71 @@ def main():
         pygame.display.flip()
         clock.tick(60)
 
+
+    music.fadeout(1000)
+
+    current_level = 11
+    border = WIDTH
+    camera.offset_float = 0
+    player.velocity.y = 0
+    player.position = pygame.math.Vector2(0, 680)
+    player.rect.bottom = 680
+    player.end_game = True
+    player.RIGHT_KEY, player.LEFT_KEY = False, False
+    player.FACING_LEFT = False
+    ended = False
+
+    end_text = title_font.render('', True, (255, 255, 255))
+    end_rect = end_text.get_rect(center=(WIDTH / 2, 200))
+
+    end_game_time = time
+    player_state = "run_right"
+    yay = pygame.mixer.Sound('audio/yay.wav')
+
+    while end_game:
+
+        dt = clock.tick(60) * 0.001 * TARGET_FPS
+
+        time = pygame.time.get_ticks()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                end_game = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    end_game = False
+            if event.type == NEW_PLAYER_FRAME:
+                player.update_frame(player_state, False, False, player_state)
+
+        screen.fill((0, 0, 0))
+
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, backgrounds[0], 9, camera)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, backgrounds[0], 9, camera)
+
+        tile_rects = tile_rects1 + tile_rects2
+        spike_rects = spike_rects1 + spike_rects2
+
+        if time - end_game_time > 3150:
+            player.RIGHT_KEY = False
+            player_state = 'idle_right'
+        else:
+            player.RIGHT_KEY = True
+
+        if time - end_game_time > 5000 and not ended:
+            ended = True
+            end_text = title_font.render('You escaped the dungeon!', True, (255, 255, 255))
+            end_rect = end_text.get_rect(center=(WIDTH / 2, 200))
+            yay.play()
+
+        player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
+
+        camera.scroll()
+
+        screen.blit(end_text, end_rect)
+
+        player.draw(screen)
+
+        pygame.display.flip()
 
 if __name__ == "__main__":
     main()
