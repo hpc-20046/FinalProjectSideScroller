@@ -287,9 +287,9 @@ def main():
                 running = False
                 end_game = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-                    end_game = False
+                # if event.key == pygame.K_ESCAPE:
+                #     running = False
+                #     end_game = False
                     
                 if not inventory.showing:
                     if not player.dead and not fade_anim and not player.animation:
