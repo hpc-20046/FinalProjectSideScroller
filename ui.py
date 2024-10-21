@@ -252,6 +252,8 @@ class AttributeButton(pygame.sprite.Sprite):
             else:
                 player.spirit -= 5
             self.click_sound.play()
+            if self.attr_num == 0:
+                player.health_update = True
 
 
 class UiText(pygame.sprite.Sprite):

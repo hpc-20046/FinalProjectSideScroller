@@ -124,10 +124,11 @@ class Player:
 
         self.damage = 1
         self.strength = 1
-        self.spirit = 50
+        self.spirit = 0
         self.attributes = [0, 0, 0, 0]
         self.equip = [0, 0, 0, 0, 0]
-        self.power = True
+        self.power = False
+        self.health_update = False
 
         self.time = 0
         self.time_start = 0
@@ -184,12 +185,16 @@ class Player:
             self.door_sound.play()
 
         self.damage = self.strength + self.attributes[1] + temp_damage
-        if not self.dash and current_level != 8:
+        if not self.dash and current_level != 8 and current_level != 11:
             self.max_velocity = self.current_speed + (self.attributes[3] / 2)
         elif self.dash:
             self.max_velocity = 10
         else:
             self.max_velocity = 4
+
+        if self.health_update:
+            self.health_update = False
+            bar.amount = bar.total
 
         self.equip = inventory.equip
         self.border = border
@@ -502,56 +507,57 @@ class Player:
         return player_state
 
     def respawn(self, current_level, camera, bar):
-        match current_level:
-            case 0:
-                self.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 1:
-                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 2:
-                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 3:
-                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 4:
-                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 5:
-                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 6:
-                self.position = pygame.math.Vector2(WIDTH - self.rect.w, HEIGHT / 2 + 200)
-                camera.offset_float = WIDTH
-                self.velocity.y = 0
-            case 7:
-                self.position = pygame.math.Vector2(400, self.rect.h)
-                camera.offset_float = WIDTH
-                self.velocity.y = 0
-            case 8:
-                self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
-                camera.offset_float = 0
-                self.velocity.y = 0
-            case 9:
-                self.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT)
-                camera.offset_float = 0
-                self.velocity.y = -10
-            case 10:
-                self.position = pygame.math.Vector2(870, self.rect.h)
-                camera.offset_float = 0
-                self.velocity.y = 0
 
-        if bar.amount > 0:
-            bar.damage(10, self)
-        else:
+        if bar.amount == 0:
             bar.amount = bar.total
+            pygame.event.post(pygame.event.Event(pygame.USEREVENT + 8))
+        else:
+            bar.damage(10, self)
+            match current_level:
+                case 0:
+                    self.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 1:
+                    self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 2:
+                    self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 3:
+                    self.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 4:
+                    self.position = pygame.math.Vector2(0, HEIGHT / 2 + 240)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 5:
+                    self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 6:
+                    self.position = pygame.math.Vector2(WIDTH - self.rect.w, HEIGHT / 2 + 200)
+                    camera.offset_float = WIDTH
+                    self.velocity.y = 0
+                case 7:
+                    self.position = pygame.math.Vector2(400, self.rect.h)
+                    camera.offset_float = WIDTH
+                    self.velocity.y = 0
+                case 8:
+                    self.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
+                case 9:
+                    self.position = pygame.math.Vector2(WIDTH / 2 - 150, HEIGHT)
+                    camera.offset_float = 0
+                    self.velocity.y = -10
+                case 10:
+                    self.position = pygame.math.Vector2(870, self.rect.h)
+                    camera.offset_float = 0
+                    self.velocity.y = 0
             
     def sound_test(self):
         pygame.mixer.Sound('audio/heart_kill.wav').play()
@@ -662,6 +668,11 @@ class Arc(pygame.sprite.Sprite):
 
                 if kill.type == 2:
                     player.item.add(Item((kill.position.x, kill.position.y - kill.rect.h), 3, 1.5))
+                elif kill.type == 3:
+                    player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h - 20), 3, (5, 10)))
+                    if random.random() <= 0.1:
+                        player.item.add(
+                            Item((kill.position.x, kill.position.y - kill.rect.h), random.randrange(1, 7), 1.5))
                 else:
                     player.flame.add(SpiritFlame((kill.position.x, kill.position.y - kill.rect.h - 20), 3, (1, 3)))
                     if random.random() <= 0.1:

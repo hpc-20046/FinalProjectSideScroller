@@ -19,6 +19,8 @@ from tilemap import TileMap, spawn_enemies
 from camera import Camera
 from ui import *
 
+play_again = True
+
 
 def main():
     pygame.init()
@@ -27,6 +29,9 @@ def main():
 
     tiles = TileMap('dungeon/', 'dungeon/')
 
+    global play_again
+    play_again = False
+
     levels = []
     level_list = os.scandir('levels/')
     with level_list as alevel:
@@ -34,16 +39,9 @@ def main():
             with open(level.path, 'r') as openfile:
                 levels.append(json.load(openfile))
 
-    backgrounds = []
-    back_list = os.scandir('backgrounds/')
-    with back_list as backs:
-        for back in backs:
-            with open(back.path, 'r') as openfile:
-                backgrounds.append(json.load(openfile))
+    current_level = 0
 
-    current_level = 3
-
-    border = WIDTH
+    border = WIDTH * 2
 
     player = Player(300, HEIGHT / 2 + 200, 3, border)
     player_state = 'idle'
@@ -230,6 +228,7 @@ def main():
 
     running = True
     main_menu = True
+    game_over = False
     end_game = True
     while main_menu:
 
@@ -265,7 +264,7 @@ def main():
         pygame.display.flip()
 
 
-    music.stop()
+    music.fadeout(500)
     music = pygame.mixer.Sound('audio/(Loop) Forest Exploration.wav')
     music.play(-1)
     music.set_volume(0.6)
@@ -393,6 +392,10 @@ def main():
                 elif inventory.moving_equip_slot != -1:
                     inventory.moving_equip_slot = -1
 
+            if event.type == pygame.USEREVENT + 8:
+                game_over = True
+                running = False
+
 
 
         
@@ -473,7 +476,7 @@ def main():
                     camera.offset = 0
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 1, 1, 1, 1, 1])
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 3, 1, 1, 3, 1])
                 case 8:
                     running = False
                 case _:
@@ -517,7 +520,7 @@ def main():
                     camera.offset = WIDTH
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 1, 1, 1, 1, 1])
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 3, 1, 1, 3, 1])
                 case 5:
                     current_level = 6
                     player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 200)
@@ -596,8 +599,8 @@ def main():
 
         screen.fill((0, 0, 0))
 
-        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, backgrounds[0], 9, camera)
-        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, backgrounds[0], 9, camera)
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, 9, camera)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, 9, camera)
 
         door = []
         if current_level == 3 and player.door:
@@ -629,6 +632,7 @@ def main():
             enemies.empty()
             explosion = Dummy()
             player.power = True
+            player.FACING_LEFT = False
             tutorial_text.empty()
             tutorial_text.add(TutorialText('C to dash', 'fonts/pixel.ttf', 40, (255, 255, 255), (500, 100), 0))
 
@@ -698,11 +702,54 @@ def main():
         screen.blit(fade_text, fade_rect)
 
         explosion.draw(screen)
-
-        print(player.position)
         
         pygame.display.flip()
         clock.tick(60)
+
+    music.fadeout(1000)
+
+    game_over_title = title_font.render('You Died', True, (255, 255, 255))
+    game_over_rect = game_over_title.get_rect(center=(WIDTH / 2, 200))
+
+    play_again_text = button_font.render('play again', True, (255, 255, 255))
+    play_again_rect = play_again_text.get_rect(center=(WIDTH / 2 - 200, 900))
+
+    end_quit_text = button_font.render('quit', True, (255, 255, 255))
+    end_quit_rect = end_quit_text.get_rect(center=(WIDTH / 2 + 200, 900))
+
+    dead_image = pygame.transform.scale_by(pygame.image.load('player/death/right/tile075.png'), 3)
+    dead_rect = dead_image.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+
+    while game_over:
+
+        end_game = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                end_game = False
+                game_over = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    end_game = False
+                    game_over = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if end_quit_rect.collidepoint(pygame.mouse.get_pos()):
+                    end_game = False
+                    game_over = False
+                elif play_again_rect.collidepoint(pygame.mouse.get_pos()):
+                    play_again = True
+                    game_over = False
+                    end_game = False
+
+        screen.fill((0, 0, 0))
+
+        screen.blit(game_over_title, game_over_rect)
+        screen.blit(play_again_text, play_again_rect)
+        screen.blit(end_quit_text, end_quit_rect)
+        screen.blit(dead_image, dead_rect)
+
+        pygame.display.flip()
 
 
     music.fadeout(1000)
@@ -717,9 +764,16 @@ def main():
     player.RIGHT_KEY, player.LEFT_KEY = False, False
     player.FACING_LEFT = False
     ended = False
+    player.on_ground = True
 
     end_text = title_font.render('', True, (255, 255, 255))
     end_rect = end_text.get_rect(center=(WIDTH / 2, 200))
+
+    play_again_text = button_font.render('', True, (255, 255, 255))
+    play_again_rect = play_again_text.get_rect(center=(0, 0))
+
+    end_quit_text = button_font.render('', True, (255, 255, 255))
+    end_quit_rect = end_quit_text.get_rect(center=(0, 0))
 
     end_game_time = time
     player_state = "run_right"
@@ -740,10 +794,17 @@ def main():
             if event.type == NEW_PLAYER_FRAME:
                 player.update_frame(player_state, False, False, player_state)
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if end_quit_rect.collidepoint(pygame.mouse.get_pos()):
+                    end_game = False
+                elif play_again_rect.collidepoint(pygame.mouse.get_pos()):
+                    play_again = True
+                    end_game = False
+
         screen.fill((0, 0, 0))
 
-        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, backgrounds[0], 9, camera)
-        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, backgrounds[0], 9, camera)
+        tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, 9, camera)
+        tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, 9, camera)
 
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
@@ -760,17 +821,28 @@ def main():
             end_rect = end_text.get_rect(center=(WIDTH / 2, 200))
             yay.play()
 
+        if time - end_game_time > 7000:
+            play_again_text = button_font.render('play again', True, (255, 255, 255))
+            play_again_rect = play_again_text.get_rect(center=(WIDTH / 2 - 200, 900))
+
+            end_quit_text = button_font.render('quit', True, (255, 255, 255))
+            end_quit_rect = end_quit_text.get_rect(center=(WIDTH / 2 + 200, 900))
+
         player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
 
         camera.scroll()
 
         screen.blit(end_text, end_rect)
+        screen.blit(play_again_text, play_again_rect)
+        screen.blit(end_quit_text, end_quit_rect)
 
         player.draw(screen)
 
         pygame.display.flip()
 
 if __name__ == "__main__":
-    main()
+    while play_again:
+        main()
+
     pygame.quit()
     sys.exit()
