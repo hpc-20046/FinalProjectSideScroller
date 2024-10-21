@@ -63,9 +63,8 @@ def spawn_enemies(pos, etype):
 
 
 class TileMap:
-    def __init__(self, path, background):
+    def __init__(self, path):
         self.tiles, self.total_tiles = load_tiles(path)
-        self.background_tiles, self.total_background_tiles = load_tiles(background)
 
     def draw(self, display, level, gridx, gridy, spike, camera):
         tile_rects = []

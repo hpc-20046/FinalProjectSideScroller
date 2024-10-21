@@ -8,6 +8,7 @@ Date Started: 25/7/24
 Python: 3.10
 --------------------------------------------------
 """
+# imports
 import pygame
 import sys
 import os
@@ -19,18 +20,23 @@ from tilemap import TileMap, spawn_enemies
 from camera import Camera
 from ui import *
 
+# play again varible
 play_again = True
 
 
 def main():
+    # pygame init, setting screen, and clock
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
-
-    tiles = TileMap('dungeon/', 'dungeon/')
-
+    
+    # declaring time and play again variable
+    time = 1
     global play_again
     play_again = False
+
+    # loading tilemap and levels into list
+    tiles = TileMap('dungeon/')
 
     levels = []
     level_list = os.scandir('levels/')
@@ -38,16 +44,19 @@ def main():
         for level in alevel:
             with open(level.path, 'r') as openfile:
                 levels.append(json.load(openfile))
-
+                
+    # level variables
     current_level = 0
-
     border = WIDTH * 2
 
+    # load player object and state
     player = Player(300, HEIGHT / 2 + 200, 3, border)
     player_state = 'idle'
 
+    # load camera object
     camera = Camera(player)
 
+    # creating inventory and other visual groups
     inventory = Inventory((WIDTH / 2, HEIGHT / 2), 550, 4)
     misc_inventory = pygame.sprite.Group()
     attribute_buttons = pygame.sprite.Group()
@@ -58,39 +67,49 @@ def main():
     tutorial_text = pygame.sprite.Group()
     level_animations = pygame.sprite.Group()
     
+
+    # adding inventory backgrounds
     misc_inventory.add(PlayerBorder(inventory, 8))
 
+    # adding equip slot icons
     slot_icons.add(Icon(inventory, ((WIDTH / 2) - 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/helmet.png'), 6))
     slot_icons.add(Icon(inventory, ((WIDTH / 2) - 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/chestplate.png'), 6))
     slot_icons.add(Icon(inventory, ((WIDTH / 2) + 50, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/leggings.png'), 6))
     slot_icons.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
     slot_icons.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
     
+    # adding traslucent player in the middle of the inventory
     misc_inventory.add(Icon(inventory, (WIDTH / 2 - 5, HEIGHT / 2 - 140), pygame.image.load('misc_assets/player/tile000.png'), 14))
     
+    # adding attribute icons
     misc_inventory.add(Icon(inventory, (250, 330), pygame.image.load('ui/icons/heart.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 470), pygame.image.load('ui/icons/strength.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 610), pygame.image.load('ui/icons/defense.png'), 7))
     misc_inventory.add(Icon(inventory, (250, 750), pygame.image.load('ui/icons/stamina.png'), 7))
 
+    # adding attribute buttons
     attribute_buttons.add(AttributeButton((560, 352), 5, 0))
     attribute_buttons.add(AttributeButton((560, 492), 5, 1))
     attribute_buttons.add(AttributeButton((560, 632), 5, 2))
     attribute_buttons.add(AttributeButton((560, 772), 5, 3))
 
+    # adding attribute text
     misc_inventory.add(UiText('Con', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 290)))
     misc_inventory.add(UiText('Str', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 430)))
     misc_inventory.add(UiText('Def', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 570)))
     misc_inventory.add(UiText('Spe', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 710)))
     
+    # adding floating number showing your spirit amount
     spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [(WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440)]))
 
+    # added attribute bars
     attribute_bars = []
     attribute_bars.append(AttributeBar(inventory, (320, 330), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 470), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 610), 5))
     attribute_bars.append(AttributeBar(inventory, (320, 750), 5))
 
+    # added tutorial text on each level
     tutorial_text.add(TutorialText('ARROW KEYS to move', 'fonts/pixel.ttf', 40, (255, 255, 255), (200, 100), 0))
     tutorial_text.add(TutorialText('Z to jump', 'fonts/pixel.ttf', 40, (255, 255, 255), (200, 160), 0))
     tutorial_text.add(TutorialText('SPIKES can kill you', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 800, 160), 0))
@@ -105,6 +124,7 @@ def main():
     tutorial_text.add(TutorialText('UPGRADE you character, and see your SPIRIT', 'fonts/pixel.ttf', 40, (255, 255, 255), (1000, 560), 2))
     tutorial_text.add(TutorialText('UPGRADES use SPIRIT', 'fonts/pixel.ttf', 40, (255, 255, 255), (WIDTH + 500, 300), 2))
 
+    # added spirit fire to rhe center of the inventory
     animations.add(AnimatedImage([
         'misc_assets/spirit_fire/frame_00_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_01_delay-0.08s.png',
@@ -135,6 +155,7 @@ def main():
         'misc_assets/spirit_fire/frame_26_delay-0.08s.png',
         'misc_assets/spirit_fire/frame_27_delay-0.08s.png'], (WIDTH / 2, HEIGHT / 2 - 170), 3, False, False, camera, True))
 
+    # added beating heart on level 8
     level_animations.add(AnimatedLevelImage([
         'misc_assets/heart/frame_0_delay-0.1s.png',
         'misc_assets/heart/frame_1_delay-0.1s.png',
@@ -157,28 +178,36 @@ def main():
         'misc_assets/heart/frame_5_delay-0.1s.png',
         'misc_assets/heart/frame_5_delay-0.1s.png'
     ], (980, 700), 0.3, 7, True, 10))
+    
 
+    # added door at the end of the level
     door_surf = pygame.transform.scale_by(pygame.image.load('ui/Level_0__Tiles.png'), 2.5)
     door_rect = door_surf.get_rect(topright=(WIDTH, 14*40))
     
+    # init the sounds for inventory
     inventory_in = pygame.mixer.Sound('audio/Menu_In.wav')
     inventory_out = pygame.mixer.Sound('audio/Menu_Out.wav')
 
 
-
+    # adding inventory and equip slots
     for i in range(24):
         slots.add(InventorySlot(inventory, i, 4.5))
     for i in range(5):
         slots.add(EquipSlot(inventory, i + 1, 4.5))
-
+    
+    # added health bar
     health_bar = HealthBar(2.5, (60, HEIGHT - 80))
 
+    # init visuals for animation
     explosion = Dummy()
     fade = pygame.sprite.Group()
     fadeout = True
-
     fade_text = pygame.Surface((0,0))
     fade_rect = fade_text.get_rect(topleft=(0, 0))
+    fade_time = 0
+    fade_anim = False
+    
+    # adding fonts and text for main menu
     dungeon_font = pygame.font.Font('fonts/DungeonFont.ttf', 80)
     title_font = pygame.font.Font('fonts/DungeonFont.ttf', 120)
     button_font = pygame.font.Font('fonts/DungeonFont.ttf', 60)
@@ -195,15 +224,16 @@ def main():
     quit_text = button_font.render('quit', True, (255, 255, 255))
     quit_rect = quit_text.get_rect(center=(WIDTH / 2, 800))
 
-
+    # init enemy group
     enemies = pygame.sprite.Group()
 
+    # init sounds for menu theme
     title_sound = pygame.mixer.Sound('audio/title.wav')
-
     music = pygame.mixer.Sound('audio/(Loop) Powerful Relic Theme.wav')
     music.play(-1)
     music.set_volume(0.6)
 
+    # setting intervals for custom events
     NEW_PLAYER_FRAME = pygame.USEREVENT
     pygame.time.set_timer(NEW_PLAYER_FRAME, 150)
     FIRE_ANIM = pygame.USEREVENT + 1
@@ -221,18 +251,19 @@ def main():
     HIT_ANIM = pygame.USEREVENT + 7
     pygame.time.set_timer(HIT_ANIM, 150)
     
+    # variable so computers sucky specs dont ruin the spawn point
     loading = 0
 
-    fade_time = 0
-    fade_anim = False
-
+    # game states
     running = True
     main_menu = True
     game_over = False
     end_game = True
     while main_menu:
 
+        # event loop
         for event in pygame.event.get():
+            # quitting the game
             if event.type == pygame.QUIT:
                 running = False
                 main_menu = False
@@ -243,6 +274,7 @@ def main():
                     main_menu = False
                     end_game = False
 
+            # check for mouse clicks on the buttons
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if start_rect.collidepoint(pygame.mouse.get_pos()):
                     main_menu = False
@@ -252,18 +284,21 @@ def main():
                 elif quit_rect.collidepoint(pygame.mouse.get_pos()):
                     main_menu = False
                     running = False
+                    end_game = False
 
+        # reset screen
         screen.fill((0, 0, 0))
 
+        # draw text and buttons
         screen.blit(title_text, title_rect)
         screen.blit(start_text, start_rect)
         screen.blit(options_text, options_rect)
         screen.blit(quit_text, quit_rect)
 
-
+        # update display
         pygame.display.flip()
 
-
+    # change game music
     music.fadeout(500)
     music = pygame.mixer.Sound('audio/(Loop) Forest Exploration.wav')
     music.play(-1)
@@ -271,6 +306,7 @@ def main():
 
     while running:
 
+        # set the time for intervals
         time = pygame.time.get_ticks()
 
         # delta time - so player speed will look the same no matter the frame rate
@@ -282,15 +318,13 @@ def main():
             
         loading += 1
 
+        # event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 end_game = False
             if event.type == pygame.KEYDOWN:
-                # if event.key == pygame.K_ESCAPE:
-                #     running = False
-                #     end_game = False
-                    
+                # detect arrow key pressed. only when not in inventory, alive, or not in the animation
                 if not inventory.showing:
                     if not player.dead and not fade_anim and not player.animation:
                         if event.key == pygame.K_LEFT:
@@ -304,7 +338,7 @@ def main():
                         elif event.key == pygame.K_z:
                             player.jump()
 
-
+                        # detect key presses for jump, attack, and dash
                         if event.key == pygame.K_x:
                             player.attack(camera)
                         if event.key == pygame.K_s:
@@ -314,6 +348,7 @@ def main():
                     else:
                         player.LEFT_KEY, player.RIGHT_KEY = False, False
 
+                # open the inventory when pressed i and play sound
                 if event.key == pygame.K_i:
                     if not fade_anim and not player.animation:
                         if inventory.showing:
@@ -323,6 +358,7 @@ def main():
                             inventory.showing = True
                             inventory_in.play()
 
+            # detect keyup to stop movement or jump 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     player.LEFT_KEY = False
