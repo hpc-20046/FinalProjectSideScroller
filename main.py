@@ -13,14 +13,13 @@ import pygame
 import sys
 import os
 import json
-from enemy import Enemy
 from settings import *
 from player import Player
 from tilemap import TileMap, spawn_enemies
 from camera import Camera
 from ui import *
 
-# play again varible
+# play again variable
 play_again = True
 
 
@@ -78,7 +77,7 @@ def main():
     slot_icons.add(Icon(inventory, ((WIDTH / 2) + 150, (HEIGHT / 2) + 220), pygame.image.load('ui/icons/boots.png'), 6))
     slot_icons.add(Icon(inventory, ((WIDTH / 2), (HEIGHT / 2) + 120), pygame.image.load('ui/icons/sword.png'), 6))
     
-    # adding traslucent player in the middle of the inventory
+    # adding translucent player in the middle of the inventory
     misc_inventory.add(Icon(inventory, (WIDTH / 2 - 5, HEIGHT / 2 - 140), pygame.image.load('misc_assets/player/tile000.png'), 14))
     
     # adding attribute icons
@@ -259,6 +258,8 @@ def main():
     main_menu = True
     game_over = False
     end_game = True
+
+    # menu screen loop
     while main_menu:
 
         # event loop
@@ -304,6 +305,7 @@ def main():
     music.play(-1)
     music.set_volume(0.6)
 
+    # main loop
     while running:
 
         # set the time for intervals
@@ -369,9 +371,10 @@ def main():
                         player.velocity.y *= 0.25
                         player.is_jumping = False
 
-
+            # update the player frame
             if not inventory.showing:
                 if event.type == NEW_PLAYER_FRAME:
+                    # play waking up animation
                     if player.animation:
                         if player.alternate_1 >= 6:
                             player.alternate_1 = 0
@@ -383,42 +386,52 @@ def main():
                                 player.image = player.death_right_frames[player.animation_counter]
                         else:
                             player.alternate_1 += 1
+                    # update player image based on the player state
                     else:
                         player_state = player.update_frame(player.state, False, False, player_state)
                     
-            
+            # update the image for the spirit fire and the spirit number in the inventory
             if event.type == FIRE_ANIM:
                 animations.update(camera)
                 spirit_amount.update(player.spirit)
 
+            # update the image for the enemies
             if event.type == ENEMY_ANIM:
                 if enemies.sprites():
                     for sprite in enemies.sprites():
                         sprite.update_frame()
 
+            # update the image for and poof animations happening in the level
             if event.type == SMOKE_ANIM:
                 player.poof.update(camera)
 
+            # update the image for any spirit flames in the level
             if event.type == FLAME_ANIM:
                 if player.flame.sprites():
                     for flame in player.flame.sprites():
                         flame.update_frame()
 
+            # update the image for the beating heart in level 8
             if event.type == HEART_ANIM:
                 if level_animations.sprites():
                     level_animations.sprites()[0].update_frame()
-                
+
+            # update the player image if in a roll animation
             if event.type == ROLL_ANIM:
                 player_state = player.update_frame("roll", True, False, player_state)
-                
+
+            # update the player image if in a hurt animation
             if event.type == HIT_ANIM:
                 player_state = player.update_frame("hit", False, True, player_state)
 
+            # check for mouse clicks on inventory and equip slots
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for slot in slots.sprites():
                     slot.drag(inventory)
                 for button in attribute_buttons.sprites():
                     button.click(player)
+
+            # check for when the player releases the mouse button to dop the item
             if event.type == pygame.MOUSEBUTTONUP:
                 for slot in slots.sprites():
                     slot.drop(inventory)
@@ -428,13 +441,14 @@ def main():
                 elif inventory.moving_equip_slot != -1:
                     inventory.moving_equip_slot = -1
 
+            # check for game over event
             if event.type == pygame.USEREVENT + 8:
                 game_over = True
                 running = False
 
 
 
-        
+        # update the player_state variable and the player image whenever there is a change in state
         if not inventory.showing:
             if not player.dead:
                 if player.RIGHT_KEY:
@@ -455,15 +469,17 @@ def main():
                             player.update_frame('idle_right', False, False, player_state)
                             player_state = player_state = 'idle'
 
-
+        # stop the player moving when the animation is player or if the player is dead
         if player.dead or player.animation:
             player.LEFT_KEY, player.RIGHT_KEY = False, False
 
-
+        # check if the player exits the screen on the right side and transitions level
         if player.rect.x > WIDTH - player.rect.w:
+            # deletes all the enemies, items, and spirit flames
             enemies.empty()
             player.flame.empty()
             player.item.empty()
+            # check for level and update variables and spawn enemies
             match current_level:
                 case 0:
                     current_level = 1
@@ -518,10 +534,13 @@ def main():
                 case _:
                     pass
 
+        # check if the player exits the screen on the left side and transitions level
         elif player.rect.x < 0:
+            # deletes all the enemies, items, and spirit flames
             enemies.empty()
             player.flame.empty()
             player.item.empty()
+            # check for level and update variables and spawn enemies
             match current_level:
                 case 1:
                     current_level = 0
@@ -574,10 +593,13 @@ def main():
                 case _:
                     pass
 
+        # check if the player exits the screen on the bottom side and transitions level
         elif player.rect.y > HEIGHT:
+            # deletes all the enemies, items, and spirit flames
             enemies.empty()
             player.flame.empty()
             player.item.empty()
+            # check for level and update variables and spawn enemies
             match current_level:
                 case 3:
                     current_level = 10
@@ -606,10 +628,13 @@ def main():
                 case _:
                     pass
 
+        # check if the player exits the screen on the top side and transitions level
         elif player.rect.y < 0:
+            # deletes all the enemies, items, and spirit flames
             enemies.empty()
             player.flame.empty()
             player.item.empty()
+            # check for level and update variables and spawn enemies
             match current_level:
                 case 2:
                     current_level = 9
@@ -632,25 +657,31 @@ def main():
                 case _:
                     pass
                     
-
+        # resets the screen to draw
         screen.fill((0, 0, 0))
 
+        # draws all the tiles on the screen from a json file based on the camera offset and then stores the rects in a list
         tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, 9, camera)
         tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, 9, camera)
 
+        # draws the door if on level 4 and if the door is closed
         door = []
         if current_level == 3 and player.door:
             door.append(door_rect)
             screen.blit(door_surf, door_rect)
 
+        # fades out the music on the level with the beating heart.
         if current_level == 7:
             music.fadeout(1000)
 
+        # combines the tile and door rects, and the spike rects into one list
         tile_rects = tile_rects1 + tile_rects2 + door
         spike_rects = spike_rects1 + spike_rects2
 
+        # update the tutorial text based on the current level and the camera offset
         tutorial_text.update(camera, current_level)
 
+        # start the explosion animation
         if player.explosion:
             player.explosion = False
             fadeout = True
@@ -658,6 +689,7 @@ def main():
             fade.add(Fade(0))
             explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10,(255, 0, 0), (0, 360), (3000, 8000), 0)
 
+        # change level and draw the wind dash text
         if not explosion.particles.sprites():
             current_level = 0
             player.position = pygame.math.Vector2(300, HEIGHT / 2 + 200)
@@ -678,7 +710,7 @@ def main():
             title_sound.play()
 
 
-
+        # fade into the level after a certain amount of time and play player animation
         if (time - fade_time > 5000) and fade_time != 0:
             fade.empty()
             fade_text = dungeon_font.render('', True, (255, 255, 255))
@@ -690,30 +722,42 @@ def main():
             pygame.event.post(pygame.event.Event(NEW_PLAYER_FRAME))
             music.play(-1)
 
-
+        # make it so the enemies only move when you are not in the inventory
         if not inventory.showing:
             enemies.update(dt, camera, tile_rects, health_bar, player)
 
+        # update the level animations
         level_animations.update(current_level, player)
-        
+
+        # update the health bar
         health_bar.update(player)
 
+        # update the particle explosion and the fade
         explosion.update(dt)
         fade.update(fadeout)
-        
+
+        # update the player
         player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
-        
+
+        # update the camera offset
         camera.scroll()
 
+        # draw the tutorial text
         tutorial_text.draw(screen)
 
+        # draw the level animations
         level_animations.draw(screen)
 
+        # draw the player
         player.draw(screen)
 
+        # draw the enemies
         enemies.draw(screen)
 
+        # draw the inventory
         inventory.draw(screen)
+
+        # draw everything in the inventory if it is showing
         if inventory.showing:
             slots.draw(screen)
             misc_inventory.draw(screen)
@@ -731,19 +775,27 @@ def main():
             slots.update(inventory, screen)
             spirit_amount.draw(screen)
         else:
+            # draw the health bar when not in the inventory
             health_bar.draw(screen)
-            
+
+        # draw the fade
         fade.draw(screen)
 
+        # draw the wind dash text
         screen.blit(fade_text, fade_rect)
 
+        # draw the particles in the explosion
         explosion.draw(screen)
-        
+
+        # update the screen
         pygame.display.flip()
+        # tick the clock at 60 fps
         clock.tick(60)
 
+    # fade out the music when died or finished the game
     music.fadeout(1000)
 
+    # set game over title and buttons
     game_over_title = title_font.render('You Died', True, (255, 255, 255))
     game_over_rect = game_over_title.get_rect(center=(WIDTH / 2, 200))
 
@@ -753,14 +805,19 @@ def main():
     end_quit_text = button_font.render('quit', True, (255, 255, 255))
     end_quit_rect = end_quit_text.get_rect(center=(WIDTH / 2 + 200, 900))
 
+    # set the player image
     dead_image = pygame.transform.scale_by(pygame.image.load('player/death/right/tile075.png'), 3)
     dead_rect = dead_image.get_rect(center=(WIDTH / 2, HEIGHT / 2))
 
+    # game over loop
     while game_over:
 
+        # make sure that when you quit or play again, it doesn't go to the win screen
         end_game = False
 
+        # event loop
         for event in pygame.event.get():
+            # quit the game
             if event.type == pygame.QUIT:
                 end_game = False
                 game_over = False
@@ -769,6 +826,7 @@ def main():
                     end_game = False
                     game_over = False
 
+            # check for mouse click on buttons
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if end_quit_rect.collidepoint(pygame.mouse.get_pos()):
                     end_game = False
@@ -778,18 +836,22 @@ def main():
                     game_over = False
                     end_game = False
 
+        # reset the screen
         screen.fill((0, 0, 0))
 
+        # draw the title, buttons, and player image
         screen.blit(game_over_title, game_over_rect)
         screen.blit(play_again_text, play_again_rect)
         screen.blit(end_quit_text, end_quit_rect)
         screen.blit(dead_image, dead_rect)
 
+        # update the screen
         pygame.display.flip()
 
-
+    # fade out the music when finished the game
     music.fadeout(1000)
 
+    # set event and player variables
     current_level = 11
     border = WIDTH
     camera.offset_float = 0
@@ -802,6 +864,7 @@ def main():
     ended = False
     player.on_ground = True
 
+    # hide the title and buttons
     end_text = title_font.render('', True, (255, 255, 255))
     end_rect = end_text.get_rect(center=(WIDTH / 2, 200))
 
@@ -811,25 +874,34 @@ def main():
     end_quit_text = button_font.render('', True, (255, 255, 255))
     end_quit_rect = end_quit_text.get_rect(center=(0, 0))
 
+    # set player state for animation
     end_game_time = time
     player_state = "run_right"
     yay = pygame.mixer.Sound('audio/yay.wav')
 
+    # end game loop
     while end_game:
 
+        # delta time
         dt = clock.tick(60) * 0.001 * TARGET_FPS
 
+        # update time variable for interval calculations
         time = pygame.time.get_ticks()
 
+        #event loop
         for event in pygame.event.get():
+            # quit game
             if event.type == pygame.QUIT:
                 end_game = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     end_game = False
+
+            # update player image for animation
             if event.type == NEW_PLAYER_FRAME:
                 player.update_frame(player_state, False, False, player_state)
 
+            # check mouse clicks for buttons
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if end_quit_rect.collidepoint(pygame.mouse.get_pos()):
                     end_game = False
@@ -837,26 +909,32 @@ def main():
                     play_again = True
                     end_game = False
 
+        # reset screen
         screen.fill((0, 0, 0))
 
+        # load empty level
         tile_rects1, spike_rects1 = tiles.draw(screen, levels[current_level * 2], 0, 0, 9, camera)
         tile_rects2, spike_rects2 = tiles.draw(screen, levels[current_level * 2 + 1], 1, 0, 9, camera)
 
+        # combine rect lists
         tile_rects = tile_rects1 + tile_rects2
         spike_rects = spike_rects1 + spike_rects2
 
+        # stop running after a certain time
         if time - end_game_time > 3150:
             player.RIGHT_KEY = False
             player_state = 'idle_right'
         else:
             player.RIGHT_KEY = True
 
+        # display title after a certain time
         if time - end_game_time > 5000 and not ended:
             ended = True
             end_text = title_font.render('You escaped the dungeon!', True, (255, 255, 255))
             end_rect = end_text.get_rect(center=(WIDTH / 2, 200))
             yay.play()
 
+        # display buttons after a certain time
         if time - end_game_time > 7000:
             play_again_text = button_font.render('play again', True, (255, 255, 255))
             play_again_rect = play_again_text.get_rect(center=(WIDTH / 2 - 200, 900))
@@ -864,21 +942,29 @@ def main():
             end_quit_text = button_font.render('quit', True, (255, 255, 255))
             end_quit_rect = end_quit_text.get_rect(center=(WIDTH / 2 + 200, 900))
 
+        # update the player
         player.update(dt, tile_rects, spike_rects, border, camera, inventory, enemies.sprites(), health_bar, current_level)
 
+        # update the camera offset
         camera.scroll()
 
+        # draw the title and buttons
         screen.blit(end_text, end_rect)
         screen.blit(play_again_text, play_again_rect)
         screen.blit(end_quit_text, end_quit_rect)
 
+        # draw the player
         player.draw(screen)
 
+        # update the screen
         pygame.display.flip()
 
+# run main()
 if __name__ == "__main__":
+    # plays again if play again button has been pressed
     while play_again:
         main()
 
+    # exits the program
     pygame.quit()
     sys.exit()
