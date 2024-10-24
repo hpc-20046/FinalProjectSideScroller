@@ -479,7 +479,7 @@ def main():
             enemies.empty()
             player.flame.empty()
             player.item.empty()
-            # check for level and update variables and spawn enemies
+            # check for level and update variables and spawn enemies based on the position and enemy type
             match current_level:
                 case 0:
                     current_level = 1
