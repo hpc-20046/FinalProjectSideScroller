@@ -331,12 +331,12 @@ def main():
                     if not player.dead and not fade_anim and not player.animation:
                         if event.key == pygame.K_LEFT:
                             player_state = player.turn(True, player_state)
-                            player.RIGHT_KEY = False
-                            player.LEFT_KEY, player.FACING_LEFT = True, True
+                            player.right_key = False
+                            player.left_key, player.facing_left = True, True
                         elif event.key == pygame.K_RIGHT:
                             player_state = player.turn(False, player_state)
-                            player.LEFT_KEY = False
-                            player.RIGHT_KEY, player.FACING_LEFT = True, False
+                            player.left_key = False
+                            player.right_key, player.facing_left = True, False
                         elif event.key == pygame.K_z:
                             player.jump()
 
@@ -348,7 +348,7 @@ def main():
                         if event.key == pygame.K_c:
                             player.roll()
                     else:
-                        player.LEFT_KEY, player.RIGHT_KEY = False, False
+                        player.left_key, player.right_key = False, False
 
                 # open the inventory when pressed i and play sound
                 if event.key == pygame.K_i:
@@ -363,9 +363,9 @@ def main():
             # detect keyup to stop movement or jump 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
-                    player.LEFT_KEY = False
+                    player.left_key = False
                 elif event.key == pygame.K_RIGHT:
-                    player.RIGHT_KEY = False
+                    player.right_key = False
                 elif event.key == pygame.K_z:
                     if player.is_jumping:
                         player.velocity.y *= 0.25
@@ -451,18 +451,18 @@ def main():
         # update the player_state variable and the player image whenever there is a change in state
         if not inventory.showing:
             if not player.dead:
-                if player.RIGHT_KEY:
+                if player.right_key:
                     if not player_state == 'run':
                         player_state = 'run'
                         player_state = player.update_frame('run_right', False, False, player_state)
 
-                elif player.LEFT_KEY:
+                elif player.left_key:
                     if not player_state == 'run':
                         player_state = 'run'
                         player_state = player.update_frame('run_left', False, False, player_state)
                 else:
                     if not player_state == 'idle':
-                        if player.FACING_LEFT:
+                        if player.facing_left:
                             player.update_frame('idle_left', False, False, player_state)
                             player_state = player_state = 'idle'
                         else:
@@ -471,7 +471,7 @@ def main():
 
         # stop the player moving when the animation is player or if the player is dead
         if player.dead or player.animation:
-            player.LEFT_KEY, player.RIGHT_KEY = False, False
+            player.left_key, player.right_key = False, False
 
         # check if the player exits the screen on the right side and transitions level
         if player.rect.x > WIDTH - player.rect.w:
@@ -700,7 +700,7 @@ def main():
             enemies.empty()
             explosion = Dummy()
             player.power = True
-            player.FACING_LEFT = False
+            player.facing_left = False
             tutorial_text.empty()
             tutorial_text.add(TutorialText('C to dash', 'fonts/pixel.ttf', 40, (255, 255, 255), (500, 100), 0))
 
@@ -859,8 +859,8 @@ def main():
     player.position = pygame.math.Vector2(0, 680)
     player.rect.bottom = 680
     player.end_game = True
-    player.RIGHT_KEY, player.LEFT_KEY = False, False
-    player.FACING_LEFT = False
+    player.right_key, player.left_key = False, False
+    player.facing_left = False
     ended = False
     player.on_ground = True
 
@@ -922,10 +922,10 @@ def main():
 
         # stop running after a certain time
         if time - end_game_time > 3150:
-            player.RIGHT_KEY = False
+            player.right_key = False
             player_state = 'idle_right'
         else:
-            player.RIGHT_KEY = True
+            player.right_key = True
 
         # display title after a certain time
         if time - end_game_time > 5000 and not ended:

@@ -1,13 +1,15 @@
+# imports
 import random
 import pygame
 from settings import *
 from spirit import SpiritFlame
 from ui import AnimatedImage, Item
 
-
+# player object that handles everything to do with the player
 class Player:
     def __init__(self, start_x, start_y, scale_factor, border):
 
+        # put player frames into lists according to its direction and state
         self.idle_right_frames = [
             pygame.transform.scale_by(pygame.image.load("player/idle/right/tile000.png"), scale_factor),
             pygame.transform.scale_by(pygame.image.load("player/idle/right/tile001.png"), scale_factor),
@@ -89,22 +91,26 @@ class Player:
             pygame.transform.scale_by(pygame.image.load('player/death/right/tile075.png'), scale_factor)
         ]
 
+        # level border variable for ease of access
+        self.border = border
 
+        # control variables for the player images
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
         self.image = self.idle_right_frames[self.frame_index]
         self.image_offset = pygame.math.Vector2(-9 * scale_factor, -9 * scale_factor)
-        self.border = border
-
-        self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
-
         self.state = "idle_right"
         self.temp_state = ""
 
-        self.LEFT_KEY, self.RIGHT_KEY, self.FACING_LEFT = False, False, False
+        # defining the rect of the player
+        self.rect = pygame.Rect(start_x, start_y, 13 * scale_factor, 19 * scale_factor)
+
+        # control and spacial booleans
+        self.left_key, self.right_key, self.facing_left = False, False, False
         self.is_jumping, self.on_ground = False, False
         self.in_air = False
 
+        # variables to do with movement and physics
         self.gravity = 0.35
         self.friction = -0.12
         self.max_velocity = 4
@@ -113,15 +119,18 @@ class Player:
         self.speed = 2
         self.current_speed = 4
 
+        # physics vectors
         self.position = pygame.math.Vector2(start_x, start_y)
         self.velocity = pygame.math.Vector2(0, 0)
         self.acceleration = pygame.math.Vector2(0, self.gravity)
 
+        # groups for small visuals
         self.arc = pygame.sprite.Group()
         self.poof = pygame.sprite.Group()
         self.flame = pygame.sprite.Group()
         self.item = pygame.sprite.Group()
 
+        # player stats
         self.damage = 1
         self.strength = 1
         self.spirit = 0
@@ -130,6 +139,7 @@ class Player:
         self.power = False
         self.health_update = False
 
+        # player event variables
         self.time = 0
         self.time_start = 0
         self.death_time_start = 0
@@ -149,14 +159,15 @@ class Player:
         self.door = True
         self.door_opened = False
         self.end_game = False
-        
+
+        # sounds
         self.jump_sound = pygame.mixer.Sound('audio/Jump.wav')
         self.dash_sound = pygame.mixer.Sound('audio/dash.wav')
         self.door_sound = pygame.mixer.Sound('audio/door_open.wav')
         self.death_sound = pygame.mixer.Sound('audio/death.wav')
         
 
-
+    # draw small visuals and player onto screen based on the camera offset
     def draw(self, display):
         self.arc.draw(display)
         self.flame.draw(display)
@@ -164,13 +175,17 @@ class Player:
         self.poof.draw(display)
         display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
 
+    # update small visuals and player
     def update(self, dt, tiles, spikes, border, camera, inventory, enemies, bar, current_level):
+        # get ticks
         self.time = pygame.time.get_ticks()
+        # check if dash has ended
         if self.time - self.time_start >= 400:
             self.max_velocity = 4
             self.dash = False
             self.dashing = False
 
+        # update damage based on equipped sword
         match self.equip[4]:
             case 1:
                 temp_damage = 2
@@ -178,13 +193,15 @@ class Player:
                 temp_damage = 1
             case _:
                 temp_damage = 0
+        self.damage = self.strength + self.attributes[1] + temp_damage
 
+        # open the door if reached 50 spirit and if door has not already opened
         if self.spirit >= 50 and not self.door_opened:
             self.door = False
             self.door_opened = True
             self.door_sound.play()
 
-        self.damage = self.strength + self.attributes[1] + temp_damage
+        # update speed based on attributes
         if not self.dash and current_level != 8 and current_level != 11:
             self.max_velocity = self.current_speed + (self.attributes[3] / 2)
         elif self.dash:
@@ -192,15 +209,21 @@ class Player:
         else:
             self.max_velocity = 4
 
+        # refill health bar when upgrading health
         if self.health_update:
             self.health_update = False
             bar.amount = bar.total
 
+        # update variables for ease of access
         self.equip = inventory.equip
         self.border = border
+
+        # update small visuals
         self.arc.update(self, enemies, camera)
         self.flame.update(camera, self)
         self.item.update(self, camera, inventory)
+
+        # check movement and collisions when not in inventory
         if not inventory.showing:
             self.horizontal_movement(dt, camera)
             self.check_collisions_x(tiles, spikes)
@@ -209,6 +232,7 @@ class Player:
                     self.vertical_movement(dt)
                     self.check_collisions_y(tiles, spikes)
 
+        # respawn after a certain amount of time after being dead
         if self.time - self.death_time_start >= 3000 and self.death_anim:
             self.dead = False
             self.death_anim = False
@@ -216,58 +240,82 @@ class Player:
             self.hurt = False
             self.respawn(current_level, camera, bar)
 
+        # if health is 0, player is dead
         if bar.amount <= 0:
             self.dead = True
 
+    # calculate player movement on the x-axis
     def horizontal_movement(self, dt, camera):
+        # reset acceleration
         self.acceleration.x = 0
-        if self.LEFT_KEY:
+        # update acceleration based on key pressed
+        if self.left_key:
             self.acceleration.x -= self.speed
-        elif self.RIGHT_KEY:
+        elif self.right_key:
             self.acceleration.x += self.speed
+        # apply friction
         self.acceleration.x += self.velocity.x * self.friction
+        # using kinematics equations to calculate velocity and change in distance and then capping it
         self.velocity.x += self.acceleration.x * dt
         self.limit_velocity(self.max_velocity)
         self.position.x += self.velocity.x * dt + (self.acceleration.x * 0.5) * (dt * dt)
+        # setting the rect pos
         self.rect.x = self.position.x - camera.offset_float
 
+    # calculate the player movement on the y-axis
     def vertical_movement(self, dt):
+        # change velocity based on gravity
         self.velocity.y += self.acceleration.y * dt
+        # cap velocity
         if self.velocity.y > self.terminal_velocity:
             self.velocity.y = self.terminal_velocity
 
+        # calculate distance changed and set rect pos
         self.position.y += self.velocity.y * dt + (self.acceleration.y * 0.5) * (dt * dt)
         self.rect.bottom = self.position.y
 
+    # handles jumping
     def jump(self):
+        # if on the ground, apply upwards velocity
         if self.on_ground:
             self.is_jumping = True
             self.velocity.y -= self.jump_height
             self.on_ground = False
             self.jump_sound.play()
 
+    # limits the velocity
     def limit_velocity(self, max_vel):
+        # clamping the velocity to the positive and negative values of max_vel
         self.velocity.x = max(min(max_vel, self.velocity.x), -max_vel)
+        # set the velocity to 0 if small enough to stop janky movements
         if abs(self.velocity.x) < 0.01:
             self.velocity.x = 0
 
+    # check for collisions with tiles and spikes
     def get_collisions(self, tiles, spikes):
         hits = []
         impaled = False
+        # go through all the tiles and add the ones the player has collided with to a list
         for tile in tiles:
             if self.rect.colliderect(tile):
                 hits.append(tile)
 
+        # check for a collision with a spike
         for spike in spikes:
             if self.rect.colliderect(spike):
                 impaled = True
                 break
+        # return collisions
         return hits, impaled
 
+    # checks and corrects collisions on the x-axis
     def check_collisions_x(self, tiles, spikes):
+        # get collisions
         collisions, spike = self.get_collisions(tiles, spikes)
+        # correct tile collisions based on velocity direction
         for tile in collisions:
             if self.velocity.x > 0:
+                # adjusts the position by how much the rect position has changed
                 temp_rect = self.rect.x
                 self.rect.x = tile.left - self.rect.w
                 adjust_factor = self.rect.x - temp_rect
@@ -275,11 +323,13 @@ class Player:
                 self.position.x = int(self.position.x)
 
             elif self.velocity.x < 0:
+                # adjusts the position by how much the rect position has changed
                 temp_rect = self.rect.x
                 self.rect.x = tile.right
                 adjust_factor = self.rect.x - temp_rect
                 self.position.x += adjust_factor
                 self.position.x = int(self.position.x) + 1
+        # player is dead if they touch a spike
         if spike:
             self.dead = True
 
@@ -309,7 +359,7 @@ class Player:
         if not self.time - self.time_start >= self.cooldown:
             return
 
-        if self.FACING_LEFT:
+        if self.facing_left:
             self.time_start = self.time
             self.velocity.x -= 10
             self.velocity.y = 0
@@ -330,7 +380,7 @@ class Player:
             self.temp_state = state
             if not self.death_anim:
                 self.death_sound.play()
-                if self.FACING_LEFT:
+                if self.facing_left:
                     self.state_frames = self.death_left_frames
                     self.frame_index = 0
                     self.image = self.state_frames[self.frame_index]
@@ -357,7 +407,7 @@ class Player:
             if self.dash:
                 self.temp_state = state
                 if not self.dashing:
-                    if self.FACING_LEFT:
+                    if self.facing_left:
                         self.state_frames = self.roll_left_frames
                         self.frame_index = 0
                         self.image = self.state_frames[self.frame_index]
@@ -377,7 +427,7 @@ class Player:
             elif self.hit:
                 self.temp_state = state
                 if not self.hurt:
-                    if self.FACING_LEFT:
+                    if self.facing_left:
                         self.state_frames = self.hit_left_frames
                         self.frame_index = 0
                         self.image = self.state_frames[self.frame_index]
@@ -387,15 +437,15 @@ class Player:
                         self.frame_index = 0
                         self.image = self.state_frames[self.frame_index]
                         self.hurt = True
-                    self.temp_facing = self.FACING_LEFT
+                    self.temp_facing = self.facing_left
                 else:
                     if hit:
-                        if self.temp_facing != self.FACING_LEFT:
-                            if self.FACING_LEFT:
+                        if self.temp_facing != self.facing_left:
+                            if self.facing_left:
                                 self.state_frames = self.hit_left_frames
                             else:
                                 self.state_frames = self.hit_right_frames
-                            self.temp_facing = self.FACING_LEFT
+                            self.temp_facing = self.facing_left
 
                         self.frame_index += 1
                         if self.frame_index >= len(self.state_frames):
@@ -436,12 +486,12 @@ class Player:
 
                     if not self.on_ground:
                         if abs(self.velocity.x) > 0:
-                            if self.FACING_LEFT:
+                            if self.facing_left:
                                 self.image = self.run_jump_left_frames
                             else:
                                 self.image = self.run_jump_right_frames
                         else:
-                            if self.FACING_LEFT:
+                            if self.facing_left:
                                 self.image = self.idle_jump_left_frames
                             else:
                                 self.image = self.idle_jump_right_frames
@@ -566,7 +616,7 @@ class Player:
 
     def turn(self, turning_left, player_state):
         state = "idle_right"
-        if turning_left == self.FACING_LEFT:
+        if turning_left == self.facing_left:
             return
         elif not turning_left:
             state = "run_right"
@@ -582,7 +632,7 @@ class Player:
             self.arc.add(Arc(['misc_assets/slash_fx/tile099.png',
                                         'misc_assets/slash_fx/tile100.png',
                                         'misc_assets/slash_fx/tile101.png',
-                                        'misc_assets/slash_fx/tile102.png'], 40, (self.rect.x, self.rect.y), 1, self.FACING_LEFT))
+                                        'misc_assets/slash_fx/tile102.png'], 40, (self.rect.x, self.rect.y), 1, self.facing_left))
 
 
 
@@ -645,7 +695,7 @@ class Arc(pygame.sprite.Sprite):
             if not self.damaged:
                 kill.health -= player.damage
                 self.damaged = True
-                kill.knockback(player.FACING_LEFT)
+                kill.knockback(player.facing_left)
                 self.hit_sound.play()
                 self.sound_played = True
 

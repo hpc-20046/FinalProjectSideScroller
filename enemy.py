@@ -126,11 +126,11 @@ class Enemy(pygame.sprite.Sprite):
         # check for player collisions
         self.check_player_collisions(bar, player)
 
-    # calculate and move the enemy on the y axis
+    # calculate and move the enemy on the y-axis
     def y_movement(self, dt):
         # increase the y velocity based on the gravity 
         self.velocity.y += self.gravity * dt
-        # cap the y velocity at the ternimal velocity
+        # cap the y velocity at the terminal velocity
         if self.velocity.y > self.terminal_velocity:
             self.velocity.y = self.terminal_velocity
 
@@ -151,9 +151,9 @@ class Enemy(pygame.sprite.Sprite):
             self.position.y = tile.top
             self.rect.bottom = self.position.y
 
-    # calculate and move the enemy on the x axis
+    # calculate and move the enemy on the x-axis
     def x_movement(self, camera):
-        # if walking, update the position based on the movement speed and the directiom its facing only if not in knockback animation
+        # if walking, update the position based on the movement speed and the direction its facing only if not in knockback animation
         if self.state == 'walk':
             if self.velocity.x == 0:
                 if self.facing_left:
@@ -174,10 +174,14 @@ class Enemy(pygame.sprite.Sprite):
         # set the rect position to the position minus the camera offset
         self.rect.x = self.position.x - camera.offset_float
 
+    # checks and corrects collisions on the x-axis
     def x_collisions(self, tiles):
+        # get all tile collisions
         collisions = self.get_collisions(tiles)
+        # correct all tile collisions
         for tile in collisions:
             if not self.facing_left:
+                # update the self.position based on how much the rect has moved
                 temp_rect = self.rect.x
                 self.rect.x = tile.left - self.rect.w
                 adjust_factor = self.rect.x - temp_rect
@@ -192,11 +196,12 @@ class Enemy(pygame.sprite.Sprite):
                 self.position.x = int(self.position.x) + 1
                 self.velocity.x = 0
 
+        # change direction if collided with a wall
         if collisions:
             self.change_direction()
 
 
-
+    # check for collisions with any tiles and put them in a list
     def get_collisions(self, tiles):
         hits = []
         for tile in tiles:
@@ -204,6 +209,7 @@ class Enemy(pygame.sprite.Sprite):
                 hits.append(tile)
         return hits
 
+    # adds velocity in the direction the player hits them so simulate knockback
     def knockback(self, left):
         if self.facing_left != left:
             self.change_direction()
@@ -215,6 +221,7 @@ class Enemy(pygame.sprite.Sprite):
             self.velocity.x = 15
             self.velocity.y = -5
 
+    # damage player when colliding with it
     def check_player_collisions(self, bar, player):
         if player.rect.colliderect(self.rect):
             bar.damage(self.damage, player)
