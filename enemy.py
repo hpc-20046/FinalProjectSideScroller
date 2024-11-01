@@ -42,14 +42,14 @@ class Enemy(pygame.sprite.Sprite):
         self.time_until_state_change = random.randrange(500, 5000)
 
         # constants for time the enemy walks and idles
-        self.idle_time = pygame.math.Vector2(500, 5000)
-        self.walk_time = pygame.math.Vector2(4000, 15000)
+        self.IDLE_TIME = pygame.math.Vector2(500, 5000)
+        self.WALK_TIME = pygame.math.Vector2(4000, 15000)
         
-        # declare varibles for movement and physics 
-        self.movement_speed = 1
+        # declare variables for movement and physics
+        self.MOVEMENT_SPEED = 1
         self.velocity = pygame.math.Vector2(0, 0)
-        self.gravity = 0.35
-        self.terminal_velocity = 10
+        self.GRAVITY = 0.35
+        self.TERMINAL_VELOCITY = 10
 
         # declare health, damage, and enemy type
         self.health = health
@@ -99,7 +99,7 @@ class Enemy(pygame.sprite.Sprite):
                     self.index = 0
                     self.image = self.current_frames[self.index]
                 # choose new random interval for state change
-                self.time_until_state_change = random.randrange(int(self.walk_time.x), int(self.walk_time.y))
+                self.time_until_state_change = random.randrange(int(self.WALK_TIME.x), int(self.WALK_TIME.y))
             else:
                 # if walking, start idling
                 self.state = 'idle'
@@ -113,7 +113,7 @@ class Enemy(pygame.sprite.Sprite):
                     self.index = 0
                     self.image = self.current_frames[self.index]
                     # choose new random interval for state change   
-                self.time_until_state_change = random.randrange(int(self.idle_time.x), int(self.idle_time.y))
+                self.time_until_state_change = random.randrange(int(self.IDLE_TIME.x), int(self.IDLE_TIME.y))
             # reset the timer
             self.timer_start = self.current_time
         
@@ -129,13 +129,13 @@ class Enemy(pygame.sprite.Sprite):
     # calculate and move the enemy on the y-axis
     def y_movement(self, dt):
         # increase the y velocity based on the gravity 
-        self.velocity.y += self.gravity * dt
+        self.velocity.y += self.GRAVITY * dt
         # cap the y velocity at the terminal velocity
-        if self.velocity.y > self.terminal_velocity:
-            self.velocity.y = self.terminal_velocity
+        if self.velocity.y > self.TERMINAL_VELOCITY:
+            self.velocity.y = self.TERMINAL_VELOCITY
 
         # using a kinematics equation to calculate the change in distance
-        self.position.y += self.velocity.y * dt + (self.gravity * 0.5) * (dt * dt)
+        self.position.y += self.velocity.y * dt + (self.GRAVITY * 0.5) * (dt * dt)
         # set the rect position to the calculated position
         self.rect.bottom = self.position.y
 
@@ -157,9 +157,9 @@ class Enemy(pygame.sprite.Sprite):
         if self.state == 'walk':
             if self.velocity.x == 0:
                 if self.facing_left:
-                    self.position.x += -self.movement_speed
+                    self.position.x += -self.MOVEMENT_SPEED
                 else:
-                    self.position.x += self.movement_speed
+                    self.position.x += self.MOVEMENT_SPEED
 
         # increase the position based on the velocity
         self.position.x += self.velocity.x

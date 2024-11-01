@@ -98,7 +98,7 @@ class Player:
         self.state_frames = self.idle_right_frames
         self.frame_index = 0
         self.image = self.idle_right_frames[self.frame_index]
-        self.image_offset = pygame.math.Vector2(-9 * scale_factor, -9 * scale_factor)
+        self.IMAGE_OFFSET = pygame.math.Vector2(-9 * scale_factor, -9 * scale_factor)
         self.state = "idle_right"
         self.temp_state = ""
 
@@ -111,10 +111,10 @@ class Player:
         self.in_air = False
 
         # variables to do with movement and physics
-        self.gravity = 0.35
-        self.friction = -0.12
+        self.GRAVITY = 0.35
+        self.FRICTION = -0.12
         self.max_velocity = 4
-        self.jump_height = 10
+        self.JUMP_HEIGHT = 10
         self.terminal_velocity = 10
         self.speed = 2
         self.current_speed = 4
@@ -122,7 +122,7 @@ class Player:
         # physics vectors
         self.position = pygame.math.Vector2(start_x, start_y)
         self.velocity = pygame.math.Vector2(0, 0)
-        self.acceleration = pygame.math.Vector2(0, self.gravity)
+        self.acceleration = pygame.math.Vector2(0, self.GRAVITY)
 
         # groups for small visuals
         self.arc = pygame.sprite.Group()
@@ -173,7 +173,7 @@ class Player:
         self.flame.draw(display)
         self.item.draw(display)
         self.poof.draw(display)
-        display.blit(self.image, (self.rect.x + self.image_offset.x, self.rect.y + self.image_offset.x))
+        display.blit(self.image, (self.rect.x + self.IMAGE_OFFSET.x, self.rect.y + self.IMAGE_OFFSET.x))
 
     # update small visuals and player
     def update(self, dt, tiles, spikes, border, camera, inventory, enemies, bar, current_level):
@@ -254,7 +254,7 @@ class Player:
         elif self.right_key:
             self.acceleration.x += self.speed
         # apply friction
-        self.acceleration.x += self.velocity.x * self.friction
+        self.acceleration.x += self.velocity.x * self.FRICTION
         # using kinematics equations to calculate velocity and change in distance and then capping it
         self.velocity.x += self.acceleration.x * dt
         self.limit_velocity(self.max_velocity)
@@ -279,7 +279,7 @@ class Player:
         # if on the ground, apply upwards velocity
         if self.on_ground:
             self.is_jumping = True
-            self.velocity.y -= self.jump_height
+            self.velocity.y -= self.JUMP_HEIGHT
             self.on_ground = False
             self.jump_sound.play()
 
@@ -694,7 +694,7 @@ class Arc(pygame.sprite.Sprite):
                 pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)), 1, 0))
 
         # timer variables
-        self.interval = interval
+        self.INTERVAL = interval
         self.timer = 0
         self.timer_start = 0
 
@@ -705,16 +705,16 @@ class Arc(pygame.sprite.Sprite):
 
         # position variables
         self.pos = pos
-        self.offset_right = pygame.math.Vector2(-10, -20)
-        self.offset_left = pygame.math.Vector2(-45, -20)
+        self.OFFSET_RIGHT = pygame.math.Vector2(-10, -20)
+        self.OFFSET_LEFT = pygame.math.Vector2(-45, -20)
 
         # set the frames and offset based on direction the player is facing
         if self.facingleft:
             self.current_frames = self.left_frames
-            self.offset = self.offset_left
+            self.offset = self.OFFSET_LEFT
         else:
             self.current_frames = self.right_frames
-            self.offset = self.offset_right
+            self.offset = self.OFFSET_RIGHT
 
         # set the position
         self.pos = (self.pos[0] + self.offset.x, self.pos[1] + self.offset.y)
@@ -740,7 +740,7 @@ class Arc(pygame.sprite.Sprite):
             self.timer_start = self.timer
 
         # if the frame interval has passed, update the frame
-        if self.timer - self.timer_start > self.interval:
+        if self.timer - self.timer_start > self.INTERVAL:
             self.index += 1
             self.timer_start = self.timer
             # if it's the last frame, delete the slash
