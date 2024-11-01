@@ -342,9 +342,7 @@ def main():
 
                         # detect key presses for jump, attack, and dash
                         if event.key == pygame.K_x:
-                            player.attack(camera)
-                        if event.key == pygame.K_s:
-                            player.sound_test()
+                            player.attack()
                         if event.key == pygame.K_c:
                             player.roll()
                     else:

@@ -15,7 +15,7 @@ class Camera:
     def scroll(self):
         # update the offset based on the amount the player position has changed
         self.offset_float += self.player.position.x - self.offset_float + self.CONSTANT
-        # create an int version of the offset while keepthing the precision
+        # create an int version of the offset while keeping the precision
         self.offset = int(self.offset_float)
         # clamp offsets based on the level border so the player can reach the end of the screen
         self.offset = max(self.offset, 0)

@@ -16,7 +16,7 @@ tile_surfaces = []
 tile_list = os.scandir('dungeon/')
 with tile_list as tiles:
     for tile in tiles:
-        tile_surfaces.append(pygame.transform.scale(pygame.image.load(tile.path), (cell_width, cell_height)))
+        tile_surfaces.append(pygame.transform.scale(pygame.image.load(tile.path), (CELL_WIDTH, CELL_HEIGHT)))
 total_tiles = len(tile_surfaces)
 
 # open level file to be edited
@@ -29,8 +29,8 @@ try:
 except FileNotFoundError:
     open(file, 'x')
     temp = [[]]
-    for x in range(0, int(WIDTH/cell_width)+1):
-        for y in range(0, int(HEIGHT/cell_height)+1):
+    for x in range(0, int(WIDTH / CELL_WIDTH) + 1):
+        for y in range(0, int(HEIGHT / CELL_HEIGHT) + 1):
             temp[x].append(0)
         temp.append([])
     temp.pop(-1)
@@ -52,8 +52,8 @@ while running:
             try:
                 print(event.pos)
                 pos = pygame.mouse.get_pos()
-                cellx = math.floor(pos[0] / cell_width)
-                celly = math.floor(pos[1] / cell_height)
+                cellx = math.floor(pos[0] / CELL_WIDTH)
+                celly = math.floor(pos[1] / CELL_HEIGHT)
                 level["level"][cellx][celly] = tile_num
             except AttributeError:
                 pass
@@ -61,8 +61,8 @@ while running:
             try:
                 print(event.pos)
                 pos = pygame.mouse.get_pos()
-                cellx = math.floor(pos[0] / cell_width)
-                celly = math.floor(pos[1] / cell_height)
+                cellx = math.floor(pos[0] / CELL_WIDTH)
+                celly = math.floor(pos[1] / CELL_HEIGHT)
                 level["level"][cellx][celly] = 0
             except AttributeError:
                 pass
@@ -70,8 +70,8 @@ while running:
             try:
                 print(event.pos)
                 pos = pygame.mouse.get_pos()
-                cellx = math.floor(pos[0] / cell_width)
-                celly = math.floor(pos[1] / cell_height)
+                cellx = math.floor(pos[0] / CELL_WIDTH)
+                celly = math.floor(pos[1] / CELL_HEIGHT)
                 level["level"][cellx][celly] = total_tiles
             except AttributeError:
                 pass
@@ -83,19 +83,19 @@ while running:
                 tile_num = total_tiles
             pos = pygame.mouse.get_pos()
             print(tile_num)
-            cellx = math.floor(pos[0] / cell_width)
-            celly = math.floor(pos[1] / cell_height)
+            cellx = math.floor(pos[0] / CELL_WIDTH)
+            celly = math.floor(pos[1] / CELL_HEIGHT)
             level["level"][cellx][celly] = tile_num
 
     screen.fill(pygame.Color('lightblue'))
 
     # draw grid with appropriate tiles.
-    for x in range(0, int(WIDTH/cell_width)+1):
-        for y in range(0, int(HEIGHT/cell_height)+1):
+    for x in range(0, int(WIDTH / CELL_WIDTH) + 1):
+        for y in range(0, int(HEIGHT / CELL_HEIGHT) + 1):
             if level["level"][x][y] == 0:
-                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(cell_width * x, cell_height * y, cell_width, cell_height), width=1)
+                pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(CELL_WIDTH * x, CELL_HEIGHT * y, CELL_WIDTH, CELL_HEIGHT), width=1)
             else:
-                screen.blit(tile_surfaces[level["level"][x][y] - 1], tile_surfaces[level["level"][x][y] - 1].get_rect(topleft=(cell_width * x, cell_height * y)))
+                screen.blit(tile_surfaces[level["level"][x][y] - 1], tile_surfaces[level["level"][x][y] - 1].get_rect(topleft=(CELL_WIDTH * x, CELL_HEIGHT * y)))
 
     pygame.display.flip()
 

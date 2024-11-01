@@ -1,9 +1,10 @@
-import pygame
-
+# width and height of screen
 WIDTH = 1920
 HEIGHT = 1080
 
-cell_width = 40
-cell_height = 40
+# width and height of each tile
+CELL_WIDTH = 40
+CELL_HEIGHT = 40
 
+# fps the game should run at
 TARGET_FPS = 60
