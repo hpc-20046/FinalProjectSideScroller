@@ -48,7 +48,8 @@ class InventorySlot(pygame.sprite.Sprite):
         self.line_height = 90
         self.slots_per_row = 4
         self.slot_num = slot_num
-        self.pos_x = (WIDTH / 2) + self.inventory_offset - (inventory.panel3.w / 2) + self.x_offset + (slot_num - ((math.floor(slot_num / self.slots_per_row)) * self.slots_per_row)) * self.spacing
+        self.pos_x = ((WIDTH / 2) + self.inventory_offset - (inventory.panel3.w / 2) + self.x_offset
+                      + (slot_num - ((math.floor(slot_num / self.slots_per_row)) * self.slots_per_row)) * self.spacing)
         self.pos_y = ((HEIGHT / 2) - (inventory.panel3.h / 2) + self.y_offset) + (math.floor(slot_num / self.slots_per_row) * self.line_height)
         self.icon_x = self.pos_x
         self.icon_y = self.pos_y
@@ -619,7 +620,12 @@ class Explosion:
         # adds particles
         self.particles = pygame.sprite.Group()
         for i in range(num_of_particles):
-            self.particles.add(Particle((random.randrange(pos_range[0], pos_range[1]), random.randrange(pos_range[2], pos_range[3])), colour, size, random.randrange(angle_range[0], angle_range[1]), random.randrange(speed_range[0], speed_range[1]) / 1000, gravity))
+            self.particles.add(Particle((random.randrange(pos_range[0],
+                                                          pos_range[1]),
+                                         random.randrange(pos_range[2],
+                                                          pos_range[3])), colour, size,
+                                        random.randrange(angle_range[0], angle_range[1]),
+                                        random.randrange(speed_range[0], speed_range[1]) / 1000, gravity))
 
     # update particles
     def update(self, dt):

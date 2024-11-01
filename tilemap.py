@@ -84,16 +84,19 @@ class TileMap:
 
                 # if the cell is inside a wall or floor, draw but without a rect
                 elif level["level"][x][y] == self.total_tiles:
-                    display.blit(self.tiles[level["level"][x][y] - 1], self.tiles[level["level"][x][y] - 1].get_rect(topleft=((CELL_WIDTH * x + grid_factor_x) - camera.offset_float, (CELL_HEIGHT * y + grid_factor_y))))
+                    display.blit(self.tiles[level["level"][x][y] - 1], self.tiles[level["level"][x][y] - 1]
+                                 .get_rect(topleft=((CELL_WIDTH * x + grid_factor_x) - camera.offset_float, (CELL_HEIGHT * y + grid_factor_y))))
 
                 # if the cell is a spike, draw and append the rect to a seperate list
                 elif level["level"][x][y] == spike:
-                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((CELL_WIDTH * x + grid_factor_x) - camera.offset_float, (CELL_HEIGHT * y + grid_factor_y)))
+                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((CELL_WIDTH * x + grid_factor_x)
+                                                                                  - camera.offset_float, (CELL_HEIGHT * y + grid_factor_y)))
                     spike_rects.append(rect)
                     display.blit(self.tiles[level["level"][x][y] - 1], rect)
                 # draw and append rect to list
                 else:
-                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((CELL_WIDTH * x + grid_factor_x) - camera.offset_float, (CELL_HEIGHT * y + grid_factor_y)))
+                    rect = self.tiles[level["level"][x][y] - 1].get_rect(topleft=((CELL_WIDTH * x + grid_factor_x)
+                                                                                  - camera.offset_float, (CELL_HEIGHT * y + grid_factor_y)))
                     tile_rects.append(rect)
                     display.blit(self.tiles[level["level"][x][y] - 1], rect)
 

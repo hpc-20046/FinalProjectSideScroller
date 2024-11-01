@@ -366,7 +366,7 @@ class Player:
         if not self.time - self.time_start >= self.cooldown:
             return
 
-        # set the velocity for the dash depending on what whay the player if facing
+        # set the velocity for the dash depending on what way the player if facing
         if self.facing_left:
             self.time_start = self.time
             self.velocity.x -= 10
@@ -688,8 +688,10 @@ class Arc(pygame.sprite.Sprite):
         self.right_frames = []
         self.left_frames = []
         for frame in frames:
-            self.right_frames.append(pygame.transform.scale(pygame.transform.scale_by(pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)))
-            self.left_frames.append(pygame.transform.flip(pygame.transform.scale(pygame.transform.scale_by(pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)), 1, 0))
+            self.right_frames.append(pygame.transform.scale(pygame.transform.scale_by(
+                pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)))
+            self.left_frames.append(pygame.transform.flip(pygame.transform.scale(pygame.transform.scale_by(
+                pygame.image.load(frame), scale), (96 * scale, 96 * scale + 20)), 1, 0))
 
         # timer variables
         self.interval = interval

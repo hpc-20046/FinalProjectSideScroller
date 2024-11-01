@@ -99,7 +99,14 @@ def main():
     misc_inventory.add(UiText('Spe', 'fonts/pixel.ttf', 40, (0, 0, 0), (320, 710)))
     
     # adding floating number showing your spirit amount
-    spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [(WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440)]))
+    spirit_amount.add(SpiritAmount(0, 'fonts/pixel.ttf', 20, (0, 0, 255), [
+        (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450),
+        (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465),
+        (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 465), (WIDTH/2 - 2, 460), (WIDTH/2 - 2, 460),
+        (WIDTH/2 - 2, 455), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 450), (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 445),
+        (WIDTH/2 - 2, 445), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440),
+        (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440), (WIDTH/2 - 2, 440)
+    ]))
 
     # added attribute bars
     attribute_bars = []
@@ -250,7 +257,7 @@ def main():
     HIT_ANIM = pygame.USEREVENT + 7
     pygame.time.set_timer(HIT_ANIM, 150)
     
-    # variable so computers sucky specs dont ruin the spawn point
+    # variable so computers sucky specs don't ruin the spawn point
     loading = 0
 
     # game states
@@ -462,10 +469,10 @@ def main():
                     if not player_state == 'idle':
                         if player.facing_left:
                             player.update_frame('idle_left', False, False, player_state)
-                            player_state = player_state = 'idle'
+                            player_state = 'idle'
                         else:
                             player.update_frame('idle_right', False, False, player_state)
-                            player_state = player_state = 'idle'
+                            player_state = 'idle'
 
         # stop the player moving when the animation is player or if the player is dead
         if player.dead or player.animation:
@@ -487,7 +494,8 @@ def main():
                     camera.offset = 0
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)], [1, 1, 1, 1, 1])
+                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)],
+                                            [1, 1, 1, 1, 1])
                 case 1:
                     current_level = 2
                     player.position = pygame.math.Vector2(0, HEIGHT / 2 + 200)
@@ -526,7 +534,9 @@ def main():
                     camera.offset = 0
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 3, 1, 1, 3, 1])
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920),
+                                             (1130, 920), (933, 920), (689, 920), (411, 920)],
+                                            [1, 1, 3, 1, 1, 3, 1])
                 case 8:
                     running = False
                 case _:
@@ -555,7 +565,8 @@ def main():
                     camera.offset = WIDTH
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)], [1, 1, 1, 1, 1])
+                    enemies = spawn_enemies([(1128, 800), (764, 800), (3087, 800), (2823, 800), (2588, 800)],
+                                            [1, 1, 1, 1, 1])
                 case 3:
                     current_level = 2
                     player.position = pygame.math.Vector2(WIDTH * 2 - player.rect.w, HEIGHT / 2 + 240)
@@ -573,7 +584,9 @@ def main():
                     camera.offset = WIDTH
                     border = WIDTH * 2
 
-                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920), (1130, 920), (933, 920), (689, 920), (411, 920)], [1, 1, 3, 1, 1, 3, 1])
+                    enemies = spawn_enemies([(871, 920), (1092, 920), (1336, 920),
+                                             (1130, 920), (933, 920), (689, 920), (411, 920)],
+                                            [1, 1, 3, 1, 1, 3, 1])
                 case 5:
                     current_level = 6
                     player.position = pygame.math.Vector2(WIDTH - player.rect.w, HEIGHT / 2 + 200)
@@ -685,7 +698,8 @@ def main():
             fadeout = True
             fade_anim = True
             fade.add(Fade(0))
-            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160), 200, 10,(255, 0, 0), (0, 360), (3000, 8000), 0)
+            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160),
+                                  200, 10,(255, 0, 0), (0, 360), (3000, 8000), 0)
 
         # change level and draw the wind dash text
         if not explosion.particles.sprites():
@@ -700,7 +714,8 @@ def main():
             player.power = True
             player.facing_left = False
             tutorial_text.empty()
-            tutorial_text.add(TutorialText('C to dash', 'fonts/pixel.ttf', 40, (255, 255, 255), (500, 100), 0))
+            tutorial_text.add(TutorialText('C to dash', 'fonts/pixel.ttf', 40, (255, 255, 255),
+                                           (500, 100), 0))
 
             fade_time = time
             fade_text = dungeon_font.render('You have acquired Wind Dash', True, (255, 255, 255))
