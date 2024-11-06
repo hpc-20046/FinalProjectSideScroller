@@ -698,7 +698,7 @@ def main():
             fadeout = True
             fade_anim = True
             fade.add(Fade(0))
-            explosion = Explosion((WIDTH / 2 - 10 + 20, WIDTH / 2 + 10 + 20, HEIGHT / 2 - 10 + 160, HEIGHT / 2 + 10 + 160),
+            explosion = Explosion((int(WIDTH / 2 - 10 + 20), int(WIDTH / 2 + 10 + 20), int(HEIGHT / 2 - 10 + 160), int(HEIGHT / 2 + 10 + 160)),
                                   200, 10,(255, 0, 0), (0, 360), (3000, 8000), 0)
 
         # change level and draw the wind dash text
